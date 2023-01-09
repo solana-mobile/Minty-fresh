@@ -22,6 +22,7 @@ android {
         properties.load(project.rootProject.file("local.properties").newDataInputStream())
 
         buildConfigField "String", "NFTSTORAGE_KEY", "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
+        buildConfigField "String", "API_BASE_URL", "\"https://api.nft.storage/\""
     }
 
     buildFeatures {

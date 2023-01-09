@@ -4,6 +4,7 @@ import android.app.Application
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.repository.StorageUploadRepository
@@ -63,7 +64,9 @@ class ImageViewModel @Inject constructor(
 
     fun uploadImage(path: String) {
         viewModelScope.launch {
-            storageRepository.uploadFile(path)
+            val uploadUrl = storageRepository.uploadFile(path)
+
+            Log.v("Andrew", uploadUrl)
         }
     }
 }
