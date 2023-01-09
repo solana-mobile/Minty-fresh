@@ -1,4 +1,4 @@
-package com.nft.gallery
+package com.nft.gallery.repository
 
 import javax.inject.Inject
 
