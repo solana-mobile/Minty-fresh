@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -102,13 +103,18 @@ class MainActivity : ComponentActivity() {
                     columns = GridCells.Adaptive(minSize = 110.dp)
                 ) {
                     itemsIndexed(items = uiState) { index, _ ->
+                        val path = uiState[index]
+
                         AsyncImage(
                             modifier = Modifier
                                 .width(110.dp)
                                 .height(110.dp)
-                                .clip(RoundedCornerShape(4.dp)),
+                                .clip(RoundedCornerShape(4.dp))
+                                .clickable {
+                                   imageViewModel.uploadImage(path)
+                                },
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(uiState[index])
+                                .data(path)
                                 .size(110)
                                 .crossfade(false)
                                 .build(),

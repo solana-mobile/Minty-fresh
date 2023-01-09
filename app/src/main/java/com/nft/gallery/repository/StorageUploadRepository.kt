@@ -1,9 +1,10 @@
 package com.nft.gallery.repository
 
+import android.util.Log
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.endpoints.NftStorageEndpoints
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import java.io.File
@@ -21,11 +22,13 @@ class StorageUploadRepository @Inject constructor(
     private val endpoints = retrofit.create(NftStorageEndpoints::class.java)
 
     suspend fun uploadFile(filePath: String) {
-        val uploadFile = File(filePath)
+        withContext(Dispatchers.IO) {
+            val uploadFile = File(filePath)
 
-        val reqBody = uploadFile.asRequestBody("multipart/form-file".toMediaTypeOrNull())
-        val partToUpload = MultipartBody.Part.createFormData("file", uploadFile.name, reqBody)
+            val reqBody = uploadFile.asRequestBody()
+            val response = endpoints.uploadFile(reqBody, token)
 
-        val response = endpoints.uploadFile(partToUpload, token)
+            Log.v("Andrew", response.charStream().readText())
+        }
     }
 }

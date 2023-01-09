@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.nft.gallery.repository.StorageUploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ImageViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
+class ImageViewModel @Inject constructor(
+    application: Application,
+    private val storageRepository: StorageUploadRepository
+) : AndroidViewModel(application) {
 
     private var imagesLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
@@ -54,6 +58,12 @@ class ImageViewModel @Inject constructor(application: Application) : AndroidView
     fun loadAllImages() {
         viewModelScope.launch(Dispatchers.IO) {
             imagesLiveData.value = loadImagesFromSDCard()
+        }
+    }
+
+    fun uploadImage(path: String) {
+        viewModelScope.launch {
+            storageRepository.uploadFile(path)
         }
     }
 }
