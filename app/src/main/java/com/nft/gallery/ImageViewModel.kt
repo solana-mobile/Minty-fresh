@@ -19,8 +19,14 @@ class ImageViewModel @Inject constructor(application: Application) : AndroidView
 
     private var imagesLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
+    private var videosLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+
     fun getImageList(): StateFlow<List<String>> {
         return imagesLiveData.asStateFlow()
+    }
+
+    fun getVideoList(): StateFlow<List<String>> {
+        return videosLiveData.asStateFlow()
     }
 
     /**
@@ -55,5 +61,32 @@ class ImageViewModel @Inject constructor(application: Application) : AndroidView
         viewModelScope.launch(Dispatchers.IO) {
             imagesLiveData.value = loadImagesFromSDCard()
         }
+    }
+
+    fun loadAllVideos() {
+        viewModelScope.launch(Dispatchers.IO) {
+            videosLiveData.value = loadVideosFromSDCard()
+        }
+    }
+
+    private fun loadVideosFromSDCard(): ArrayList<String> {
+        val uri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        val cursor: Cursor?
+        val listOfAllVideos = ArrayList<String>()
+        var absolutePathOfVideo: String?
+        val context = getApplication<Application>().applicationContext
+
+        val projection =
+            arrayOf(MediaStore.Video.VideoColumns.DATA, MediaStore.Video.Media.BUCKET_DISPLAY_NAME, MediaStore.Video.Media.DATE_TAKEN)
+
+        cursor = context.contentResolver.query(uri, projection, null, null, MediaStore.Video.Media.DATE_TAKEN + " DESC")
+
+        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DATA)
+        while (cursor.moveToNext()) {
+            absolutePathOfVideo = cursor.getString(columnIndexData)
+            listOfAllVideos.add(absolutePathOfVideo)
+        }
+        cursor.close()
+        return listOfAllVideos
     }
 }

@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -30,7 +32,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -127,7 +132,9 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun Videos() {
+    fun Videos(
+        imageViewModel: ImageViewModel = hiltViewModel()
+    ) {
         val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listOf(
                 Manifest.permission.READ_MEDIA_VIDEO,
@@ -141,8 +148,42 @@ class MainActivity : ComponentActivity() {
         PermissionView(
             permissionsRequired,
             content = {
-                Column {
-                    Text("videos permissions granted")
+                val uiState = imageViewModel.getVideoList().collectAsState().value
+
+                LaunchedEffect(
+                    key1 = Unit,
+                    block = {
+                        imageViewModel.loadAllVideos()
+                    }
+                )
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 110.dp)
+                ) {
+                    itemsIndexed(items = uiState) { index, _ ->
+
+                        val context = LocalContext.current
+
+                        val imageLoader = ImageLoader.Builder(context)
+                            .components {
+                                add(VideoFrameDecoder.Factory())
+                            }.crossfade(true)
+                            .build()
+
+                        val painter = rememberAsyncImagePainter(
+                            model = uiState[index],
+                            imageLoader = imageLoader,
+                        )
+
+                        Image(
+                            painter = painter,
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
+                            modifier = Modifier
+                                .width(110.dp)
+                                .height(110.dp)
+                        )
+                    }
                 }
             },
             emptyView = {
