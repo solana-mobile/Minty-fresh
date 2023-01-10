@@ -161,7 +161,13 @@ class MainActivity : ComponentActivity() {
                 StartCamera(navigateToDetails)
             },
             emptyView = {
-                EmptyView(it)
+                Box(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize(),
+                ) {
+                    EmptyView(it)
+                }
             }
         )
     }
@@ -409,7 +415,11 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     fun EmptyView(permissionState: MultiplePermissionsState) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             val textToShow = if (permissionState.shouldShowRationale) {
                 "The camera is important for this app. Please grant the permission."
             } else {
