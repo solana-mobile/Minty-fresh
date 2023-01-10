@@ -1,13 +1,18 @@
 package com.nft.gallery
 
 import android.Manifest
+import android.content.ContentValues
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -20,6 +25,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -27,6 +33,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -42,10 +49,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private var imageCapture: ImageCapture? = null
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,43 +120,98 @@ class MainActivity : ComponentActivity() {
     private fun StartCamera() {
         val coroutineScope = rememberCoroutineScope()
         val lifecycleOwner = LocalLifecycleOwner.current
-        AndroidView(
-            factory = { context ->
-                val previewView = PreviewView(context).apply {
-                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                }
-
-                // CameraX Preview UseCase
-                val previewUseCase = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(previewView.surfaceProvider)
-                    }
-
-                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-                coroutineScope.launch {
-                    val cameraProvider: ProcessCameraProvider =
-                        withContext(Dispatchers.IO) {
-                            cameraProviderFuture.get()
-                        }
-                    try {
-                        // Must unbind the use-cases before rebinding them.
-                        cameraProvider.unbindAll()
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner, cameraSelector, previewUseCase
+        Box {
+            AndroidView(
+                factory = { context ->
+                    val previewView = PreviewView(context).apply {
+                        this.scaleType = PreviewView.ScaleType.FILL_CENTER
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
                         )
-                    } catch (ex: Exception) {
-                        Log.e("CameraPreview", "Use case binding failed", ex)
                     }
+
+                    // CameraX Preview UseCase
+                    val previewUseCase = Preview.Builder()
+                        .build()
+                        .also {
+                            it.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+
+                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                    val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+                    coroutineScope.launch {
+                        val cameraProvider: ProcessCameraProvider =
+                            withContext(Dispatchers.IO) {
+                                cameraProviderFuture.get()
+                            }
+                        try {
+                            // Must unbind the use-cases before rebinding them.
+                            cameraProvider.unbindAll()
+                            cameraProvider.bindToLifecycle(
+                                lifecycleOwner, cameraSelector, previewUseCase
+                            )
+                        } catch (ex: Exception) {
+                            Log.e("CameraPreview", "Use case binding failed", ex)
+                        }
+                    }
+
+                    previewView
+                }
+            )
+            Button(
+                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 48.dp),
+                onClick = { takePhoto() }
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = NavigationItem.Camera.icon),
+                    contentDescription = "Take Picture"
+                )
+            }
+        }
+    }
+
+    private fun takePhoto() {
+        // Get a stable reference of the modifiable image capture use case
+        val imageCapture = imageCapture ?: return
+
+        // Create time stamped name and MediaStore entry.
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            .format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+            }
+        }
+
+        // Create output options object which contains file + metadata
+        val outputOptions = ImageCapture.OutputFileOptions
+            .Builder(
+                contentResolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValues
+            )
+            .build()
+
+        // Set up image capture listener, which is triggered after photo has
+        // been taken
+        imageCapture.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e("CameraTakePicture", "Photo capture failed: ${exc.message}", exc)
                 }
 
-                previewView
+                override fun
+                        onImageSaved(output: ImageCapture.OutputFileResults) {
+                    val msg = "Photo capture succeeded: ${output.savedUri}"
+                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                }
             }
         )
     }
@@ -336,5 +402,9 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    companion object {
+        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
     }
 }
