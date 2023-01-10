@@ -102,7 +102,7 @@ fun MintDetailsPage(
                     OutlinedTextField(
                         value = title.value,
                         onValueChange = {
-                            title.value = it.trim().take(32)
+                            title.value = it.trimStart().take(32)
                         },
                         label = {
                             Text(text = "Give your NFT a title")
@@ -116,7 +116,8 @@ fun MintDetailsPage(
                         ),
                         keyboardActions = KeyboardActions(
                             onNext = { focusRequester.requestFocus() }
-                        )
+                        ),
+                        modifier = Modifier.focusRequester(focusRequester)
                     )
                     OutlinedTextField(
                         modifier = Modifier
@@ -124,7 +125,7 @@ fun MintDetailsPage(
                             .focusRequester(focusRequester),
                         value = description.value,
                         onValueChange = {
-                            description.value = it.trim().take(128)
+                            description.value = it.trimStart().take(128)
                         },
                         label = {
                             Text(text = "Add a description")
