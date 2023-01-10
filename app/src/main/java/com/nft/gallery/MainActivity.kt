@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -18,12 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,11 +28,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.VideoFrameDecoder
-import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -77,7 +70,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalPermissionsApi::class)
+    @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
     @Composable
     fun Gallery(
         imageViewModel: ImageViewModel = hiltViewModel()
@@ -104,22 +97,17 @@ class MainActivity : ComponentActivity() {
                     }
                 )
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 110.dp)
+                    columns = GridCells.Adaptive(minSize = 128.dp)
                 ) {
-                    itemsIndexed(items = uiState) { index, _ ->
-                        AsyncImage(
-                            modifier = Modifier
-                                .width(110.dp)
-                                .height(110.dp)
-                                .clip(RoundedCornerShape(4.dp)),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(uiState[index])
-                                .size(110)
-                                .crossfade(false)
-                                .build(),
+                    itemsIndexed(items = uiState) { _, path ->
+                        GlideImage(
+                            model = path,
                             contentDescription = null,
-                            placeholder = ColorPainter(MaterialTheme.colorScheme.surfaceVariant),
-                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .width(128.dp)
+                                .height(128.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
@@ -130,7 +118,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    @OptIn(ExperimentalPermissionsApi::class)
+    @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
     @Composable
     fun Videos(
         imageViewModel: ImageViewModel = hiltViewModel()
@@ -157,31 +145,17 @@ class MainActivity : ComponentActivity() {
                     }
                 )
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 110.dp)
+                    columns = GridCells.Adaptive(minSize = 128.dp)
                 ) {
-                    itemsIndexed(items = uiState) { index, _ ->
-
-                        val context = LocalContext.current
-
-                        val imageLoader = ImageLoader.Builder(context)
-                            .components {
-                                add(VideoFrameDecoder.Factory())
-                            }.crossfade(true)
-                            .build()
-
-                        val painter = rememberAsyncImagePainter(
-                            model = uiState[index],
-                            imageLoader = imageLoader,
-                        )
-
-                        Image(
-                            painter = painter,
-                            contentDescription = "",
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center,
+                    itemsIndexed(items = uiState) { _, path ->
+                        GlideImage(
+                            model = path,
+                            contentDescription = null,
                             modifier = Modifier
-                                .width(110.dp)
-                                .height(110.dp)
+                                .width(128.dp)
+                                .height(128.dp)
+                                .clip(RoundedCornerShape(4.dp)),
+                            contentScale = ContentScale.Crop
                         )
                     }
                 }
