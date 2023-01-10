@@ -15,6 +15,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -38,10 +39,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -108,10 +111,27 @@ class MainActivity : ComponentActivity() {
                 Camera()
             }
             composable(NavigationItem.Photos.route) {
-                Gallery()
+                Gallery(
+                    navigateToDetails = {
+                        navController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                    }
+                )
             }
             composable(NavigationItem.Videos.route) {
                 Videos()
+            }
+            composable(
+                route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
+                arguments = listOf(navArgument("imagePath") { type = NavType.StringType })
+            ) { backStackEntry ->
+
+                MintDetailsPage(
+                    imagePath = backStackEntry.arguments?.getString("imagePath")
+                        ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                    navigateUp = {
+                        navController.navigateUp()
+                    }
+                )
             }
         }
     }
@@ -246,7 +266,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
     @Composable
     fun Gallery(
-        imageViewModel: ImageViewModel = hiltViewModel()
+        imageViewModel: ImageViewModel = hiltViewModel(),
+        navigateToDetails: (String) -> Unit = { },
     ) {
         val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             listOf(
@@ -294,7 +315,10 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .width(76.dp)
                                     .height(76.dp)
-                                    .clip(RoundedCornerShape(4.dp)),
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .clickable {
+                                        navigateToDetails(path)
+                                    },
                                 contentScale = ContentScale.Crop
                             )
                         }
