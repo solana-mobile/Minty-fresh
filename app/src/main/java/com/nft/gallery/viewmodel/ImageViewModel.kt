@@ -1,4 +1,4 @@
-package com.nft.gallery
+package com.nft.gallery.viewmodel
 
 import android.app.Application
 import android.database.Cursor

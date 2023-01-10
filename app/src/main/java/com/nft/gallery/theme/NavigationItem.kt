@@ -1,4 +1,6 @@
-package com.nft.gallery
+package com.nft.gallery.theme
+
+import com.nft.gallery.R
 
 sealed class NavigationItem(var route: String, var icon: Int, var title: String) {
     object Camera: NavigationItem("camera", R.drawable.camera_icon, "Camera")
