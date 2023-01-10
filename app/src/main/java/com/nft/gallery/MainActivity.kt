@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.camera.core.CameraSelector
@@ -139,6 +138,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+                    imageCapture = ImageCapture.Builder()
+                        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                        .build()
+
 
                     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
                     coroutineScope.launch {
@@ -150,7 +153,7 @@ class MainActivity : ComponentActivity() {
                             // Must unbind the use-cases before rebinding them.
                             cameraProvider.unbindAll()
                             cameraProvider.bindToLifecycle(
-                                lifecycleOwner, cameraSelector, previewUseCase
+                                lifecycleOwner, cameraSelector, previewUseCase, imageCapture
                             )
                         } catch (ex: Exception) {
                             Log.e("CameraPreview", "Use case binding failed", ex)
@@ -207,10 +210,7 @@ class MainActivity : ComponentActivity() {
                     Log.e("CameraTakePicture", "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                 }
             }
         )
