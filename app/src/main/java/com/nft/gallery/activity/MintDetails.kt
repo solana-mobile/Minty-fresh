@@ -2,6 +2,8 @@ package com.nft.gallery.activity
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -10,17 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.nft.gallery.AppTheme
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun MintDetailsPage(
     imagePath: String,
@@ -57,6 +67,9 @@ fun MintDetailsPage(
                 ) {
                     val title = rememberSaveable { mutableStateOf("") }
                     val description = rememberSaveable { mutableStateOf("") }
+                    val (focusRequester) = FocusRequester.createRefs()
+                    val keyboardController = LocalSoftwareKeyboardController.current
+
                     GlideImage(
                         model = imagePath,
                         contentDescription = null,
@@ -98,9 +111,17 @@ fun MintDetailsPage(
                             Text(text = "Enter a title")
                         },
                         maxLines = 1,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusRequester.requestFocus() }
+                        )
                     )
                     OutlinedTextField(
-                        modifier = Modifier.padding(vertical = 24.dp),
+                        modifier = Modifier
+                            .padding(vertical = 24.dp)
+                            .focusRequester(focusRequester),
                         value = description.value,
                         onValueChange = {
                             description.value = it.trim().take(128)
@@ -112,6 +133,12 @@ fun MintDetailsPage(
                             Text(text = "Describe your NFT here")
                         },
                         maxLines = 3,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { keyboardController?.hide() }
+                        )
                     )
                     Button(
                         enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
