@@ -1,4 +1,4 @@
-package com.nft.gallery
+package com.nft.gallery.activity
 
 import android.Manifest
 import android.content.ContentValues
@@ -44,6 +44,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.nft.gallery.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.ImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
