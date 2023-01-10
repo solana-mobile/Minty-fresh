@@ -232,7 +232,7 @@ class MainActivity : ComponentActivity() {
                         Text(text = item.title)
                     },
                     selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     alwaysShowLabel = true,
                     selected = currentRoute == item.route,
                     onClick = {
