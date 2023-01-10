@@ -3,8 +3,14 @@ package com.nft.gallery
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -13,15 +19,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,6 +39,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @AndroidEntryPoint
@@ -61,6 +69,9 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun Navigation(navController: NavHostController) {
         NavHost(navController, startDestination = NavigationItem.Photos.route) {
+            composable(NavigationItem.Camera.route) {
+                Camera()
+            }
             composable(NavigationItem.Photos.route) {
                 Gallery()
             }
@@ -68,6 +79,75 @@ class MainActivity : ComponentActivity() {
                 Videos()
             }
         }
+    }
+
+    @OptIn(ExperimentalPermissionsApi::class)
+    @Composable
+    fun Camera() {
+        val permissionsRequired =
+            mutableListOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.RECORD_AUDIO
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            }
+
+        PermissionView(
+            permissionsRequired,
+            content = {
+                StartCamera()
+            },
+            emptyView = {
+                EmptyView(it)
+            }
+        )
+    }
+
+    @Composable
+    private fun StartCamera() {
+        val coroutineScope = rememberCoroutineScope()
+        val lifecycleOwner = LocalLifecycleOwner.current
+        AndroidView(
+            factory = { context ->
+                val previewView = PreviewView(context).apply {
+                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
+
+                // CameraX Preview UseCase
+                val previewUseCase = Preview.Builder()
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(previewView.surfaceProvider)
+                    }
+
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+                coroutineScope.launch {
+                    val cameraProvider: ProcessCameraProvider =
+                        withContext(Dispatchers.IO) {
+                            cameraProviderFuture.get()
+                        }
+                    try {
+                        // Must unbind the use-cases before rebinding them.
+                        cameraProvider.unbindAll()
+                        cameraProvider.bindToLifecycle(
+                            lifecycleOwner, cameraSelector, previewUseCase
+                        )
+                    } catch (ex: Exception) {
+                        Log.e("CameraPreview", "Use case binding failed", ex)
+                    }
+                }
+
+                previewView
+            }
+        )
     }
 
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
@@ -209,6 +289,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
         val items = listOf(
+            NavigationItem.Camera,
             NavigationItem.Photos,
             NavigationItem.Videos,
         )
