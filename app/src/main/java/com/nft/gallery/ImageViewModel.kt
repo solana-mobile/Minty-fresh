@@ -4,10 +4,8 @@ import android.app.Application
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.repository.StorageUploadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,15 +15,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ImageViewModel @Inject constructor(
-    application: Application,
-    private val storageRepository: StorageUploadRepository
-) : AndroidViewModel(application) {
+class ImageViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
     private var imagesLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
+    private var videosLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+
     fun getImageList(): StateFlow<List<String>> {
         return imagesLiveData.asStateFlow()
+    }
+
+    fun getVideoList(): StateFlow<List<String>> {
+        return videosLiveData.asStateFlow()
     }
 
     /**
@@ -62,11 +63,30 @@ class ImageViewModel @Inject constructor(
         }
     }
 
-    fun uploadImage(path: String) {
-        viewModelScope.launch {
-            val uploadUrl = storageRepository.uploadFile(path)
-
-            Log.v("Andrew", uploadUrl)
+    fun loadAllVideos() {
+        viewModelScope.launch(Dispatchers.IO) {
+            videosLiveData.value = loadVideosFromSDCard()
         }
+    }
+
+    private fun loadVideosFromSDCard(): ArrayList<String> {
+        val uri: Uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        val cursor: Cursor?
+        val listOfAllVideos = ArrayList<String>()
+        var absolutePathOfVideo: String?
+        val context = getApplication<Application>().applicationContext
+
+        val projection =
+            arrayOf(MediaStore.Video.VideoColumns.DATA, MediaStore.Video.Media.BUCKET_DISPLAY_NAME, MediaStore.Video.Media.DATE_TAKEN)
+
+        cursor = context.contentResolver.query(uri, projection, null, null, MediaStore.Video.Media.DATE_TAKEN + " DESC")
+
+        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.Video.VideoColumns.DATA)
+        while (cursor.moveToNext()) {
+            absolutePathOfVideo = cursor.getString(columnIndexData)
+            listOfAllVideos.add(absolutePathOfVideo)
+        }
+        cursor.close()
+        return listOfAllVideos
     }
 }
