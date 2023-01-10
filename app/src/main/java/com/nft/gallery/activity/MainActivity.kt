@@ -108,7 +108,11 @@ class MainActivity : ComponentActivity() {
     fun Navigation(navController: NavHostController) {
         NavHost(navController, startDestination = NavigationItem.Photos.route) {
             composable(NavigationItem.Camera.route) {
-                Camera()
+                Camera(
+                    navigateToDetails = {
+                        navController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                    }
+                )
             }
             composable(NavigationItem.Photos.route) {
                 Gallery(
@@ -138,7 +142,9 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    fun Camera() {
+    fun Camera(
+        navigateToDetails: (String) -> Unit = { },
+    ) {
         val permissionsRequired =
             mutableListOf(
                 Manifest.permission.CAMERA,
@@ -152,7 +158,7 @@ class MainActivity : ComponentActivity() {
         PermissionView(
             permissionsRequired,
             content = {
-                StartCamera()
+                StartCamera(navigateToDetails)
             },
             emptyView = {
                 EmptyView(it)
@@ -161,7 +167,9 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    private fun StartCamera() {
+    private fun StartCamera(
+        navigateToDetails: (String) -> Unit = { },
+    ) {
         val coroutineScope = rememberCoroutineScope()
         val lifecycleOwner = LocalLifecycleOwner.current
         Box {
@@ -212,7 +220,7 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 48.dp),
-                onClick = { takePhoto() }
+                onClick = { takePhoto(navigateToDetails) }
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
@@ -223,7 +231,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun takePhoto() {
+    private fun takePhoto(
+        navigateToDetails: (String) -> Unit = { },
+    ) {
         // Get a stable reference of the modifiable image capture use case
         val imageCapture = imageCapture ?: return
 
@@ -258,6 +268,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    output.savedUri?.let { navigateToDetails(it.toString()) }
                 }
             }
         )
