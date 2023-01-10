@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,9 +68,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
             AppTheme {
                 Scaffold(
-                    bottomBar = { BottomNavigationBar(navController) },
+                    floatingActionButton = {
+                        if (currentRoute == NavigationItem.Photos.route) {
+                            FloatingActionButton(
+                                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                                backgroundColor = MaterialTheme.colorScheme.onBackground,
+                                onClick = {
+                                    navController.navigate(NavigationItem.Camera.route)
+                                }
+                            ) {
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(id = NavigationItem.Camera.icon),
+                                    contentDescription = "Take Picture",
+                                    tint = MaterialTheme.colorScheme.background
+                                )
+                            }
+                        }
+                    },
                     content = { padding ->
                         Box(modifier = Modifier.padding(padding)) {
                             Navigation(navController = navController)
@@ -167,7 +189,9 @@ class MainActivity : ComponentActivity() {
                 }
             )
             Button(
-                modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 48.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 48.dp),
                 onClick = { takePhoto() }
             ) {
                 Icon(
@@ -234,37 +258,53 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        PermissionView(
-            permissionsRequired,
-            content = {
-                val uiState = imageViewModel.getImageList().collectAsState().value
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Let’s get minty fresh.",
+                fontSize = 30.sp,
+                lineHeight = 36.sp,
+                modifier = Modifier.padding(bottom = 30.dp)
+            )
+            Text(
+                text = "Select a photo to mint:",
+                fontSize = 14.sp,
+                lineHeight = 21.sp,
+            )
+            PermissionView(
+                permissionsRequired,
+                content = {
+                    val uiState = imageViewModel.getImageList().collectAsState().value
 
-                LaunchedEffect(
-                    key1 = Unit,
-                    block = {
-                        imageViewModel.loadAllImages()
+                    LaunchedEffect(
+                        key1 = Unit,
+                        block = {
+                            imageViewModel.loadAllImages()
+                        }
+                    )
+                    LazyVerticalGrid(
+                        modifier = Modifier.padding(top = 16.dp),
+                        columns = GridCells.Adaptive(minSize = 76.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        itemsIndexed(items = uiState) { _, path ->
+                            GlideImage(
+                                model = path,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .width(76.dp)
+                                    .height(76.dp)
+                                    .clip(RoundedCornerShape(4.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
-                )
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 128.dp)
-                ) {
-                    itemsIndexed(items = uiState) { _, path ->
-                        GlideImage(
-                            model = path,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(128.dp)
-                                .height(128.dp)
-                                .clip(RoundedCornerShape(4.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                },
+                emptyView = {
+                    EmptyView(it)
                 }
-            },
-            emptyView = {
-                EmptyView(it)
-            }
-        )
+            )
+        }
     }
 
     @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
@@ -341,7 +381,7 @@ class MainActivity : ComponentActivity() {
                 "Camera permission required for this feature to be available. " +
                         "Please grant the permission"
             }
-            Text(textToShow)
+            Text(textToShow, modifier = Modifier.padding(vertical = 16.dp))
 
             Button(
                 onClick = {
