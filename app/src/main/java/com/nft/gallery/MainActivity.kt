@@ -357,7 +357,6 @@ class MainActivity : ComponentActivity() {
         val items = listOf(
             NavigationItem.Camera,
             NavigationItem.Photos,
-            NavigationItem.Videos,
         )
 
         BottomNavigation(
