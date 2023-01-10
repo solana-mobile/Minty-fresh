@@ -1,6 +1,5 @@
 package com.nft.gallery.activity
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.TopAppBar
@@ -34,13 +33,10 @@ fun MintDetailsPage(
                     backgroundColor = MaterialTheme.colorScheme.background
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(48.dp)
-                                .clickable {
-                                    navigateUp()
-                                }
+                        IconButton(
+                            onClick = {
+                                navigateUp()
+                            }
                         ) {
                             Icon(
                                 tint = MaterialTheme.colorScheme.onSurface,
