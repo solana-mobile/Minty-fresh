@@ -15,6 +15,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -333,11 +334,14 @@ class MainActivity : ComponentActivity() {
                                     .width(76.dp)
                                     .height(76.dp)
                                     .clip(RoundedCornerShape(4.dp))
+                                    .background(color = MaterialTheme.colorScheme.surface)
                                     .clickable {
                                         navigateToDetails(path)
                                     },
                                 contentScale = ContentScale.Crop
-                            )
+                            ) {
+                                it.thumbnail()
+                            }
                         }
                     }
                 },
