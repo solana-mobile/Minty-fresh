@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                                         walletConnectionViewModel.authorize(intentSender)
                                     }
                                 ) {
-                                    val buttonText = walletConnectionViewModel.uiState.collectAsState().value.publicKey?.toString() ?: "Collect"
+                                    val buttonText = walletConnectionViewModel.uiState.collectAsState().value.publicKey?.toString() ?: "Connect"
                                     Text(
                                         text = buttonText,
                                         color = MaterialTheme.colorScheme.onSurface
