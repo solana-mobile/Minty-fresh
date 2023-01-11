@@ -40,7 +40,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,7 +53,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.nft.gallery.AppTheme
+import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.ImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -484,7 +483,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                     Text(
                                         text = item.title,
-                                        fontSize = 13.sp,
+                                        style = MaterialTheme.typography.bodyMedium,
                                         modifier = Modifier.padding(bottom = 10.dp)
                                     )
                                 }

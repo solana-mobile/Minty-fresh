@@ -23,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -87,14 +86,12 @@ fun MintDetailsPage(
                 }
                 Text(
                     text = title.value.ifEmpty { "Your NFT" },
-                    fontSize = 20.sp,
-                    lineHeight = 30.sp,
+                    style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(top = 16.dp)
                 )
                 Text(
                     text = description.value.ifEmpty { "No description yet." },
-                    fontSize = 12.sp,
-                    lineHeight = 20.sp,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
                 )
                 Spacer(modifier = Modifier.weight(1.0f))
@@ -121,7 +118,7 @@ fun MintDetailsPage(
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
                     text = "Use up to 32 characters",
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 OutlinedTextField(
@@ -139,6 +136,7 @@ fun MintDetailsPage(
                     placeholder = {
                         Text(text = "Describe your NFT here")
                     },
+                    minLines = 3,
                     maxLines = 3,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Done,
@@ -150,7 +148,7 @@ fun MintDetailsPage(
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp, bottom = 24.dp),
                     text = "Use up to 256 characters",
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.weight(2f))
