@@ -5,6 +5,10 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.annotation.GuardedBy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -16,6 +20,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -36,12 +41,12 @@ import com.nft.gallery.composables.MintDetailsPage
 import com.nft.gallery.composables.MyMintPage
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
+import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +83,28 @@ class MainActivity : ComponentActivity() {
                                     contentDescription = "Take Picture",
                                     tint = MaterialTheme.colorScheme.background
                                 )
+                            }
+                        }
+                    },
+                    topBar = {
+                        if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Button(
+                                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                    onClick = {
+                                        walletConnectionViewModel.authorize(intentSender)
+                                    }
+                                ) {
+                                    val buttonText = walletConnectionViewModel.uiState.collectAsState().value.publicKey?.toString() ?: "Connect"
+                                    Text(
+                                        text = buttonText,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
                             }
                         }
                     },
@@ -246,6 +273,36 @@ class MainActivity : ComponentActivity() {
                         .navigationBarsPadding()
                         .fillMaxWidth()
                 )
+            }
+        }
+    }
+
+    private val walletConnectionViewModel: WalletConnectionViewModel by viewModels()
+
+    private val activityResultLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            intentSender.onActivityComplete()
+        }
+
+    private val intentSender = object : WalletConnectionViewModel.StartActivityForResultSender {
+        @GuardedBy("this")
+        private var callback: (() -> Unit)? = null
+
+        override fun startActivityForResult(
+            intent: Intent,
+            onActivityCompleteCallback: () -> Unit
+        ) {
+            synchronized(this) {
+                check(callback == null) { "Received an activity start request while another is pending" }
+                callback = onActivityCompleteCallback
+            }
+            activityResultLauncher.launch(intent)
+        }
+
+        fun onActivityComplete() {
+            synchronized(this) {
+                callback?.let { it() }
+                callback = null
             }
         }
     }
