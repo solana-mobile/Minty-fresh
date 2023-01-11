@@ -230,6 +230,8 @@ class MainActivity : ComponentActivity() {
                 }
             )
             Button(
+                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 48.dp),
