@@ -20,6 +20,7 @@ private val LightColors = lightColorScheme(
     surfaceVariant = LightSurfaceVariant,
     inverseOnSurface = LightInverseOnSurface,
     onSurface = LightOnSurface,
+    onSurfaceVariant = LightSurfaceVariant,
     outline = LightOutline,
     tertiary = LightTertiary,
     onTertiary = LightOnTertiary,

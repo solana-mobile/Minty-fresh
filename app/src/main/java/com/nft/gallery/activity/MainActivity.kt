@@ -206,7 +206,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         Text(
                                             text = item.title,
-                                            style = MaterialTheme.typography.bodyMedium,
+                                            style = MaterialTheme.typography.labelMedium,
                                             modifier = Modifier.padding(bottom = 10.dp)
                                         )
                                     }
