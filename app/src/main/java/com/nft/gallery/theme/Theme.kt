@@ -17,10 +17,11 @@ import com.nft.gallery.R
 private val LightColors = lightColorScheme(
     primary = LightPrimary,
     background = LightBackground,
+    surface = LightSurface,
     surfaceVariant = LightSurfaceVariant,
     inverseOnSurface = LightInverseOnSurface,
     onSurface = LightOnSurface,
-    onSurfaceVariant = LightSurfaceVariant,
+    onSurfaceVariant = LightOnSurfaceVariant,
     outline = LightOutline,
     tertiary = LightTertiary,
     onTertiary = LightOnTertiary,

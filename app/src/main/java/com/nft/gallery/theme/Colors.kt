@@ -3,8 +3,10 @@ package com.nft.gallery.theme
 import androidx.compose.ui.graphics.Color
 
 val LightOnSurface = Color(0xFF000000)
-val LightSurfaceVariant = Color(0xFFC7C7CC)
+val LightOnSurfaceVariant = Color(0xFFC7C7C7)
 val LightBackground = Color(0xFFFFFFFF)
+val LightSurface = Color(0xFFF8F8F8)
+val LightSurfaceVariant = Color(0xFFF2F2F7)
 
 val LightPrimary = Color(0xFF7F21E5)
 val LightInverseOnSurface = Color(0xFFF5EFF4)

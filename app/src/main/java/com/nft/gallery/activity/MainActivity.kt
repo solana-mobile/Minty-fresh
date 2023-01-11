@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
-import androidx.compose.material.contentColorFor
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -161,9 +160,7 @@ class MainActivity : ComponentActivity() {
         )
 
         Surface(
-            color = MaterialTheme.colorScheme.surface,
-            contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
-            elevation = 8.dp,
+            color = MaterialTheme.colorScheme.background,
         ) {
             Column {
                 Row(
@@ -211,8 +208,6 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
                                 },
-                                selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                 selected = currentRoute == item.route,
                                 onClick = {
                                     navController.navigate(item.route) {
