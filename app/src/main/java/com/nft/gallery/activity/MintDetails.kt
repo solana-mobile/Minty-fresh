@@ -19,7 +19,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +61,8 @@ fun MintDetailsPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(padding)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
                     .fillMaxWidth()
             ) {
                 val title = rememberSaveable { mutableStateOf("") }
@@ -109,15 +110,22 @@ fun MintDetailsPage(
                     keyboardActions = KeyboardActions(
                         onNext = { focusRequester.requestFocus() }
                     ),
-                    modifier = Modifier.focusRequester(focusRequester)
+                    modifier = Modifier.focusRequester(focusRequester).fillMaxWidth()
+                )
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+                    text = "Use up to 32 characters",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(vertical = 24.dp)
-                        .focusRequester(focusRequester),
+                        .padding(top = 24.dp)
+                        .focusRequester(focusRequester)
+                        .fillMaxWidth(),
                     value = description.value,
                     onValueChange = {
-                        description.value = it.trimStart().take(128)
+                        description.value = it.trimStart().take(256)
                     },
                     label = {
                         Text(text = "Description")
@@ -132,6 +140,12 @@ fun MintDetailsPage(
                     keyboardActions = KeyboardActions(
                         onNext = { keyboardController?.hide() }
                     )
+                )
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, bottom = 24.dp),
+                    text = "Use up to 256 characters",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Button(
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
