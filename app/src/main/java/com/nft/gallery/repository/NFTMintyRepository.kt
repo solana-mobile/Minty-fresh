@@ -1,6 +1,5 @@
 package com.nft.gallery.repository
 
-import androidx.test.core.app.ActivityScenario.launch
 import com.metaplex.lib.Metaplex
 import com.metaplex.lib.drivers.indenty.IdentityDriver
 import com.metaplex.lib.drivers.rpc.JdkRpcDriver

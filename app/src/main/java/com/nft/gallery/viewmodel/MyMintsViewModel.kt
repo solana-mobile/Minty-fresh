@@ -33,6 +33,7 @@ class MyMintsViewModel @Inject constructor(
 
     fun loadMyMints() {
         viewModelScope.launch {
+            _viewState.value = listOf()
             try {
                 val nfts = nftMintyRepository.getAllNftsFromMinty()
                 nfts.forEach { nft ->
