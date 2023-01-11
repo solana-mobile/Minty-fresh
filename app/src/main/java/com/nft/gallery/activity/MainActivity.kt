@@ -2,6 +2,7 @@ package com.nft.gallery.activity
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -43,13 +44,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -133,12 +132,29 @@ class MainActivity : ComponentActivity() {
             }
             composable(
                 route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
-                arguments = listOf(navArgument("imagePath") { type = NavType.StringType })
+                arguments = listOf(navArgument("imagePath") { type = NavType.StringType }),
+                deepLinks = listOf(navDeepLink {
+                    uriPattern = "{imagePath}"
+                    action = Intent.ACTION_SEND
+                    mimeType = "image/*"
+                })
             ) { backStackEntry ->
+                val imagePath = backStackEntry.arguments?.getString("imagePath")
+                val deepLinkIntent: Intent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    backStackEntry.arguments?.getParcelable(
+                        NavController.KEY_DEEP_LINK_INTENT,
+                        Intent::class.java
+                    )
+                } else {
+                    backStackEntry.arguments?.getParcelable(
+                        NavController.KEY_DEEP_LINK_INTENT
+                    )
+                }
+                val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri?.toString()
 
                 MintDetailsPage(
-                    imagePath = backStackEntry.arguments?.getString("imagePath")
-                        ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                    imagePath = imagePath ?: clipDataUri
+                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                     navigateUp = {
                         navController.navigateUp()
                     }
