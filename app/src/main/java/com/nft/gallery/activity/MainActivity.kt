@@ -125,9 +125,6 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
-            composable(NavigationItem.Videos.route) {
-                Videos()
-            }
             composable(
                 route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
                 arguments = listOf(navArgument("imagePath") { type = NavType.StringType })
@@ -358,54 +355,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
-    @Composable
-    fun Videos(
-        imageViewModel: ImageViewModel = hiltViewModel()
-    ) {
-        val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(
-                Manifest.permission.READ_MEDIA_VIDEO,
-            )
-        } else {
-            listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            )
-        }
-
-        PermissionView(
-            permissionsRequired,
-            content = {
-                val uiState = imageViewModel.getVideoList().collectAsState().value
-
-                LaunchedEffect(
-                    key1 = Unit,
-                    block = {
-                        imageViewModel.loadAllVideos()
-                    }
-                )
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 128.dp)
-                ) {
-                    itemsIndexed(items = uiState) { _, path ->
-                        GlideImage(
-                            model = path,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(128.dp)
-                                .height(128.dp)
-                                .clip(RoundedCornerShape(4.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-            },
-            emptyView = {
-                EmptyView(it)
-            }
-        )
-    }
-
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     fun PermissionView(
@@ -467,13 +416,12 @@ class MainActivity : ComponentActivity() {
                 BottomNavigationItem(
                     icon = {
                         Icon(
-                            modifier = Modifier.size(24.dp),
                             imageVector = item.icon,
                             contentDescription = item.title
                         )
                     },
                     label = {
-                        Text(text = item.title, fontSize = 9.sp)
+                        Text(text = item.title)
                     },
                     selectedContentColor = MaterialTheme.colorScheme.onSurface,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
