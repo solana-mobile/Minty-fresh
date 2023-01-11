@@ -1,4 +1,4 @@
-package com.nft.gallery.activity
+package com.nft.gallery.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

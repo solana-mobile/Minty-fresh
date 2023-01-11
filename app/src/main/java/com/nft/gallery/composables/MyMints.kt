@@ -1,4 +1,4 @@
-package com.nft.gallery.activity
+package com.nft.gallery.composables
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
