@@ -90,8 +90,9 @@ fun MintDetailsPage(
                     text = description.value.ifEmpty { "No description yet." },
                     fontSize = 12.sp,
                     lineHeight = 20.sp,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 64.dp)
+                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
                 )
+                Spacer(modifier = Modifier.weight(1.0f))
                 OutlinedTextField(
                     value = title.value,
                     onValueChange = {
@@ -147,7 +148,9 @@ fun MintDetailsPage(
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Spacer(modifier = Modifier.weight(2f))
                 Button(
+                    modifier = Modifier.padding(bottom = 32.dp),
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                     onClick = {
                         // TODO Mint the NFT here
