@@ -324,7 +324,9 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier
+            .padding(top = 16.dp)
+            .padding(horizontal = 16.dp)) {
             Text(
                 text = AnnotatedString(
                     "Let\u2019s get",
