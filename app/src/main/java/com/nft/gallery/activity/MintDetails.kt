@@ -52,6 +52,7 @@ fun MintDetailsPage(
                             contentDescription = "back"
                         )
                     }
+                    Text(text = "Add NFT details")
                 }
 
             }
@@ -73,8 +74,8 @@ fun MintDetailsPage(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(top = 16.dp)
-                        .width(76.dp)
-                        .height(76.dp)
+                        .width(110.dp)
+                        .height(110.dp)
                         .clip(RoundedCornerShape(4.dp)),
                     contentScale = ContentScale.Crop
                 )
@@ -82,20 +83,13 @@ fun MintDetailsPage(
                     text = title.value.ifEmpty { "Your NFT" },
                     fontSize = 20.sp,
                     lineHeight = 30.sp,
-                    modifier = Modifier.padding(top = 24.dp)
+                    modifier = Modifier.padding(top = 16.dp)
                 )
                 Text(
                     text = description.value.ifEmpty { "No description yet." },
                     fontSize = 12.sp,
                     lineHeight = 20.sp,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
-                )
-                Text(
-                    text = "Add Details",
-                    fontSize = 18.sp,
-                    lineHeight = 22.sp,
-                    modifier = Modifier.padding(bottom = 24.dp),
-                    fontWeight = FontWeight.Bold
+                    modifier = Modifier.padding(top = 8.dp, bottom = 64.dp)
                 )
                 OutlinedTextField(
                     value = title.value,
@@ -103,7 +97,7 @@ fun MintDetailsPage(
                         title.value = it.trimStart().take(32)
                     },
                     label = {
-                        Text(text = "Give your NFT a title")
+                        Text(text = "NFT title")
                     },
                     placeholder = {
                         Text(text = "Enter a title")
@@ -126,7 +120,7 @@ fun MintDetailsPage(
                         description.value = it.trimStart().take(128)
                     },
                     label = {
-                        Text(text = "Add a description")
+                        Text(text = "Description")
                     },
                     placeholder = {
                         Text(text = "Describe your NFT here")
@@ -145,7 +139,7 @@ fun MintDetailsPage(
                         // TODO Mint the NFT here
                     }
                 ) {
-                    Text(text = "Mint")
+                    Text(text = "Connect wallet and mint")
                 }
             }
         },
