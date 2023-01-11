@@ -35,6 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -307,15 +310,22 @@ class MainActivity : ComponentActivity() {
 
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Let’s get minty fresh.",
-                fontSize = 30.sp,
-                lineHeight = 36.sp,
+                text = AnnotatedString(
+                    "Let\u2019s get",
+                    spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurfaceVariant)
+                ).plus(
+                    AnnotatedString(
+                        " minty fresh.",
+                        spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurface)
+                    )
+                ),
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 30.dp)
             )
             Text(
                 text = "Select a photo to mint:",
-                fontSize = 14.sp,
-                lineHeight = 21.sp,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
             )
             PermissionView(
                 permissionsRequired,
