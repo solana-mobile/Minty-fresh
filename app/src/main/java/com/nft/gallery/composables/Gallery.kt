@@ -50,10 +50,6 @@ fun Gallery(
             .fillMaxHeight()
     ) {
         Text(
-            modifier = Modifier
-                .padding(
-                    top = 60.dp,
-                ),
             style = MaterialTheme.typography.headlineMedium,
             text = AnnotatedString(
                 "Let\u2019s get",
@@ -67,7 +63,7 @@ fun Gallery(
         )
         Text(
             modifier = Modifier.padding(
-                top = 29.dp
+                top = 30.dp
             ),
             text = "Select a photo to mint:",
             style = MaterialTheme.typography.labelLarge
@@ -90,7 +86,7 @@ fun Gallery(
                             top = 16.dp
                         )
                         .fillMaxHeight(),
-                    columns = GridCells.Fixed(4),
+                    columns = GridCells.Adaptive(minSize = 76.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
