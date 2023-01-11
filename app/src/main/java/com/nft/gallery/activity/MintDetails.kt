@@ -1,6 +1,8 @@
 package com.nft.gallery.activity
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,7 +22,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +59,7 @@ fun MintDetailsPage(
                             contentDescription = "back"
                         )
                     }
+                    Text(text = "Add NFT details")
                 }
 
             }
@@ -67,6 +69,8 @@ fun MintDetailsPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(padding)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
                     .fillMaxWidth()
             ) {
                 val title = rememberSaveable { mutableStateOf("") }
@@ -79,37 +83,32 @@ fun MintDetailsPage(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(top = 16.dp)
-                        .width(76.dp)
-                        .height(76.dp)
-                        .clip(RoundedCornerShape(4.dp)),
+                        .width(110.dp)
+                        .height(110.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(color = MaterialTheme.colorScheme.surface),
                     contentScale = ContentScale.Crop
-                )
+                ) {
+                    it.thumbnail()
+                }
                 Text(
                     text = title.value.ifEmpty { "Your NFT" },
-                    fontSize = 20.sp,
-                    lineHeight = 30.sp,
-                    modifier = Modifier.padding(top = 24.dp)
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(top = 16.dp)
                 )
                 Text(
                     text = description.value.ifEmpty { "No description yet." },
-                    fontSize = 12.sp,
-                    lineHeight = 20.sp,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
                 )
-                Text(
-                    text = "Add Details",
-                    fontSize = 18.sp,
-                    lineHeight = 22.sp,
-                    modifier = Modifier.padding(bottom = 24.dp),
-                    fontWeight = FontWeight.Bold
-                )
+                Spacer(modifier = Modifier.weight(1.0f))
                 OutlinedTextField(
                     value = title.value,
                     onValueChange = {
                         title.value = it.trimStart().take(32)
                     },
                     label = {
-                        Text(text = "Give your NFT a title")
+                        Text(text = "NFT title")
                     },
                     placeholder = {
                         Text(text = "Enter a title")
@@ -121,22 +120,30 @@ fun MintDetailsPage(
                     keyboardActions = KeyboardActions(
                         onNext = { focusRequester.requestFocus() }
                     ),
-                    modifier = Modifier.focusRequester(focusRequester)
+                    modifier = Modifier.focusRequester(focusRequester).fillMaxWidth()
+                )
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+                    text = "Use up to 32 characters",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 OutlinedTextField(
                     modifier = Modifier
-                        .padding(vertical = 24.dp)
-                        .focusRequester(focusRequester),
+                        .padding(top = 24.dp)
+                        .focusRequester(focusRequester)
+                        .fillMaxWidth(),
                     value = description.value,
                     onValueChange = {
-                        description.value = it.trimStart().take(128)
+                        description.value = it.trimStart().take(256)
                     },
                     label = {
-                        Text(text = "Add a description")
+                        Text(text = "Description")
                     },
                     placeholder = {
                         Text(text = "Describe your NFT here")
                     },
+                    minLines = 3,
                     maxLines = 3,
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Done,
@@ -145,7 +152,17 @@ fun MintDetailsPage(
                         onNext = { keyboardController?.hide() }
                     )
                 )
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, bottom = 24.dp),
+                    text = "Use up to 256 characters",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.weight(2f))
                 Button(
+                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
+                    modifier = Modifier.padding(bottom = 32.dp),
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                     onClick = {
                         performMintViewModel.performMint(title.value, description.value, imagePath)
