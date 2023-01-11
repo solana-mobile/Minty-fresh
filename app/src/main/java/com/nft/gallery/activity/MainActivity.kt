@@ -87,12 +87,15 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 Icon(
                                     modifier = Modifier.size(24.dp),
-                                    painter = painterResource(id = NavigationItem.Camera.icon),
+                                    imageVector = NavigationItem.Camera.icon,
                                     contentDescription = "Take Picture",
                                     tint = MaterialTheme.colorScheme.background
                                 )
                             }
                         }
+                    },
+                    bottomBar = {
+                        BottomNavigationBar(navController = navController)
                     },
                     content = { padding ->
                         Box(modifier = Modifier.padding(padding)) {
@@ -137,6 +140,9 @@ class MainActivity : ComponentActivity() {
                         navController.navigateUp()
                     }
                 )
+            }
+            composable(NavigationItem.MyMints.route) {
+                MyMintPage()
             }
         }
     }
@@ -231,7 +237,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = NavigationItem.Camera.icon),
+                    imageVector = NavigationItem.Camera.icon,
                     contentDescription = "Take Picture"
                 )
             }
@@ -447,8 +453,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BottomNavigationBar(navController: NavHostController) {
         val items = listOf(
-            NavigationItem.Camera,
             NavigationItem.Photos,
+            NavigationItem.MyMints,
         )
 
         BottomNavigation(
@@ -462,12 +468,12 @@ class MainActivity : ComponentActivity() {
                     icon = {
                         Icon(
                             modifier = Modifier.size(24.dp),
-                            painter = painterResource(id = item.icon),
+                            imageVector = item.icon,
                             contentDescription = item.title
                         )
                     },
                     label = {
-                        Text(text = item.title)
+                        Text(text = item.title, fontSize = 9.sp)
                     },
                     selectedContentColor = MaterialTheme.colorScheme.onSurface,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
