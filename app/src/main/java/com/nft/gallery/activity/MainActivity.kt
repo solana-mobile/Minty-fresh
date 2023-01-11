@@ -163,6 +163,13 @@ class MainActivity : ComponentActivity() {
             color = MaterialTheme.colorScheme.background,
         ) {
             Column {
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    thickness = 0.5.dp,
+                    color = Color(0xFFE5E5EA)
+                )
+
                 Row(
                     Modifier
                         .fillMaxWidth()
