@@ -139,16 +139,17 @@ class MainActivity : ComponentActivity() {
                 })
             ) { backStackEntry ->
                 val imagePath = backStackEntry.arguments?.getString("imagePath")
-                val deepLinkIntent: Intent? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    backStackEntry.arguments?.getParcelable(
-                        NavController.KEY_DEEP_LINK_INTENT,
-                        Intent::class.java
-                    )
-                } else {
-                    backStackEntry.arguments?.getParcelable(
-                        NavController.KEY_DEEP_LINK_INTENT
-                    )
-                }
+                val deepLinkIntent: Intent? =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        backStackEntry.arguments?.getParcelable(
+                            NavController.KEY_DEEP_LINK_INTENT,
+                            Intent::class.java
+                        )
+                    } else {
+                        backStackEntry.arguments?.getParcelable(
+                            NavController.KEY_DEEP_LINK_INTENT
+                        )
+                    }
                 val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri?.toString()
 
                 MintDetailsPage(
@@ -323,9 +324,11 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        Column(modifier = Modifier
-            .padding(top = 16.dp)
-            .padding(horizontal = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .padding(horizontal = 16.dp)
+        ) {
             Text(
                 text = AnnotatedString(
                     "Let\u2019s get",
@@ -411,10 +414,11 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val revokedPermissions = permissionState.revokedPermissions.map { PERMISSION_TO_DESCRIPTION.getOrDefault(it.permission, "") }
             val textToShow = if (permissionState.shouldShowRationale) {
-                "The camera is important for this app. Please grant the permission."
+                "${revokedPermissions.joinToString(separator = ", ")} permission is important for this app. Please grant the permission."
             } else {
-                "Camera permission required for this feature to be available. " +
+                "${revokedPermissions.joinToString(separator = ", ")} permission required for this feature to be available. " +
                         "Please grant the permission"
             }
             Text(textToShow, modifier = Modifier.padding(vertical = 16.dp))
@@ -517,5 +521,20 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private val PERMISSION_TO_DESCRIPTION = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mapOf(
+                Manifest.permission.CAMERA to "Camera",
+                Manifest.permission.RECORD_AUDIO to "Microphone",
+                Manifest.permission.READ_EXTERNAL_STORAGE to "Storage",
+                Manifest.permission.READ_MEDIA_IMAGES to "Photos and Media"
+            )
+        } else {
+            mapOf(
+                Manifest.permission.CAMERA to "Camera",
+                Manifest.permission.RECORD_AUDIO to "Microphone",
+                Manifest.permission.WRITE_EXTERNAL_STORAGE to "Storage",
+                Manifest.permission.READ_EXTERNAL_STORAGE to "Storage",
+            )
+        }
     }
 }
