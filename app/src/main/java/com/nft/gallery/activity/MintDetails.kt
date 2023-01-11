@@ -1,5 +1,6 @@
 package com.nft.gallery.activity
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -78,9 +79,12 @@ fun MintDetailsPage(
                         .padding(top = 16.dp)
                         .width(110.dp)
                         .height(110.dp)
-                        .clip(RoundedCornerShape(4.dp)),
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(color = MaterialTheme.colorScheme.surface),
                     contentScale = ContentScale.Crop
-                )
+                ) {
+                    it.thumbnail()
+                }
                 Text(
                     text = title.value.ifEmpty { "Your NFT" },
                     fontSize = 20.sp,
