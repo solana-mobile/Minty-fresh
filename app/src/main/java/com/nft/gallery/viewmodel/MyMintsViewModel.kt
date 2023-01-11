@@ -4,8 +4,8 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.metaplex.lib.modules.nfts.models.NFT
 import com.nft.gallery.repository.NFTMintyRepository
+import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +22,7 @@ data class MyMint(
 @HiltViewModel
 class MyMintsViewModel @Inject constructor(
     application: Application,
+    private val myMintsMapper: MyMintsMapper,
 ) : AndroidViewModel(application) {
 
     companion object {
@@ -39,12 +40,11 @@ class MyMintsViewModel @Inject constructor(
             try {
                 val nfts = nftMintyRepository.getAllNftsFromMinty()
                 nfts.forEach { nft ->
-                    nftMintyRepository.getNftsMetadata(nft).image?.let { imageUrl ->
-                        _viewState.getAndUpdate {
-                            it.toMutableList().apply {
-                                add(
-                                    MyMint(nft.mint.toString(), imageUrl)
-                                )
+                    val metadata = nftMintyRepository.getNftsMetadata(nft)
+                    _viewState.getAndUpdate {
+                        it.toMutableList().apply {
+                            myMintsMapper.map(nft, metadata)?.let { myMint ->
+                                add(myMint)
                             }
                         }
                     }
