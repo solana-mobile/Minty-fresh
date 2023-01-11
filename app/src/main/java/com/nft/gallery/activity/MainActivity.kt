@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Surface
+import androidx.compose.material.contentColorFor
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -95,7 +99,9 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     bottomBar = {
-                        BottomNavigationBar(navController = navController)
+                        if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
+                            BottomNavigationBar(navController = navController)
+                        }
                     },
                     content = { padding ->
                         Box(modifier = Modifier.padding(padding)) {
@@ -124,9 +130,6 @@ class MainActivity : ComponentActivity() {
                         navController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
                     }
                 )
-            }
-            composable(NavigationItem.Videos.route) {
-                Videos()
             }
             composable(
                 route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
@@ -230,6 +233,8 @@ class MainActivity : ComponentActivity() {
                 }
             )
             Button(
+                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 48.dp),
@@ -305,15 +310,22 @@ class MainActivity : ComponentActivity() {
 
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Let’s get minty fresh.",
-                fontSize = 30.sp,
-                lineHeight = 36.sp,
+                text = AnnotatedString(
+                    "Let\u2019s get",
+                    spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurfaceVariant)
+                ).plus(
+                    AnnotatedString(
+                        " minty fresh.",
+                        spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurface)
+                    )
+                ),
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = 30.dp)
             )
             Text(
                 text = "Select a photo to mint:",
-                fontSize = 14.sp,
-                lineHeight = 21.sp,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold
             )
             PermissionView(
                 permissionsRequired,
@@ -356,54 +368,6 @@ class MainActivity : ComponentActivity() {
                 }
             )
         }
-    }
-
-    @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
-    @Composable
-    fun Videos(
-        imageViewModel: ImageViewModel = hiltViewModel()
-    ) {
-        val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(
-                Manifest.permission.READ_MEDIA_VIDEO,
-            )
-        } else {
-            listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            )
-        }
-
-        PermissionView(
-            permissionsRequired,
-            content = {
-                val uiState = imageViewModel.getVideoList().collectAsState().value
-
-                LaunchedEffect(
-                    key1 = Unit,
-                    block = {
-                        imageViewModel.loadAllVideos()
-                    }
-                )
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(minSize = 128.dp)
-                ) {
-                    itemsIndexed(items = uiState) { _, path ->
-                        GlideImage(
-                            model = path,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(128.dp)
-                                .height(128.dp)
-                                .clip(RoundedCornerShape(4.dp)),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                }
-            },
-            emptyView = {
-                EmptyView(it)
-            }
-        )
     }
 
     @OptIn(ExperimentalPermissionsApi::class)
@@ -457,47 +421,80 @@ class MainActivity : ComponentActivity() {
             NavigationItem.MyMints,
         )
 
-        BottomNavigation(
-            backgroundColor = MaterialTheme.colorScheme.surface,
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
+            elevation = 8.dp,
         ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .selectableGroup(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                content = {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
 
-            items.forEach { item ->
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = item.icon,
-                            contentDescription = item.title
-                        )
-                    },
-                    label = {
-                        Text(text = item.title, fontSize = 9.sp)
-                    },
-                    selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    alwaysShowLabel = true,
-                    selected = currentRoute == item.route,
-                    onClick = {
-                        navController.navigate(item.route) {
-                            // Pop up to the start destination of the graph to
-                            // avoid building up a large stack of destinations
-                            // on the back stack as users select items
-                            navController.graph.startDestinationRoute?.let { route ->
-                                popUpTo(route) {
-                                    saveState = true
+                    items.forEach { item ->
+                        BottomNavigationItem(
+                            icon = {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .then(
+                                            if (currentRoute == item.route) {
+                                                Modifier.background(
+                                                    color = MaterialTheme.colorScheme.surfaceVariant
+                                                )
+                                            } else {
+                                                Modifier
+                                            }
+                                        )
+                                        .then(
+                                            Modifier
+                                                .padding(horizontal = 12.dp)
+                                        )
+                                ) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(top = 5.dp, bottom = 3.dp)
+                                            .size(24.dp),
+                                        imageVector = item.icon,
+                                        contentDescription = item.title
+                                    )
+                                    Text(
+                                        text = item.title,
+                                        fontSize = 13.sp,
+                                        modifier = Modifier.padding(bottom = 10.dp)
+                                    )
+                                }
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selected = currentRoute == item.route,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { route ->
+                                        popUpTo(route) {
+                                            saveState = true
+                                        }
+                                    }
+                                    // Avoid multiple copies of the same destination when
+                                    // re-selecting the same item
+                                    launchSingleTop = true
+                                    // Restore state when re-selecting a previously selected item
+                                    restoreState = true
                                 }
                             }
-                            // Avoid multiple copies of the same destination when
-                            // re-selecting the same item
-                            launchSingleTop = true
-                            // Restore state when re-selecting a previously selected item
-                            restoreState = true
-                        }
+                        )
                     }
-                )
-            }
+                }
+            )
         }
     }
 
