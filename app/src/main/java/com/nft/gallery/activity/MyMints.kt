@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @Composable
 fun MyMintPage(
@@ -32,8 +31,7 @@ fun MyMintPage(
                     spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurface)
                 )
             ),
-            fontSize = 20.sp,
-            lineHeight = 30.sp,
+            style = MaterialTheme.typography.headlineMedium,
         )
     }
 }
