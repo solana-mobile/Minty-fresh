@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Surface
+import androidx.compose.material.contentColorFor
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -95,7 +96,9 @@ class MainActivity : ComponentActivity() {
                         }
                     },
                     bottomBar = {
-                        BottomNavigationBar(navController = navController)
+                        if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
+                            BottomNavigationBar(navController = navController)
+                        }
                     },
                     content = { padding ->
                         Box(modifier = Modifier.padding(padding)) {
@@ -406,46 +409,59 @@ class MainActivity : ComponentActivity() {
             NavigationItem.MyMints,
         )
 
-        BottomNavigation(
-            backgroundColor = MaterialTheme.colorScheme.surface,
+        Surface(
+            color = MaterialTheme.colorScheme.surface,
+            contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
+            elevation = 8.dp,
         ) {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .selectableGroup(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                content = {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
 
-            items.forEach { item ->
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title
-                        )
-                    },
-                    label = {
-                        Text(text = item.title)
-                    },
-                    selectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    alwaysShowLabel = true,
-                    selected = currentRoute == item.route,
-                    onClick = {
-                        navController.navigate(item.route) {
-                            // Pop up to the start destination of the graph to
-                            // avoid building up a large stack of destinations
-                            // on the back stack as users select items
-                            navController.graph.startDestinationRoute?.let { route ->
-                                popUpTo(route) {
-                                    saveState = true
+                    items.forEach { item ->
+                        BottomNavigationItem(
+                            icon = {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(top = 5.dp, bottom = 3.dp)
+                                            .size(24.dp),
+                                        imageVector = item.icon,
+                                        contentDescription = item.title
+                                    )
+                                    Text(text = item.title, fontSize = 13.sp)
+                                }
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selected = currentRoute == item.route,
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    navController.graph.startDestinationRoute?.let { route ->
+                                        popUpTo(route) {
+                                            saveState = true
+                                        }
+                                    }
+                                    // Avoid multiple copies of the same destination when
+                                    // re-selecting the same item
+                                    launchSingleTop = true
+                                    // Restore state when re-selecting a previously selected item
+                                    restoreState = true
                                 }
                             }
-                            // Avoid multiple copies of the same destination when
-                            // re-selecting the same item
-                            launchSingleTop = true
-                            // Restore state when re-selecting a previously selected item
-                            restoreState = true
-                        }
+                        )
                     }
-                )
-            }
+                }
+            )
         }
     }
 
