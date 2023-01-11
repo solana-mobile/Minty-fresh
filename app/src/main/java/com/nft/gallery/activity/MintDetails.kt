@@ -1,6 +1,7 @@
 package com.nft.gallery.activity
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -150,6 +151,8 @@ fun MintDetailsPage(
                 )
                 Spacer(modifier = Modifier.weight(2f))
                 Button(
+                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
                     modifier = Modifier.padding(bottom = 32.dp),
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                     onClick = {
