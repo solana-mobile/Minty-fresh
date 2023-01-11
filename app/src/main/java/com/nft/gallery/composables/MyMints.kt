@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.nft.gallery.viewmodel.MyMintsViewModel
+import com.solana.core.PublicKey
 
 @Composable
 fun MyMintPage(
@@ -34,7 +35,9 @@ fun MyMintPage(
     LaunchedEffect(
         key1 = Unit,
         block = {
-            myMintsViewModel.loadMyMints()
+            myMintsViewModel.loadMyMints(
+                PublicKey("5nmoLTjaCYxDY2iZEAHEnbkTyPRrqtF6mrGwXxuJGr4C") // TODO real public key from MWA
+            )
         }
     )
 
