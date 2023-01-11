@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -23,8 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.viewmodel.PerformMintViewModel
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
@@ -34,7 +37,10 @@ import com.bumptech.glide.integration.compose.GlideImage
 fun MintDetailsPage(
     imagePath: String,
     navigateUp: () -> Boolean = { true },
+    performMintViewModel: PerformMintViewModel = hiltViewModel()
 ) {
+    val uiState = performMintViewModel.viewState.collectAsState().value
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -142,10 +148,10 @@ fun MintDetailsPage(
                 Button(
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                     onClick = {
-                        // TODO Mint the NFT here
+                        performMintViewModel.performMint(title.value, description.value, imagePath)
                     }
                 ) {
-                    Text(text = "Mint")
+                    Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
                 }
             }
         },
