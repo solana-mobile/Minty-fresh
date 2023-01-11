@@ -1,4 +1,4 @@
-package com.nft.gallery
+package com.nft.gallery.theme
 
 import androidx.compose.ui.graphics.Color
 
