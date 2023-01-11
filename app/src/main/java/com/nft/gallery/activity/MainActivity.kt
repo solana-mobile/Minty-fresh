@@ -427,7 +427,24 @@ class MainActivity : ComponentActivity() {
                     items.forEach { item ->
                         BottomNavigationItem(
                             icon = {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .then(
+                                            if (currentRoute == item.route) {
+                                                Modifier.background(
+                                                    color = MaterialTheme.colorScheme.surfaceVariant
+                                                )
+                                            } else {
+                                                Modifier
+                                            }
+                                        )
+                                        .then(
+                                            Modifier
+                                                .padding(horizontal = 12.dp)
+                                        )
+                                ) {
                                     Icon(
                                         modifier = Modifier
                                             .padding(top = 5.dp, bottom = 3.dp)
@@ -435,7 +452,11 @@ class MainActivity : ComponentActivity() {
                                         imageVector = item.icon,
                                         contentDescription = item.title
                                     )
-                                    Text(text = item.title, fontSize = 13.sp)
+                                    Text(
+                                        text = item.title,
+                                        fontSize = 13.sp,
+                                        modifier = Modifier.padding(bottom = 10.dp)
+                                    )
                                 }
                             },
                             selectedContentColor = MaterialTheme.colorScheme.onSurface,
