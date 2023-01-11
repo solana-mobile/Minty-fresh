@@ -116,6 +116,7 @@ class MainActivity : ComponentActivity() {
                             Intent::class.java
                         )
                     } else {
+                        @Suppress("DEPRECATION")
                         backStackEntry.arguments?.getParcelable(
                             NavController.KEY_DEEP_LINK_INTENT
                         )
