@@ -41,7 +41,7 @@ class MyMintsViewModel @Inject constructor(
             val nftMintyRepository = NFTMintyRepository(publicKey)
             _viewState.value = listOf()
             try {
-                val nfts = nftMintyRepository.getAllNftsFromMinty()
+                val nfts = nftMintyRepository.getAllNftsFromMinty(MINTY_NFT_COLLECTION_NAME)
                 Log.d(TAG, "Found ${nfts.size} NFTs")
                 nfts.forEach { nft ->
                     val metadata = nftMintyRepository.getNftsMetadata(nft)

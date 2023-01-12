@@ -31,11 +31,30 @@ class NFTMintyRepository(private val publicKey: PublicKey) {
         )
     )
 
-    suspend fun getAllNftsFromMinty() = withContext(Dispatchers.IO) {
-        nftClient.findAllByOwner(publicKey).getOrThrow()
+    suspend fun getAllNftsFromMinty(collectionName: String) = withContext(Dispatchers.IO) {
+        // Getting all the NFTs that have a Collection
+        val nftsWithCollection = nftClient.findAllByOwner(publicKey).getOrThrow()
             .filterNotNull()
             .filter { it.collection != null }
-        // TODO better filter to catch only the "Minty" ones. Constant collection naming for instance?
+
+        // Finding the collectionName's pubKey (stopping as soon as we find it)
+        val iterator = nftsWithCollection.iterator()
+        var foundCollection = false
+        var collectionPubKey = ""
+        while (iterator.hasNext() && !foundCollection) {
+            val nft = iterator.next()
+            nft.collection?.let { collection ->
+                val collectionNft = nftClient.findByMint(collection.key).getOrThrow()
+                if (collectionNft.name == collectionName) {
+                    collectionPubKey = collection.key.toString()
+                    foundCollection = true
+                }
+            }
+        }
+
+        // Filtering the list of NFTs by the collection's pubKey
+        return@withContext nftsWithCollection
+            .filter { it.collection?.key.toString() == collectionPubKey }
     }
 
     suspend fun getNftsMetadata(nft: NFT) = withContext(Dispatchers.IO) {
