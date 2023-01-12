@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -121,10 +122,14 @@ fun MintDetailsPage(
                     keyboardActions = KeyboardActions(
                         onNext = { focusRequester.requestFocus() }
                     ),
-                    modifier = Modifier.focusRequester(focusRequester).fillMaxWidth()
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .fillMaxWidth()
                 )
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
                     text = "Use up to 32 characters",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -154,7 +159,9 @@ fun MintDetailsPage(
                     )
                 )
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, bottom = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, bottom = 24.dp),
                     text = "Use up to 256 characters",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -172,6 +179,22 @@ fun MintDetailsPage(
                     Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
                 }
             }
+
+            if (uiState.mintingInProgress)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .padding(padding)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                        .background(Color.hsv(0f, 0f, 0f, .8f))
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Text(text = "Minting in progress...")
+                    CircularProgressIndicator()
+                }
         },
         containerColor = MaterialTheme.colorScheme.background
     )
