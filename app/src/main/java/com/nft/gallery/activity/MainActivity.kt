@@ -36,6 +36,7 @@ import com.nft.gallery.composables.MyMintPage
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
 
 

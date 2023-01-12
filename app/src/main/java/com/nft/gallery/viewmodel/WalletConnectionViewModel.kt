@@ -5,13 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.usecase.*
 import com.portto.solana.web3.PublicKey
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 
 data class WalletViewState(
     val isLoading: Boolean = false,
@@ -30,7 +32,7 @@ val identityName = "Solana"
 class WalletConnectionViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
     private val persistenceUseCase: PersistenceUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private fun WalletViewState.updateViewState() {
         _state.update { this }

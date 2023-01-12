@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.endpoints.NftStorageEndpoints
+import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,5 +32,10 @@ class MintyModule {
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
         return context.getSharedPreferences("MainPrefs", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    fun providesMobileWalletAdapter(): MobileWalletAdapter {
+        return MobileWalletAdapter()
     }
 }
