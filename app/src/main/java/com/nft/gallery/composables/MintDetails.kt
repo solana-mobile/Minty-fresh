@@ -45,6 +45,9 @@ fun MintDetailsPage(
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
+    if (uiState.mintState == MintState.COMPLETE)
+        navigateUp()
+
     Scaffold(
         topBar = {
             TopAppBar(
