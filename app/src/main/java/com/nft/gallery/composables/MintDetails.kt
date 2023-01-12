@@ -44,9 +44,12 @@ fun MintDetailsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = MaterialTheme.colorScheme.background
+                backgroundColor = MaterialTheme.colorScheme.background,
+                elevation = 0.dp
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(
                         onClick = {
                             navigateUp()
@@ -58,7 +61,10 @@ fun MintDetailsPage(
                             contentDescription = "back"
                         )
                     }
-                    Text(text = "Add NFT details")
+                    Text(
+                        text = "Add NFT details",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
 
             }
@@ -82,10 +88,12 @@ fun MintDetailsPage(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(top = 16.dp)
-                        .width(110.dp)
-                        .height(110.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(color = MaterialTheme.colorScheme.surface),
+                        .width(210.dp)
+                        .height(210.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.surface
+                        ),
                     contentScale = ContentScale.Crop
                 ) {
                     it.thumbnail()
@@ -98,10 +106,20 @@ fun MintDetailsPage(
                 Text(
                     text = description.value.ifEmpty { "No description yet." },
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                    modifier = Modifier.padding(
+                        top = 10.dp
+                    )
                 )
-                Spacer(modifier = Modifier.weight(1.0f))
+                Spacer(
+                    modifier = Modifier.weight(1.0f)
+                )
                 OutlinedTextField(
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .fillMaxWidth()
+                        .padding(
+                            top = 30.dp
+                        ),
                     value = title.value,
                     onValueChange = {
                         title.value = it.trimStart().take(32)
@@ -118,8 +136,7 @@ fun MintDetailsPage(
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = { focusRequester.requestFocus() }
-                    ),
-                    modifier = Modifier.focusRequester(focusRequester).fillMaxWidth()
+                    )
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
@@ -157,11 +174,14 @@ fun MintDetailsPage(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(modifier = Modifier.weight(2f))
                 Button(
+                    modifier = Modifier
+                        .padding(
+                            top = 32.dp,
+                            bottom = 24.dp
+                        ),
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier.padding(bottom = 32.dp),
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                     onClick = {
                         performMintViewModel.performMint(title.value, description.value, imagePath)
