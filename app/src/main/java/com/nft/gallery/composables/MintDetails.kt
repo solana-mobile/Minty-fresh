@@ -164,7 +164,7 @@ fun MintDetailsPage(
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
                     modifier = Modifier.padding(bottom = 32.dp),
-                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
+                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && !uiState.mintingInProgress,
                     onClick = {
                         performMintViewModel.performMint(intentSender, title.value, description.value, imagePath)
                     }

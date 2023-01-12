@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.builtins.serializer
@@ -41,7 +42,7 @@ import kotlin.math.pow
 
 data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
-    val mintingInProgress: Boolean = true
+    val mintingInProgress: Boolean = false,
 )
 
 val solanaUri = Uri.parse("https://solana.com")
@@ -67,6 +68,10 @@ class PerformMintViewModel @Inject constructor(
      */
     fun performMint(sender: ActivityResultSender, title: String, desc: String, imgUrl: String) {
         viewModelScope.launch {
+
+            _viewState.update {
+                _viewState.value.copy(mintingInProgress = true)
+            }
 
             // TODO: need to show loading spinner "uploading files"
             val nftImageUrl = storageRepository.uploadFile(imgUrl)
@@ -159,6 +164,9 @@ class PerformMintViewModel @Inject constructor(
                         println("++++++          ${actualNft?.uri}")
                         println("++++++          ${actualNft?.mint}")
 
+                        _viewState.update {
+                            _viewState.value.copy(mintingInProgress = false)
+                        }
                     }
                 }
             }
