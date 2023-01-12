@@ -1,11 +1,7 @@
 package com.nft.gallery.composables
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -21,16 +17,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.solana.core.PublicKey
 
 @Composable
 fun MyMintPage(
-    myMintsViewModel: MyMintsViewModel = hiltViewModel(),
-    navigateToDetails: (String) -> Unit,
+    myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
+    navigateToDetails: (Int) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
 
@@ -69,13 +65,13 @@ fun MyMintPage(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            itemsIndexed(items = uiState) { _, myMint ->
+            itemsIndexed(items = uiState) { index, myMint ->
                 AsyncImage(
                     modifier = Modifier
                         .height(76.dp)
                         .width(76.dp)
                         .clickable {
-                            navigateToDetails(myMint.mediaUrl)
+                            navigateToDetails(index)
                         },
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(myMint.mediaUrl)

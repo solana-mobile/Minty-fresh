@@ -164,16 +164,16 @@ class MainActivity : ComponentActivity() {
             }
             composable(NavigationItem.MyMints.route) {
                 MyMintPage {
-                    navController.navigate("${NavigationItem.MyMintsDetails.route}?imagePath=$it")
+                    navController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
                 }
             }
             composable(
-                route = "${NavigationItem.MyMintsDetails.route}?imagePath={imagePath}",
-                arguments = listOf(navArgument("imagePath") { type = NavType.StringType }),
+                route = "${NavigationItem.MyMintsDetails.route}?index={index}",
+                arguments = listOf(navArgument("index") { type = NavType.IntType }),
             ) { backStackEntry ->
                 MyMintsDetails(
-                    backStackEntry.arguments?.getString("imagePath")
-                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"imagePath\" argument to be launched")
+                    backStackEntry.arguments?.getInt("index")
+                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched")
                 )
             }
         }
