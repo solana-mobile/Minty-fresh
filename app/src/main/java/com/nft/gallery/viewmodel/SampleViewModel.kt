@@ -28,7 +28,6 @@ val identityName = "Solana"
 @HiltViewModel
 class SampleViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
-    private val solanaRpcUseCase: SolanaRpcUseCase,
     private val persistenceUseCase: PersistenceUseCase
 ): ViewModel() {
 
@@ -50,15 +49,6 @@ class SampleViewModel @Inject constructor(
                 userAddress = connection.publicKey.toBase58(),
                 userLabel = connection.accountLabel,
             ).updateViewState()
-
-            viewModelScope.launch {
-                val balance = solanaRpcUseCase.getBalance(connection.publicKey)
-
-                _state.value.copy(
-                    isLoading = false,
-                    solBalance = balance
-                ).updateViewState()
-            }
         }
     }
 
