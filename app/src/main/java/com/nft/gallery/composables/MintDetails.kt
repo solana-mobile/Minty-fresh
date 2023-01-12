@@ -121,6 +121,10 @@ fun MintDetailsPage(
                         .padding(
                             top = 30.dp
                         ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                        placeholderColor = MaterialTheme.colorScheme.outline
+                    ),
                     value = title.value,
                     onValueChange = {
                         title.value = it.trimStart().take(32)
@@ -140,16 +144,22 @@ fun MintDetailsPage(
                     )
                 )
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
                     text = "Use up to 32 characters",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.outline
                 )
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(top = 24.dp)
                         .focusRequester(focusRequester)
                         .fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                        placeholderColor = MaterialTheme.colorScheme.outline
+                    ),
                     value = description.value,
                     onValueChange = {
                         description.value = it.trimStart().take(256)
@@ -170,10 +180,12 @@ fun MintDetailsPage(
                     )
                 )
                 Text(
-                    modifier = Modifier.fillMaxWidth().padding(start = 16.dp, bottom = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, bottom = 24.dp),
                     text = "Use up to 256 characters",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.outline
                 )
                 Button(
                     modifier = Modifier
