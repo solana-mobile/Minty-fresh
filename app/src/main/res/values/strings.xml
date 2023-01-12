@@ -1,8 +1,3 @@
 <resources>
     <string name="app_name">Minty Fresh</string>
-
-    <string name="msg_request_succeeded">Wallet request successful</string>
-    <string name="msg_request_failed">Wallet request failed; check logcat for details</string>
-    <string name="msg_no_wallet_found">Please install a wallet app which supports Mobile Wallet Adapter</string>
-
 </resources>

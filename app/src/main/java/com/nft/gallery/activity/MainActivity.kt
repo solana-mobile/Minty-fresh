@@ -20,7 +20,6 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -97,12 +96,10 @@ class MainActivity : ComponentActivity() {
                                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                     onClick = {
-                                        walletConnectionViewModel.authorize(intentSender)
                                     }
                                 ) {
-                                    val buttonText = walletConnectionViewModel.uiState.collectAsState().value.publicKey?.toString() ?: "Connect"
                                     Text(
-                                        text = buttonText,
+                                        text = "Connect",
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
