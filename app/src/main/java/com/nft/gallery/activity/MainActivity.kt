@@ -10,11 +10,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -83,7 +86,10 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                     topBar = {
                         if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
                             Row(
-                                modifier = Modifier.fillMaxWidth().statusBarsPadding(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .statusBarsPadding()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 LaunchedEffect(
@@ -93,17 +99,47 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                     }
                                 )
                                 Button(
-                                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                                    shape = RoundedCornerShape(corner = CornerSize(24.dp)),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                    contentPadding = PaddingValues(
+                                        start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
+                                    ),
                                     onClick = {
                                         walletConnectionViewModel.connect(this@MainActivity)
                                     }
                                 ) {
-                                    val buttonText = viewState.userAddress.ifEmpty { "Connect" }
-                                    Text(
-                                        text = buttonText,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
+                                    val pubKey = viewState.userAddress
+                                    val buttonText = if (pubKey.isEmpty()) {
+                                        "Connect"
+                                    } else {
+                                        pubKey.take(4).plus("...").plus(pubKey.takeLast(4))
+                                    }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        if(pubKey.isNotEmpty()) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.onBackground),
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(16.dp),
+                                                    imageVector = Icons.Filled.MultipleStop,
+                                                    tint = MaterialTheme.colorScheme.background,
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        }
+                                        Text(
+                                            modifier = Modifier.padding(start = 8.dp),
+                                            text = buttonText,
+                                            maxLines = 1,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                             }
                         }
