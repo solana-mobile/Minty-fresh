@@ -42,6 +42,7 @@ import com.nft.gallery.composables.MyMintPage
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -170,6 +171,13 @@ class MainActivity : ComponentActivity() {
                     ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                     navigateUp = {
                         navController.navigateUp()
+                    },
+                    intentSender = object : ActivityResultSender {
+                        override fun launch(intent: Intent) {
+                            intentSender.startActivityForResult(intent) {
+                                // ???
+                            }
+                        }
                     }
                 )
             }

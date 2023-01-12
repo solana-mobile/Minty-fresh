@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.nft.gallery.viewmodel.PerformMintViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
@@ -37,7 +38,8 @@ import com.nft.gallery.viewmodel.PerformMintViewModel
 fun MintDetailsPage(
     imagePath: String,
     navigateUp: () -> Boolean = { true },
-    performMintViewModel: PerformMintViewModel = hiltViewModel()
+    performMintViewModel: PerformMintViewModel = hiltViewModel(),
+    intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
@@ -164,7 +166,7 @@ fun MintDetailsPage(
                     modifier = Modifier.padding(bottom = 32.dp),
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                     onClick = {
-                        performMintViewModel.performMint(title.value, description.value, imagePath)
+                        performMintViewModel.performMint(intentSender, title.value, description.value, imagePath)
                     }
                 ) {
                     Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
