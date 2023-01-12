@@ -15,3 +15,11 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Gallery"
 include ':app'
+include ':ktx-clientlib'
+project(":ktx-clientlib").projectDir = new File("../mobile-wallet-adapter/android/clientlib-ktx")
+
+include ':clientlib'
+project(":clientlib").projectDir = new File("../mobile-wallet-adapter/android/clientlib")
+
+include ':common'
+project(":common").projectDir = new File("../mobile-wallet-adapter/android/common")
