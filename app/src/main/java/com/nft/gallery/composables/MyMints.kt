@@ -17,12 +17,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.solana.core.PublicKey
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MyMintPage(
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
@@ -66,17 +67,14 @@ fun MyMintPage(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             itemsIndexed(items = uiState) { index, myMint ->
-                AsyncImage(
+                GlideImage(
                     modifier = Modifier
                         .height(76.dp)
                         .width(76.dp)
                         .clickable {
                             navigateToDetails(index)
                         },
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(myMint.mediaUrl)
-                        .crossfade(true)
-                        .build(),
+                    model = myMint.mediaUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )
