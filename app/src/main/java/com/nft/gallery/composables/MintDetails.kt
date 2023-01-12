@@ -73,6 +73,7 @@ fun MintDetailsPage(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(padding)
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp)
