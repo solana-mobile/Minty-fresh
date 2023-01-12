@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -15,9 +16,7 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,11 +32,13 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nft.gallery.composables.*
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
+import com.nft.gallery.viewmodel.WalletConnectionViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), ActivityResultSender {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,8 @@ class MainActivity : ComponentActivity() {
             SideEffect {
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
             }
+
+            val viewState = walletConnectionViewModel.viewState.collectAsState().value
 
             AppTheme {
                 Scaffold(
@@ -80,17 +83,25 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth().statusBarsPadding(),
                                 horizontalArrangement = Arrangement.End
                             ) {
+                                LaunchedEffect(
+                                    key1 = Unit,
+                                    block = {
+                                        walletConnectionViewModel.loadConnection()
+                                    }
+                                )
                                 Button(
                                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                     onClick = {
+                                        walletConnectionViewModel.connect(this@MainActivity)
                                     }
                                 ) {
+                                    val buttonText = viewState.userAddress.ifEmpty { "Connect" }
                                     Text(
-                                        text = "Connect",
+                                        text = buttonText,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
@@ -277,4 +288,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val walletConnectionViewModel: WalletConnectionViewModel by viewModels()
+
+    override fun launch(intent: Intent) {
+        startActivityForResult(intent, 0)
+    }
 }
