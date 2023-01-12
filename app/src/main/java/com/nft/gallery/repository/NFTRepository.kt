@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.net.URL
 
-class NFTMintyRepository(private val publicKey: PublicKey) {
+class NFTRepository(private val publicKey: PublicKey) {
 
     private val connection = SolanaConnectionDriver(
         JdkRpcDriver(URL("https://solana-mainnet.g.alchemy.com/v2/wNKQI1tTf6CBkHRo7fQGlyQxCQVy1pxj")),
@@ -31,11 +31,14 @@ class NFTMintyRepository(private val publicKey: PublicKey) {
         )
     )
 
-    suspend fun getAllNftsFromMinty() = withContext(Dispatchers.IO) {
-        nftClient.findAllByOwner(publicKey).getOrThrow()
+    suspend fun getAllNfts() = withContext(Dispatchers.IO) {
+        nftClient.findAllByOwner(publicKey)
+            .getOrThrow()
             .filterNotNull()
-            .filter { it.collection != null }
-        // TODO better filter to catch only the "Minty" ones. Constant collection naming for instance?
+    }
+
+    suspend fun findByMint(publicKey: PublicKey) = withContext(Dispatchers.IO) {
+        nftClient.findByMint(publicKey).getOrThrow()
     }
 
     suspend fun getNftsMetadata(nft: NFT) = withContext(Dispatchers.IO) {
