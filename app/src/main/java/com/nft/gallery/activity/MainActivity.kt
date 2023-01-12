@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -27,10 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.*
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nft.gallery.composables.*
 import com.nft.gallery.theme.AppTheme
@@ -43,15 +44,18 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), ActivityResultSender {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(
+        ExperimentalMaterial3Api::class,
+        ExperimentalAnimationApi::class
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            val navController = rememberNavController()
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val animNavController = rememberAnimatedNavController()
+            val navBackStackEntry by animNavController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
 
             val systemUiController = rememberSystemUiController()
@@ -71,7 +75,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                 shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                                 backgroundColor = MaterialTheme.colorScheme.onBackground,
                                 onClick = {
-                                    navController.navigate(NavigationItem.Camera.route)
+                                    animNavController.navigate(NavigationItem.Camera.route)
                                 }
                             ) {
                                 Icon(
@@ -146,12 +150,12 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                     },
                     bottomBar = {
                         if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                            BottomNavigationBar(navController = navController)
+                            BottomNavigationBar(navController = animNavController)
                         }
                     },
                     content = { padding ->
                         Box(modifier = Modifier.padding(padding)) {
-                            Navigation(navController = navController)
+                            Navigation(navController = animNavController)
                         }
                     },
                     containerColor = MaterialTheme.colorScheme.background
@@ -160,11 +164,15 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
         }
     }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun Navigation(navController: NavHostController) {
         val navigateUp = { navController.navigateUp() }
 
-        NavHost(navController, startDestination = NavigationItem.Photos.route) {
+        AnimatedNavHost(
+            navController = navController,
+            startDestination = NavigationItem.Photos.route,
+        ) {
             composable(NavigationItem.Camera.route) {
                 Camera(
                     navigateToDetails = {
