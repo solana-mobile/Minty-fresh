@@ -2,6 +2,7 @@ package com.nft.gallery.repository
 
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.endpoints.NftStorageEndpoints
+import com.nft.gallery.endpoints.NftStorageResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -19,7 +20,10 @@ class StorageUploadRepository @Inject constructor(
 
             val result = endpoints.uploadFile(reqBody, token)
 
-            "https://${result.value.cid}${ipfsUrlSuffix}"
+            (result as? Map<*, *>)?.let { json ->
+                val cid1 = (json["value"] as? Map<*, *>)?.get("cid")
+                "https://${cid1}${ipfsUrlSuffix}"
+            } ?: throw Error("StorageUploadRepository: Failed to deserialize response: $result")
         }
     }
 

@@ -40,7 +40,7 @@ import com.nft.gallery.composables.MintDetailsPage
 import com.nft.gallery.composables.MyMintPage
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
-import com.nft.gallery.viewmodel.WalletConnectionViewModel
+import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -282,14 +282,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val walletConnectionViewModel: WalletConnectionViewModel by viewModels()
-
     private val activityResultLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             intentSender.onActivityComplete()
         }
 
-    private val intentSender = object : WalletConnectionViewModel.StartActivityForResultSender {
+    private val intentSender = object : PerformMintViewModel.StartActivityForResultSender {
         @GuardedBy("this")
         private var callback: (() -> Unit)? = null
 
