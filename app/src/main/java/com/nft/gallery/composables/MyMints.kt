@@ -1,10 +1,7 @@
 package com.nft.gallery.composables
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -20,26 +17,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.solana.core.PublicKey
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MyMintPage(
-    myMintsViewModel: MyMintsViewModel = hiltViewModel()
+    myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
+    navigateToDetails: (Int) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
 
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
+    LaunchedEffect(myMintsViewModel.wasLaunched) {
+        if (!myMintsViewModel.wasLaunched) {
             myMintsViewModel.loadMyMints(
                 PublicKey("5nmoLTjaCYxDY2iZEAHEnbkTyPRrqtF6mrGwXxuJGr4C") // TODO real public key from MWA
             )
         }
-    )
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,15 +66,15 @@ fun MyMintPage(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            itemsIndexed(items = uiState) { _, path ->
-                AsyncImage(
+            itemsIndexed(items = uiState) { index, myMint ->
+                GlideImage(
                     modifier = Modifier
                         .height(76.dp)
-                        .width(76.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(path.mediaUrl)
-                        .crossfade(true)
-                        .build(),
+                        .width(76.dp)
+                        .clickable {
+                            navigateToDetails(index)
+                        },
+                    model = myMint.mediaUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )

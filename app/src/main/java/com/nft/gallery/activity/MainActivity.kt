@@ -5,24 +5,21 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.GuardedBy
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,18 +32,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.nft.gallery.composables.Camera
-import com.nft.gallery.composables.Gallery
-import com.nft.gallery.composables.MintDetailsPage
-import com.nft.gallery.composables.MyMintPage
+import com.nft.gallery.composables.*
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), ActivityResultSender {
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +60,8 @@ class MainActivity : ComponentActivity() {
             SideEffect {
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
             }
+
+            val viewState = walletConnectionViewModel.viewState.collectAsState().value
 
             AppTheme {
                 Scaffold(
@@ -89,21 +86,60 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .statusBarsPadding()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
                                 horizontalArrangement = Arrangement.End
                             ) {
+                                LaunchedEffect(
+                                    key1 = Unit,
+                                    block = {
+                                        walletConnectionViewModel.loadConnection()
+                                    }
+                                )
                                 Button(
-                                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                                    shape = RoundedCornerShape(corner = CornerSize(24.dp)),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                                    contentPadding = PaddingValues(
+                                        start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
+                                    ),
                                     onClick = {
-                                        walletConnectionViewModel.authorize(intentSender)
+                                        walletConnectionViewModel.connect(this@MainActivity)
                                     }
                                 ) {
-                                    val buttonText = walletConnectionViewModel.uiState.collectAsState().value.publicKey?.toString() ?: "Connect"
-                                    Text(
-                                        text = buttonText,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
+                                    val pubKey = viewState.userAddress
+                                    val buttonText = if (pubKey.isEmpty()) {
+                                        "Connect"
+                                    } else {
+                                        pubKey.take(4).plus("...").plus(pubKey.takeLast(4))
+                                    }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        if(pubKey.isNotEmpty()) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(24.dp)
+                                                    .clip(CircleShape)
+                                                    .background(MaterialTheme.colorScheme.onBackground),
+                                                contentAlignment = Alignment.Center,
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(16.dp),
+                                                    imageVector = Icons.Filled.MultipleStop,
+                                                    tint = MaterialTheme.colorScheme.background,
+                                                    contentDescription = null
+                                                )
+                                            }
+                                        }
+                                        Text(
+                                            modifier = Modifier.padding(start = 8.dp),
+                                            text = buttonText,
+                                            maxLines = 1,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -174,7 +210,18 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(NavigationItem.MyMints.route) {
-                MyMintPage()
+                MyMintPage {
+                    navController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
+                }
+            }
+            composable(
+                route = "${NavigationItem.MyMintsDetails.route}?index={index}",
+                arguments = listOf(navArgument("index") { type = NavType.IntType }),
+            ) { backStackEntry ->
+                MyMintsDetails(
+                    backStackEntry.arguments?.getInt("index")
+                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched")
+                )
             }
         }
     }
@@ -279,31 +326,7 @@ class MainActivity : ComponentActivity() {
 
     private val walletConnectionViewModel: WalletConnectionViewModel by viewModels()
 
-    private val activityResultLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            intentSender.onActivityComplete()
-        }
-
-    private val intentSender = object : WalletConnectionViewModel.StartActivityForResultSender {
-        @GuardedBy("this")
-        private var callback: (() -> Unit)? = null
-
-        override fun startActivityForResult(
-            intent: Intent,
-            onActivityCompleteCallback: () -> Unit
-        ) {
-            synchronized(this) {
-                check(callback == null) { "Received an activity start request while another is pending" }
-                callback = onActivityCompleteCallback
-            }
-            activityResultLauncher.launch(intent)
-        }
-
-        fun onActivityComplete() {
-            synchronized(this) {
-                callback?.let { it() }
-                callback = null
-            }
-        }
+    override fun launch(intent: Intent) {
+        startActivityForResult(intent, 0)
     }
 }
