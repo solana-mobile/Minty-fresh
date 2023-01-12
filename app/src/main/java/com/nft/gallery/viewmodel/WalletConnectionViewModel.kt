@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 
-data class SampleViewState(
+data class WalletViewState(
     val isLoading: Boolean = false,
     val canTransact: Boolean = false,
     val solBalance: Double = 0.0,
@@ -26,18 +27,18 @@ val iconUri = Uri.parse("favicon.ico")
 val identityName = "Solana"
 
 @HiltViewModel
-class SampleViewModel @Inject constructor(
+class WalletConnectionViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
     private val persistenceUseCase: PersistenceUseCase
 ): ViewModel() {
 
-    private fun SampleViewState.updateViewState() {
+    private fun WalletViewState.updateViewState() {
         _state.update { this }
     }
 
-    private val _state = MutableStateFlow(SampleViewState())
+    private val _state = MutableStateFlow(WalletViewState())
 
-    val viewState: StateFlow<SampleViewState>
+    val viewState: StateFlow<WalletViewState>
         get() = _state
 
     fun loadConnection() {
@@ -97,7 +98,7 @@ class SampleViewModel @Inject constructor(
 
                 persistenceUseCase.clearConnection()
 
-                SampleViewState().updateViewState()
+                WalletViewState().updateViewState()
             }
         }
     }

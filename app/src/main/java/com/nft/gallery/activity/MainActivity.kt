@@ -35,8 +35,7 @@ import com.nft.gallery.composables.MintDetailsPage
 import com.nft.gallery.composables.MyMintPage
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
-import com.nft.gallery.usecase.ActivityResultSender
-import com.nft.gallery.viewmodel.SampleViewModel
+import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
             }
 
-            val viewState = sampleViewModel.viewState.collectAsState().value
+            val viewState = walletConnectionViewModel.viewState.collectAsState().value
 
             AppTheme {
                 Scaffold(
@@ -92,14 +91,14 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                 LaunchedEffect(
                                     key1 = Unit,
                                     block = {
-                                        sampleViewModel.loadConnection()
+                                        walletConnectionViewModel.loadConnection()
                                     }
                                 )
                                 Button(
                                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                                     onClick = {
-                                        sampleViewModel.connect(this@MainActivity)
+                                        walletConnectionViewModel.connect(this@MainActivity)
                                     }
                                 ) {
                                     val buttonText = viewState.userAddress.ifEmpty { "Connect" }
@@ -280,7 +279,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
         }
     }
 
-    private val sampleViewModel: SampleViewModel by viewModels()
+    private val walletConnectionViewModel: WalletConnectionViewModel by viewModels()
 
     override fun launch(intent: Intent) {
         startActivityForResult(intent, 0)
