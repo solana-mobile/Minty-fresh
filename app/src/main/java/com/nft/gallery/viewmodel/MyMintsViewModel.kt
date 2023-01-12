@@ -4,7 +4,6 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.repository.NFTRepository
 import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.solana.core.PublicKey

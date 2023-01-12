@@ -1,6 +1,5 @@
 package com.nft.gallery.usecase
 
-import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.nft.gallery.repository.NFTRepository
 import com.solana.core.PublicKey
