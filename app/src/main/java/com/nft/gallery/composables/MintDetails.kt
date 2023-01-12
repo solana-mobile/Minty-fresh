@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.viewmodel.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 
@@ -171,7 +172,7 @@ fun MintDetailsPage(
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
                     modifier = Modifier.padding(bottom = 32.dp),
-                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && !uiState.mintingInProgress,
+                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
                     onClick = {
                         performMintViewModel.performMint(intentSender, title.value, description.value, imagePath)
                     }
@@ -180,7 +181,7 @@ fun MintDetailsPage(
                 }
             }
 
-            if (uiState.mintingInProgress)
+            if (uiState.mintState != MintState.NONE)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -192,7 +193,12 @@ fun MintDetailsPage(
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    Text(text = "Minting in progress...")
+                    Text(text = when (uiState.mintState) {
+                        MintState.UPLOADING_FILE -> "Uploading file..."
+                        MintState.CREATING_METADATA -> "Creating NFT metadata..."
+                        MintState.MINTING -> "Minting your NFT..."
+                        else -> ""
+                    })
                     CircularProgressIndicator()
                 }
         },

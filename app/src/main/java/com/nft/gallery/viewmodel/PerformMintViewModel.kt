@@ -40,9 +40,14 @@ import kotlinx.serialization.json.*
 import javax.inject.Inject
 import kotlin.math.pow
 
+enum class MintState {
+    NONE, UPLOADING_FILE, CREATING_METADATA, MINTING
+}
+
 data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
     val mintingInProgress: Boolean = false,
+    val mintState: MintState = MintState.NONE
 )
 
 val solanaUri = Uri.parse("https://solana.com")
@@ -70,11 +75,14 @@ class PerformMintViewModel @Inject constructor(
         viewModelScope.launch {
 
             _viewState.update {
-                _viewState.value.copy(mintingInProgress = true)
+                _viewState.value.copy(mintState = MintState.UPLOADING_FILE)
             }
 
-            // TODO: need to show loading spinner "uploading files"
             val nftImageUrl = storageRepository.uploadFile(imgUrl)
+
+            _viewState.update {
+                _viewState.value.copy(mintState = MintState.CREATING_METADATA)
+            }
             val metadataUrl = metadataRepository.uploadMetadata(title, desc, nftImageUrl)
 
             MobileWalletAdapter().apply {
@@ -97,6 +105,13 @@ class PerformMintViewModel @Inject constructor(
                                 onComplete(result.signedPayloads[0])
                             }
                         }
+                    }
+
+                    _viewState.update {
+                        _viewState.value.copy(
+                            mintingInProgress = true,
+                            mintState = MintState.MINTING
+                        )
                     }
 
                     withContext(Dispatchers.IO) {
@@ -165,7 +180,10 @@ class PerformMintViewModel @Inject constructor(
                         println("++++++          ${actualNft?.mint}")
 
                         _viewState.update {
-                            _viewState.value.copy(mintingInProgress = false)
+                            _viewState.value.copy(
+                                mintingInProgress = false,
+                                mintState = MintState.NONE
+                            )
                         }
                     }
                 }
