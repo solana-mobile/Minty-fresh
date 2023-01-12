@@ -17,7 +17,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.net.URL
 
-class NFTMintyRepository(private val publicKey: PublicKey) {
+class NFTRepository(private val publicKey: PublicKey) {
 
     private val connection = SolanaConnectionDriver(
         JdkRpcDriver(URL("https://solana-mainnet.g.alchemy.com/v2/wNKQI1tTf6CBkHRo7fQGlyQxCQVy1pxj")),
@@ -31,30 +31,14 @@ class NFTMintyRepository(private val publicKey: PublicKey) {
         )
     )
 
-    suspend fun getAllNftsFromMinty(collectionName: String) = withContext(Dispatchers.IO) {
-        // Getting all the NFTs that have a Collection
-        val nftsWithCollection = nftClient.findAllByOwner(publicKey).getOrThrow()
+    suspend fun getAllNfts() = withContext(Dispatchers.IO) {
+        nftClient.findAllByOwner(publicKey)
+            .getOrThrow()
             .filterNotNull()
-            .filter { it.collection != null }
+    }
 
-        // Finding the collectionName's pubKey (stopping as soon as we find it)
-        val iterator = nftsWithCollection.iterator()
-        var foundCollection = false
-        var collectionPubKey = ""
-        while (iterator.hasNext() && !foundCollection) {
-            val nft = iterator.next()
-            nft.collection?.let { collection ->
-                val collectionNft = nftClient.findByMint(collection.key).getOrThrow()
-                if (collectionNft.name == collectionName) {
-                    collectionPubKey = collection.key.toString()
-                    foundCollection = true
-                }
-            }
-        }
-
-        // Filtering the list of NFTs by the collection's pubKey
-        return@withContext nftsWithCollection
-            .filter { it.collection?.key.toString() == collectionPubKey }
+    suspend fun findByMint(publicKey: PublicKey) = withContext(Dispatchers.IO) {
+        nftClient.findByMint(publicKey).getOrThrow()
     }
 
     suspend fun getNftsMetadata(nft: NFT) = withContext(Dispatchers.IO) {

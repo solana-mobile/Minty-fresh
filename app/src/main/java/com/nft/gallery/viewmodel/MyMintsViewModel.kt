@@ -4,7 +4,8 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.repository.NFTMintyRepository
+import com.nft.gallery.repository.NFTRepository
+import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,13 +39,13 @@ class MyMintsViewModel @Inject constructor(
 
     fun loadMyMints(publicKey: PublicKey) {
         viewModelScope.launch {
-            val nftMintyRepository = NFTMintyRepository(publicKey)
+            val mintsUseCase = MyMintsUseCase(publicKey)
             _viewState.value = listOf()
             try {
-                val nfts = nftMintyRepository.getAllNftsFromMinty(MINTY_NFT_COLLECTION_NAME)
+                val nfts = mintsUseCase.getAllNftsForCollectionName(MINTY_NFT_COLLECTION_NAME)
                 Log.d(TAG, "Found ${nfts.size} NFTs")
                 nfts.forEach { nft ->
-                    val metadata = nftMintyRepository.getNftsMetadata(nft)
+                    val metadata = mintsUseCase.getNftsMetadata(nft)
                     Log.d(TAG, "Fetched ${nft.name} NFT metadata")
                     _viewState.getAndUpdate {
                         it.toMutableList().apply {
