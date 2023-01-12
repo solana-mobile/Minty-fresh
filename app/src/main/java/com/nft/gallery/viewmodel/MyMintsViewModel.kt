@@ -33,13 +33,16 @@ class MyMintsViewModel @Inject constructor(
     }
 
     private var _viewState: MutableStateFlow<List<MyMint>> = MutableStateFlow(listOf())
+    private var _wasLaunched = false
 
     val viewState = _viewState.asStateFlow()
+    val wasLaunched: Boolean
+            get() = _wasLaunched
 
     fun loadMyMints(publicKey: PublicKey) {
+        _wasLaunched = true
         viewModelScope.launch {
             val mintsUseCase = MyMintsUseCase(publicKey)
-            _viewState.value = listOf()
             try {
                 val nfts = mintsUseCase.getAllNftsForCollectionName(MINTY_NFT_COLLECTION_NAME)
                 Log.d(TAG, "Found ${nfts.size} NFTs")

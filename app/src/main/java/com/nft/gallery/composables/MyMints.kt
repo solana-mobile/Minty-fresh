@@ -1,5 +1,6 @@
 package com.nft.gallery.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -28,18 +29,18 @@ import com.solana.core.PublicKey
 
 @Composable
 fun MyMintPage(
-    myMintsViewModel: MyMintsViewModel = hiltViewModel()
+    myMintsViewModel: MyMintsViewModel = hiltViewModel(),
+    navigateToDetails: (String) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
 
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
+    LaunchedEffect(myMintsViewModel.wasLaunched) {
+        if (!myMintsViewModel.wasLaunched) {
             myMintsViewModel.loadMyMints(
                 PublicKey("5nmoLTjaCYxDY2iZEAHEnbkTyPRrqtF6mrGwXxuJGr4C") // TODO real public key from MWA
             )
         }
-    )
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,13 +69,16 @@ fun MyMintPage(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            itemsIndexed(items = uiState) { _, path ->
+            itemsIndexed(items = uiState) { _, myMint ->
                 AsyncImage(
                     modifier = Modifier
                         .height(76.dp)
-                        .width(76.dp),
+                        .width(76.dp)
+                        .clickable {
+                            navigateToDetails(myMint.mediaUrl)
+                        },
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(path.mediaUrl)
+                        .data(myMint.mediaUrl)
                         .crossfade(true)
                         .build(),
                     contentDescription = null,

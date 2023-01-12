@@ -30,10 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.nft.gallery.composables.Camera
-import com.nft.gallery.composables.Gallery
-import com.nft.gallery.composables.MintDetailsPage
-import com.nft.gallery.composables.MyMintPage
+import com.nft.gallery.composables.*
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import dagger.hilt.android.AndroidEntryPoint
@@ -166,7 +163,18 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable(NavigationItem.MyMints.route) {
-                MyMintPage()
+                MyMintPage {
+                    navController.navigate("${NavigationItem.MyMintsDetails.route}?imagePath=$it")
+                }
+            }
+            composable(
+                route = "${NavigationItem.MyMintsDetails.route}?imagePath={imagePath}",
+                arguments = listOf(navArgument("imagePath") { type = NavType.StringType }),
+            ) { backStackEntry ->
+                MyMintsDetails(
+                    backStackEntry.arguments?.getString("imagePath")
+                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"imagePath\" argument to be launched")
+                )
             }
         }
     }
