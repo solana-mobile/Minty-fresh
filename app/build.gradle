@@ -78,6 +78,7 @@ dependencies {
     implementation 'androidx.paging:paging-compose:1.0.0-alpha17'
 
     implementation 'com.google.accompanist:accompanist-permissions:0.28.0'
+    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.28.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
