@@ -162,6 +162,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
 
     @Composable
     fun Navigation(navController: NavHostController) {
+        val navigateUp = { navController.navigateUp() }
+
         NavHost(navController, startDestination = NavigationItem.Photos.route) {
             composable(NavigationItem.Camera.route) {
                 Camera(
@@ -219,8 +221,9 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                 arguments = listOf(navArgument("index") { type = NavType.IntType }),
             ) { backStackEntry ->
                 MyMintsDetails(
-                    backStackEntry.arguments?.getInt("index")
-                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched")
+                    index = backStackEntry.arguments?.getInt("index")
+                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched"),
+                    navigateUp = navigateUp,
                 )
             }
         }

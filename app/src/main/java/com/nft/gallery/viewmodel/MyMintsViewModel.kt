@@ -16,6 +16,8 @@ import javax.inject.Inject
 
 data class MyMint(
     val id: String,
+    val name: String?,
+    val description: String?,
     val mediaUrl: String,
 )
 
