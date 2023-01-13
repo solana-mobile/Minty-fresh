@@ -1,11 +1,13 @@
 package com.nft.gallery.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -17,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.*
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -36,9 +37,13 @@ import javax.annotation.concurrent.GuardedBy
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), ActivityResultSender {
 
+    private val startForResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {}
+
     override fun launch(intent: Intent) {
         try {
-            startActivityForResult(intent, 0)
+            startForResult.launch(intent)
         } catch (exception: Exception) {
             lifecycleScope.launch(Dispatchers.Main) {
                 Toast.makeText(
@@ -51,7 +56,6 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
     }
 
     @OptIn(
-        ExperimentalMaterial3Api::class,
         ExperimentalAnimationApi::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +65,14 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
 
         setContent {
             val animNavController = rememberAnimatedNavController()
-            val navBackStackEntry by animNavController.currentBackStackEntryAsState()
-
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = !isSystemInDarkTheme()
 
             SideEffect {
-                systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = useDarkIcons)
+                systemUiController.setSystemBarsColor(
+                    Color.Transparent,
+                    darkIcons = useDarkIcons
+                )
             }
 
             AppTheme {
@@ -99,7 +104,9 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                     }
                     composable(
                         route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
-                        arguments = listOf(navArgument("imagePath") { type = NavType.StringType }),
+                        arguments = listOf(navArgument("imagePath") {
+                            type = NavType.StringType
+                        }),
                         deepLinks = listOf(navDeepLink {
                             uriPattern = "{imagePath}"
                             action = Intent.ACTION_SEND
