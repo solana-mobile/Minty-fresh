@@ -40,9 +40,7 @@ fun MyMintsDetails(
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val walletState = walletConnectionViewModel.viewState.collectAsState().value
-    val uiState = myMintsViewModel.viewState
-        .getOrDefault(walletState.userAddress, MutableStateFlow(listOf()))
-        .collectAsState().value
+    val uiState = myMintsViewModel.viewState.collectAsState().value
 
     myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
 
