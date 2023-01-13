@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,10 +20,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import com.nft.gallery.ktx.hiltActivityViewModel
-import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
-import com.solana.core.PublicKey
 
 @OptIn(
     ExperimentalPagerApi::class,
@@ -35,22 +31,10 @@ import com.solana.core.PublicKey
 fun MyMintsDetails(
     index: Int,
     navigateUp: () -> Boolean = { true },
-    myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel()
 ) {
-    val uiState = myMintsViewModel.viewState.collectAsState().value
+    val uiState = walletConnectionViewModel.mintState.collectAsState().value
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val walletState = walletConnectionViewModel.viewState.collectAsState().value
-
-    LaunchedEffect(myMintsViewModel.wasLaunched) {
-        if (!myMintsViewModel.wasLaunched) {
-            if (walletState.userAddress.isNotEmpty()) {
-                myMintsViewModel.loadMyMints(
-                    PublicKey(walletState.userAddress)
-                )
-            }
-        }
-    }
 
     Scaffold(
         topBar = {

@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,30 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.nft.gallery.ktx.hiltActivityViewModel
-import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
-import com.solana.core.PublicKey
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MyMintPage(
-    myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     navigateToDetails: (Int) -> Unit,
 ) {
-    val uiState = myMintsViewModel.viewState.collectAsState().value
+    val uiState = walletConnectionViewModel.mintState.collectAsState().value
     val walletState = walletConnectionViewModel.viewState.collectAsState().value
-
-    LaunchedEffect(myMintsViewModel.wasLaunched) {
-        if (!myMintsViewModel.wasLaunched) {
-            if (walletState.userAddress.isNotEmpty()) {
-                myMintsViewModel.loadMyMints(
-                    PublicKey(walletState.userAddress)
-                )
-            }
-        }
-    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,26 +53,33 @@ fun MyMintPage(
                 .padding(bottom = 30.dp)
                 .align(Alignment.Start)
         )
-        LazyVerticalGrid(
-            modifier = Modifier.padding(top = 16.dp),
-            columns = GridCells.Adaptive(minSize = 76.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            itemsIndexed(items = uiState) { index, myMint ->
-                GlideImage(
-                    modifier = Modifier
-                        .height(76.dp)
-                        .width(76.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(color = MaterialTheme.colorScheme.surface)
-                        .clickable {
-                            navigateToDetails(index)
-                        },
-                    model = myMint.mediaUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                )
+        if (walletState.userAddress.isEmpty()) {
+            Text(
+                modifier = Modifier.padding(top = 16.dp),
+                text = "Connect to a wallet to see your mints"
+            )
+        } else {
+            LazyVerticalGrid(
+                modifier = Modifier.padding(top = 16.dp),
+                columns = GridCells.Adaptive(minSize = 76.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                itemsIndexed(items = uiState) { index, myMint ->
+                    GlideImage(
+                        modifier = Modifier
+                            .height(76.dp)
+                            .width(76.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(color = MaterialTheme.colorScheme.surface)
+                            .clickable {
+                                navigateToDetails(index)
+                            },
+                        model = myMint.mediaUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
         }
     }

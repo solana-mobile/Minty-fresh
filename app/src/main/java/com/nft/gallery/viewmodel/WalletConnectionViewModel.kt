@@ -1,20 +1,24 @@
 package com.nft.gallery.viewmodel
 
+import android.graphics.DiscretePathEffect
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.usecase.Connected
+import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.usecase.NotConnected
 import com.nft.gallery.usecase.PersistenceUseCase
+import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.portto.solana.web3.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class WalletViewState(
@@ -32,7 +36,8 @@ const val identityName = "Solana"
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
-    private val persistenceUseCase: PersistenceUseCase
+    private val persistenceUseCase: PersistenceUseCase,
+    private val myMintsMapper: MyMintsMapper,
 ) : ViewModel() {
 
     private fun WalletViewState.updateViewState() {
@@ -44,15 +49,30 @@ class WalletConnectionViewModel @Inject constructor(
     val viewState: StateFlow<WalletViewState>
         get() = _state
 
-    fun loadConnection() {
-        val connection = persistenceUseCase.getWalletConnection()
-        if (connection is Connected) {
-            _state.value.copy(
-                isLoading = true,
-                canTransact = true,
-                userAddress = connection.publicKey.toBase58(),
-                userLabel = connection.accountLabel,
-            ).updateViewState()
+    companion object {
+        private const val TAG = "MyMintsViewModel"
+
+        // TODO real name and shared constant between the mint and the fetch
+        private const val MINTY_NFT_COLLECTION_NAME = "Spaces NFT List"
+    }
+
+    private var _mintState: MutableStateFlow<List<MyMint>> = MutableStateFlow(listOf())
+    private var _wasLaunched = false
+
+    val mintState = _mintState.asStateFlow()
+
+    suspend fun loadConnection() {
+        withContext(Dispatchers.IO) {
+            val connection = persistenceUseCase.getWalletConnection()
+            if (connection is Connected) {
+                _state.value.copy(
+                    isLoading = true,
+                    canTransact = true,
+                    userAddress = connection.publicKey.toBase58(),
+                    userLabel = connection.accountLabel,
+                ).updateViewState()
+                loadMyMints(com.solana.core.PublicKey(connection.publicKey.toBase58()))
+            }
         }
     }
 
@@ -100,6 +120,7 @@ class WalletConnectionViewModel @Inject constructor(
                     userAddress = currentConn.publicKey.toBase58(),
                     userLabel = currentConn.accountLabel,
                 ).updateViewState()
+                loadMyMints(com.solana.core.PublicKey(currentConn.publicKey.toBase58()))
             } else {
                 _state.value.copy(
                     isLoading = false,
@@ -124,6 +145,29 @@ class WalletConnectionViewModel @Inject constructor(
                 persistenceUseCase.clearConnection()
 
                 WalletViewState().updateViewState()
+            }
+        }
+    }
+
+    private fun loadMyMints(publicKey: com.solana.core.PublicKey) {
+        viewModelScope.launch {
+            val mintsUseCase = MyMintsUseCase(publicKey)
+            try {
+                val nfts = mintsUseCase.getAllNftsForCollectionName(MINTY_NFT_COLLECTION_NAME)
+                Log.d(TAG, "Found ${nfts.size} NFTs")
+                nfts.forEach { nft ->
+                    val metadata = mintsUseCase.getNftsMetadata(nft)
+                    Log.d(TAG, "Fetched ${nft.name} NFT metadata")
+                        _mintState.getAndUpdate {
+                        it.toMutableList().apply {
+                            myMintsMapper.map(nft, metadata)?.let { myMint ->
+                                add(myMint)
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, e.toString())
             }
         }
     }
