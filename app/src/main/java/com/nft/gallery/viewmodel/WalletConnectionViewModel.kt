@@ -3,7 +3,9 @@ package com.nft.gallery.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.usecase.*
+import com.nft.gallery.usecase.Connected
+import com.nft.gallery.usecase.NotConnected
+import com.nft.gallery.usecase.PersistenceUseCase
 import com.portto.solana.web3.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
@@ -21,12 +23,11 @@ data class WalletViewState(
     val solBalance: Double = 0.0,
     val userAddress: String = "",
     val userLabel: String = "",
-    val memoTx: String = ""
 )
 
-val solanaUri = Uri.parse("https://solana.com")
-val iconUri = Uri.parse("favicon.ico")
-val identityName = "Solana"
+val solanaUri: Uri = Uri.parse("https://solana.com")
+val iconUri: Uri = Uri.parse("favicon.ico")
+const val identityName = "Solana"
 
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
@@ -70,22 +71,44 @@ class WalletConnectionViewModel @Inject constructor(
                         )
                     }
                     is Connected -> {
-                        val reauthed = reauthorize(solanaUri, iconUri, identityName, conn.authToken)
-                        Connected(
-                            PublicKey(reauthed.publicKey),
-                            reauthed.accountLabel ?: "",
-                            reauthed.authToken
-                        )
+                        try {
+                            val reauthed =
+                                reauthorize(solanaUri, iconUri, identityName, conn.authToken)
+                            Connected(
+                                PublicKey(reauthed.publicKey),
+                                reauthed.accountLabel ?: "",
+                                reauthed.authToken
+                            )
+                        } catch (exception: Exception) {
+                            persistenceUseCase.clearConnection()
+                            persistenceUseCase.getWalletConnection()
+                        }
                     }
                 }
             }
 
-            persistenceUseCase.persistConnection(
-                currentConn.publicKey,
-                currentConn.accountLabel,
-                currentConn.authToken
-            )
+            if (currentConn is Connected) {
+                persistenceUseCase.persistConnection(
+                    currentConn.publicKey,
+                    currentConn.accountLabel,
+                    currentConn.authToken
+                )
 
+                _state.value.copy(
+                    isLoading = false,
+                    canTransact = false,
+                    userAddress = currentConn.publicKey.toBase58(),
+                    userLabel = currentConn.accountLabel,
+                ).updateViewState()
+            } else {
+                _state.value.copy(
+                    isLoading = false,
+                    canTransact = true,
+                    solBalance = 0.0,
+                    userAddress = "",
+                    userLabel = ""
+                ).updateViewState()
+            }
         }
     }
 
