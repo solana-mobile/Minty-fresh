@@ -39,7 +39,7 @@ class MyMintsViewModel @Inject constructor(
     val viewState = mutableMapOf<String, StateFlow<List<MyMint>>>()
 
     fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
-        if (publicKey.toBase58().isEmpty() || (!forceRefresh && _viewState.containsKey(publicKey.toString()))) {
+        if (publicKey.toString().isEmpty() || (!forceRefresh && _viewState.containsKey(publicKey.toString()))) {
             return
         }
 
