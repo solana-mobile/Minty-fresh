@@ -85,6 +85,13 @@ class PerformMintViewModel @Inject constructor(
             }
             val metadataUrl = metadataRepository.uploadMetadata(title, desc, nftImageUrl)
 
+            _viewState.update {
+                _viewState.value.copy(
+                    mintingInProgress = true,
+                    mintState = MintState.MINTING
+                )
+            }
+
             MobileWalletAdapter().apply {
                 transact(sender) {
                     val auth = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
@@ -105,13 +112,6 @@ class PerformMintViewModel @Inject constructor(
                                 onComplete(result.signedPayloads[0])
                             }
                         }
-                    }
-
-                    _viewState.update {
-                        _viewState.value.copy(
-                            mintingInProgress = true,
-                            mintState = MintState.MINTING
-                        )
                     }
 
                     withContext(Dispatchers.IO) {

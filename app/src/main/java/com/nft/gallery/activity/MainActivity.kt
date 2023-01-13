@@ -43,6 +43,7 @@ import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 
 @AndroidEntryPoint
@@ -161,10 +162,20 @@ class MainActivity : ComponentActivity() {
                             NavController.KEY_DEEP_LINK_INTENT
                         )
                     }
-                val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri?.toString()
+                val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri
+                val clipDataPath = clipDataUri?.let {
+                    val input = contentResolver.openInputStream(clipDataUri)
+                    val file = File.createTempFile("shared", ".image", cacheDir)
+
+                    input?.let {
+                        file.writeBytes(input.readBytes())
+                        input.close()
+                        file.toPath()
+                    }
+                }?.toString()
 
                 MintDetailsPage(
-                    imagePath = imagePath ?: clipDataUri
+                    imagePath = imagePath ?: clipDataPath
                     ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                     navigateUp = {
                         navController.navigateUp()

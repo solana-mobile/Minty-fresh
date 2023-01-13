@@ -2,7 +2,6 @@ package com.nft.gallery.repository
 
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.endpoints.NftStorageEndpoints
-import com.nft.gallery.endpoints.NftStorageResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.asRequestBody
