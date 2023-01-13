@@ -13,29 +13,34 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
+import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.core.PublicKey
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MyMintPage(
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
+    walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     navigateToDetails: (Int) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
+    val walletState = walletConnectionViewModel.viewState.collectAsState().value
 
     LaunchedEffect(myMintsViewModel.wasLaunched) {
         if (!myMintsViewModel.wasLaunched) {
-            myMintsViewModel.loadMyMints(
-                PublicKey("5nmoLTjaCYxDY2iZEAHEnbkTyPRrqtF6mrGwXxuJGr4C") // TODO real public key from MWA
-            )
+            if (walletState.userAddress.isNotEmpty()) {
+                myMintsViewModel.loadMyMints(
+                    PublicKey(walletState.userAddress)
+                )
+            }
         }
     }
 
