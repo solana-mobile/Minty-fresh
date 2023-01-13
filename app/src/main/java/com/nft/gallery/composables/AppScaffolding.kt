@@ -82,7 +82,11 @@ fun ScaffoldScreen(
                             start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
                         ),
                         onClick = {
-                            walletConnectionViewModel.connect(activityResultSender)
+                            if (viewState.userAddress.isEmpty()) {
+                                walletConnectionViewModel.connect(activityResultSender)
+                            } else {
+                                walletConnectionViewModel.disconnect(activityResultSender)
+                            }
                         }
                     ) {
                         val pubKey = viewState.userAddress
