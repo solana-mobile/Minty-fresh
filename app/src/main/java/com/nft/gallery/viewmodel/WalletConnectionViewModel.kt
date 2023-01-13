@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.NotConnected
 import com.nft.gallery.usecase.PersistenceUseCase
-import com.portto.solana.web3.PublicKey
+import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
