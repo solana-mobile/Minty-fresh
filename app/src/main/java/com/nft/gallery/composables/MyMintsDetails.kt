@@ -1,5 +1,6 @@
 package com.nft.gallery.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -90,11 +91,14 @@ fun MyMintsDetails(
                 GlideImage(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp)),
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .clip(RoundedCornerShape(8.dp)),
                     model = uiState[page].mediaUrl,
                     contentDescription = "Detail of My Mint",
                     contentScale = ContentScale.Fit,
-                )
+                ) {
+                    it.thumbnail()
+                }
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     style = MaterialTheme.typography.titleLarge,

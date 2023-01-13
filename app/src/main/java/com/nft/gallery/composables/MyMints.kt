@@ -1,10 +1,12 @@
 package com.nft.gallery.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -76,9 +79,11 @@ fun MyMintPage(
                     modifier = Modifier
                         .height(76.dp)
                         .width(76.dp)
+                        .background(color = MaterialTheme.colorScheme.surface)
                         .clickable {
                             navigateToDetails(index)
-                        },
+                        }
+                        .clip(RoundedCornerShape(8.dp)),
                     model = myMint.mediaUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
