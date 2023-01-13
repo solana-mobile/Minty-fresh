@@ -15,7 +15,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -23,9 +22,6 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
-import com.nft.gallery.viewmodel.WalletConnectionViewModel
-import com.solana.core.PublicKey
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(
     ExperimentalPagerApi::class,
@@ -37,13 +33,9 @@ fun MyMintsDetails(
     index: Int,
     navigateUp: () -> Boolean = { true },
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
-    walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val walletState = walletConnectionViewModel.viewState.collectAsState().value
     val uiState = myMintsViewModel.viewState.collectAsState().value
-
-    myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
 
     Scaffold(
         topBar = {
