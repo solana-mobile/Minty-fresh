@@ -79,11 +79,11 @@ fun MyMintPage(
                     modifier = Modifier
                         .height(76.dp)
                         .width(76.dp)
+                        .clip(RoundedCornerShape(8.dp))
                         .background(color = MaterialTheme.colorScheme.surface)
                         .clickable {
                             navigateToDetails(index)
-                        }
-                        .clip(RoundedCornerShape(8.dp)),
+                        },
                     model = myMint.mediaUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,

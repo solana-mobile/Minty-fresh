@@ -91,10 +91,10 @@ fun MintDetailsPage(
                         .padding(top = 16.dp)
                         .width(210.dp)
                         .height(210.dp)
+                        .clip(RoundedCornerShape(8.dp))
                         .background(
                             color = MaterialTheme.colorScheme.surface
-                        )
-                        .clip(RoundedCornerShape(8.dp)),
+                        ),
                     contentScale = ContentScale.Crop
                 ) {
                     it.thumbnail()

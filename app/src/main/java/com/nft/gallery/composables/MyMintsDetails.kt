@@ -91,8 +91,8 @@ fun MyMintsDetails(
                 GlideImage(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = MaterialTheme.colorScheme.surface)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(color = MaterialTheme.colorScheme.surface),
                     model = uiState[page].mediaUrl,
                     contentDescription = "Detail of My Mint",
                     contentScale = ContentScale.Fit,

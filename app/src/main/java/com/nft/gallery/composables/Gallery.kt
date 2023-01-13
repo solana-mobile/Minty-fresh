@@ -99,11 +99,11 @@ fun Gallery(
                             modifier = Modifier
                                 .width(76.dp)
                                 .aspectRatio(1.0f)
+                                .clip(RoundedCornerShape(8.dp))
                                 .background(color = MaterialTheme.colorScheme.surface)
                                 .clickable {
                                     navigateToDetails(path)
-                                }
-                                .clip(RoundedCornerShape(8.dp)),
+                                },
                             contentScale = ContentScale.Crop
                         ) {
                             it.thumbnail()
