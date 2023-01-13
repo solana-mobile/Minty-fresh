@@ -9,7 +9,7 @@ import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,15 +34,17 @@ class MyMintsViewModel @Inject constructor(
         private const val MINTY_NFT_COLLECTION_NAME = "Spaces NFT List"
     }
 
-    private var _viewState: MutableStateFlow<List<MyMint>> = MutableStateFlow(listOf())
-    private var _wasLaunched = false
+    private var _viewState: MutableMap<String, MutableStateFlow<List<MyMint>>> = mutableMapOf()
 
-    val viewState = _viewState.asStateFlow()
-    val wasLaunched: Boolean
-            get() = _wasLaunched
+    val viewState = mutableMapOf<String, StateFlow<List<MyMint>>>()
 
-    fun loadMyMints(publicKey: PublicKey) {
-        _wasLaunched = true
+    fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
+        if (publicKey.toString().isEmpty() || (!forceRefresh && _viewState.containsKey(publicKey.toString()))) {
+            return
+        }
+
+        _viewState.putIfAbsent(publicKey.toString(), MutableStateFlow(mutableListOf()))
+
         viewModelScope.launch {
             val mintsUseCase = MyMintsUseCase(publicKey)
             try {
@@ -51,7 +53,7 @@ class MyMintsViewModel @Inject constructor(
                 nfts.forEach { nft ->
                     val metadata = mintsUseCase.getNftsMetadata(nft)
                     Log.d(TAG, "Fetched ${nft.name} NFT metadata")
-                    _viewState.getAndUpdate {
+                    _viewState[publicKey.toString()]?.getAndUpdate {
                         it.toMutableList().apply {
                             myMintsMapper.map(nft, metadata)?.let { myMint ->
                                 add(myMint)
