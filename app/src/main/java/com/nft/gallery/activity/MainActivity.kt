@@ -68,177 +68,208 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
             val viewState = walletConnectionViewModel.viewState.collectAsState().value
 
             AppTheme {
-                Scaffold(
-                    floatingActionButton = {
-                        if (currentRoute == NavigationItem.Photos.route) {
-                            FloatingActionButton(
-                                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                                backgroundColor = MaterialTheme.colorScheme.onBackground,
-                                onClick = {
-                                    animNavController.navigate(NavigationItem.Camera.route)
+                val navigateUp = { animNavController.navigateUp() }
+
+                AnimatedNavHost(
+                    navController = animNavController,
+                    startDestination = NavigationItem.Photos.route,
+                ) {
+                    composable(NavigationItem.Camera.route) {
+                        Camera(
+                            navigateToDetails = {
+                                animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                            }
+                        )
+                    }
+                    composable(NavigationItem.Photos.route) {
+                        ScaffoldScreen(
+                            currentRoute = NavigationItem.Photos.route,
+                            userAddress = viewState.userAddress,
+                            navController = animNavController
+                        ) {
+                            Gallery(
+                                navigateToDetails = {
+                                    animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
                                 }
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    imageVector = NavigationItem.Camera.icon,
-                                    contentDescription = "Take Picture",
-                                    tint = MaterialTheme.colorScheme.background
+                            )
+                        }
+                    }
+                    composable(
+                        route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
+                        arguments = listOf(navArgument("imagePath") { type = NavType.StringType }),
+                        deepLinks = listOf(navDeepLink {
+                            uriPattern = "{imagePath}"
+                            action = Intent.ACTION_SEND
+                            mimeType = "image/*"
+                        })
+                    ) { backStackEntry ->
+                        val imagePath = backStackEntry.arguments?.getString("imagePath")
+                        val deepLinkIntent: Intent? =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                backStackEntry.arguments?.getParcelable(
+                                    NavController.KEY_DEEP_LINK_INTENT,
+                                    Intent::class.java
+                                )
+                            } else {
+                                @Suppress("DEPRECATION")
+                                backStackEntry.arguments?.getParcelable(
+                                    NavController.KEY_DEEP_LINK_INTENT
                                 )
                             }
+                        val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri?.toString()
+
+                        ScaffoldScreen(
+                            currentRoute = NavigationItem.MintDetail.route,
+                            navController = animNavController
+                        ) {
+                            MintDetailsPage(
+                                imagePath = imagePath ?: clipDataUri
+                                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                                navigateUp = {
+                                    animNavController.navigateUp()
+                                }
+                            )
                         }
-                    },
-                    topBar = {
-                        if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
+                    }
+                    composable(NavigationItem.MyMints.route) {
+                        ScaffoldScreen(
+                            currentRoute = NavigationItem.MyMints.route,
+                            userAddress = viewState.userAddress,
+                            navController = animNavController
+                        ) {
+                            MyMintPage {
+                                animNavController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
+                            }
+                        }
+                    }
+                    composable(
+                        route = "${NavigationItem.MyMintsDetails.route}?index={index}",
+                        arguments = listOf(navArgument("index") { type = NavType.IntType }),
+                    ) { backStackEntry ->
+                        ScaffoldScreen(
+                            currentRoute = NavigationItem.MyMintsDetails.route,
+                            navController = animNavController
+                        ) {
+                            MyMintsDetails(
+                                index = backStackEntry.arguments?.getInt("index")
+                                    ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched"),
+                                navigateUp = navigateUp,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(
+        ExperimentalMaterial3Api::class
+    )
+    @Composable
+    fun ScaffoldScreen(
+        currentRoute: String,
+        navController: NavHostController,
+        userAddress: String = "",
+        content: @Composable () -> Unit
+    ) {
+        Scaffold(
+            floatingActionButton = {
+                if (currentRoute == NavigationItem.Photos.route) {
+                    FloatingActionButton(
+                        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                        backgroundColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            navController.navigate(NavigationItem.Camera.route)
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(24.dp),
+                            imageVector = NavigationItem.Camera.icon,
+                            contentDescription = "Take Picture",
+                            tint = MaterialTheme.colorScheme.background
+                        )
+                    }
+                }
+            },
+            topBar = {
+                if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        LaunchedEffect(
+                            key1 = Unit,
+                            block = {
+                                walletConnectionViewModel.loadConnection()
+                            }
+                        )
+                        Button(
+                            shape = RoundedCornerShape(corner = CornerSize(24.dp)),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                            contentPadding = PaddingValues(
+                                start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
+                            ),
+                            onClick = {
+                                walletConnectionViewModel.connect(this@MainActivity)
+                            }
+                        ) {
+                            val pubKey = userAddress
+                            val buttonText = if (pubKey.isEmpty()) {
+                                "Connect"
+                            } else {
+                                pubKey.take(4).plus("...").plus(pubKey.takeLast(4))
+                            }
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .statusBarsPadding()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.End
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                LaunchedEffect(
-                                    key1 = Unit,
-                                    block = {
-                                        walletConnectionViewModel.loadConnection()
-                                    }
-                                )
-                                Button(
-                                    shape = RoundedCornerShape(corner = CornerSize(24.dp)),
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                                    contentPadding = PaddingValues(
-                                        start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
-                                    ),
-                                    onClick = {
-                                        walletConnectionViewModel.connect(this@MainActivity)
-                                    }
-                                ) {
-                                    val pubKey = viewState.userAddress
-                                    val buttonText = if (pubKey.isEmpty()) {
-                                        "Connect"
-                                    } else {
-                                        pubKey.take(4).plus("...").plus(pubKey.takeLast(4))
-                                    }
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
+                                if(pubKey.isNotEmpty()) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.onBackground),
+                                        contentAlignment = Alignment.Center,
                                     ) {
-                                        if(pubKey.isNotEmpty()) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(24.dp)
-                                                    .clip(CircleShape)
-                                                    .background(MaterialTheme.colorScheme.onBackground),
-                                                contentAlignment = Alignment.Center,
-                                            ) {
-                                                Icon(
-                                                    modifier = Modifier.size(16.dp),
-                                                    imageVector = Icons.Filled.MultipleStop,
-                                                    tint = MaterialTheme.colorScheme.background,
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        }
-                                        Text(
-                                            modifier = Modifier.padding(start = 8.dp),
-                                            text = buttonText,
-                                            maxLines = 1,
-                                            color = MaterialTheme.colorScheme.onSurface
+                                        Icon(
+                                            modifier = Modifier.size(16.dp),
+                                            imageVector = Icons.Filled.MultipleStop,
+                                            tint = MaterialTheme.colorScheme.background,
+                                            contentDescription = null
                                         )
                                     }
                                 }
+                                Text(
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    text = buttonText,
+                                    maxLines = 1,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         }
-                    },
-                    bottomBar = {
-                        if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                            BottomNavigationBar(navController = animNavController)
-                        }
-                    },
-                    content = { padding ->
-                        Box(modifier = Modifier.padding(padding)) {
-                            Navigation(navController = animNavController)
-                        }
-                    },
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            }
-        }
-    }
-
-    @OptIn(ExperimentalAnimationApi::class)
-    @Composable
-    fun Navigation(navController: NavHostController) {
-        val navigateUp = { navController.navigateUp() }
-
-        AnimatedNavHost(
-            navController = navController,
-            startDestination = NavigationItem.Photos.route,
-        ) {
-            composable(NavigationItem.Camera.route) {
-                Camera(
-                    navigateToDetails = {
-                        navController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
                     }
-                )
-            }
-            composable(NavigationItem.Photos.route) {
-                Gallery(
-                    navigateToDetails = {
-                        navController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
-                    }
-                )
-            }
-            composable(
-                route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
-                arguments = listOf(navArgument("imagePath") { type = NavType.StringType }),
-                deepLinks = listOf(navDeepLink {
-                    uriPattern = "{imagePath}"
-                    action = Intent.ACTION_SEND
-                    mimeType = "image/*"
-                })
-            ) { backStackEntry ->
-                val imagePath = backStackEntry.arguments?.getString("imagePath")
-                val deepLinkIntent: Intent? =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        backStackEntry.arguments?.getParcelable(
-                            NavController.KEY_DEEP_LINK_INTENT,
-                            Intent::class.java
-                        )
-                    } else {
-                        @Suppress("DEPRECATION")
-                        backStackEntry.arguments?.getParcelable(
-                            NavController.KEY_DEEP_LINK_INTENT
-                        )
-                    }
-                val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri?.toString()
-
-                MintDetailsPage(
-                    imagePath = imagePath ?: clipDataUri
-                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
-                    navigateUp = {
-                        navController.navigateUp()
-                    }
-                )
-            }
-            composable(NavigationItem.MyMints.route) {
-                MyMintPage {
-                    navController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
                 }
-            }
-            composable(
-                route = "${NavigationItem.MyMintsDetails.route}?index={index}",
-                arguments = listOf(navArgument("index") { type = NavType.IntType }),
-            ) { backStackEntry ->
-                MyMintsDetails(
-                    index = backStackEntry.arguments?.getInt("index")
-                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched"),
-                    navigateUp = navigateUp,
-                )
-            }
-        }
+            },
+            bottomBar = {
+                if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
+                    BottomNavigationBar(navController = navController)
+                }
+            },
+            content = { padding ->
+                Box(modifier = Modifier.padding(padding)) {
+                    content()
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        )
     }
 
     @Composable
-    fun BottomNavigationBar(navController: NavHostController) {
+    fun BottomNavigationBar(
+        navController: NavHostController
+    ) {
         val items = listOf(
             NavigationItem.Photos,
             NavigationItem.MyMints,
