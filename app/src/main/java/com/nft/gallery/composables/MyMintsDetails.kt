@@ -1,7 +1,5 @@
 package com.nft.gallery.composables
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +14,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -23,6 +22,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
+import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.core.PublicKey
 
 @OptIn(
@@ -35,16 +35,19 @@ fun MyMintsDetails(
     index: Int,
     navigateUp: () -> Boolean = { true },
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
+    walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel()
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val scrollState = rememberScrollState()
+    val walletState = walletConnectionViewModel.viewState.collectAsState().value
 
     LaunchedEffect(myMintsViewModel.wasLaunched) {
         if (!myMintsViewModel.wasLaunched) {
-            myMintsViewModel.loadMyMints(
-                PublicKey("5nmoLTjaCYxDY2iZEAHEnbkTyPRrqtF6mrGwXxuJGr4C") // TODO real public key from MWA
-            )
+            if (walletState.userAddress.isNotEmpty()) {
+                myMintsViewModel.loadMyMints(
+                    PublicKey(walletState.userAddress)
+                )
+            }
         }
     }
 
