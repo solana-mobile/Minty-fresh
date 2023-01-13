@@ -32,7 +32,7 @@ class NFTRepository(private val publicKey: PublicKey) {
     )
 
     suspend fun getAllNfts() = withContext(Dispatchers.IO) {
-        nftClient.findAllByOwner(publicKey)
+        nftClient.findAllByCreator(publicKey)
             .getOrThrow()
             .filterNotNull()
     }
