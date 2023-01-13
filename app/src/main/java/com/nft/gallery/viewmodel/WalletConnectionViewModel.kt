@@ -34,7 +34,23 @@ data class MyMint(
     val name: String?,
     val description: String?,
     val mediaUrl: String,
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is MyMint) return false
+
+        if (id != other.id) return false
+        if (mediaUrl != other.mediaUrl) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + mediaUrl.hashCode()
+        return result
+    }
+}
 
 val solanaUri: Uri = Uri.parse("https://solana.com")
 val iconUri: Uri = Uri.parse("favicon.ico")
@@ -169,7 +185,9 @@ class WalletConnectionViewModel @Inject constructor(
                         _mintState.getAndUpdate {
                         it.toMutableList().apply {
                             myMintsMapper.map(nft, metadata)?.let { myMint ->
-                                add(myMint)
+                                if (!it.contains(myMint)) {
+                                    add(myMint)
+                                }
                             }
                         }
                     }

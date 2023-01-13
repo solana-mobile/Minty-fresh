@@ -41,6 +41,12 @@ fun ScaffoldScreen(
 ) {
     val viewState = walletConnectionViewModel.viewState.collectAsState().value
 
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            walletConnectionViewModel.loadConnection()
+        }
+    )
     Scaffold(
         floatingActionButton = {
             if (currentRoute == NavigationItem.Photos.route) {
@@ -69,12 +75,6 @@ fun ScaffoldScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    LaunchedEffect(
-                        key1 = Unit,
-                        block = {
-                            walletConnectionViewModel.loadConnection()
-                        }
-                    )
                     Button(
                         shape = RoundedCornerShape(corner = CornerSize(24.dp)),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
