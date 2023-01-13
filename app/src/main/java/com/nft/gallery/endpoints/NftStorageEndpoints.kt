@@ -8,5 +8,5 @@ import retrofit2.http.POST
 interface NftStorageEndpoints {
 
     @POST("upload/")
-    suspend fun uploadFile(@Body file: RequestBody, @Header("Authorization") token: String): Any
+    suspend fun uploadFile(@Body file: RequestBody, @Header("Authorization") token: String): NftStorageResponse
 }

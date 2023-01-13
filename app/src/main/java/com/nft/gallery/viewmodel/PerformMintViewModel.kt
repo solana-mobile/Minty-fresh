@@ -22,7 +22,6 @@ import com.nft.gallery.BuildConfig
 import com.nft.gallery.constant.mintyFreshCollectionName
 import com.nft.gallery.metaplex.MetaplexHttpDriver
 import com.nft.gallery.metaplex.MobileWalletIdentityWrapper
-import com.nft.gallery.repository.MetadataUploadRepository
 import com.nft.gallery.repository.StorageUploadRepository
 import com.solana.core.HotAccount
 import com.solana.core.PublicKey
@@ -56,8 +55,7 @@ val rpcUrl = BuildConfig.SOLANA_RPC_URL
 @HiltViewModel
 class PerformMintViewModel @Inject constructor(
     application: Application,
-    private val storageRepository: StorageUploadRepository,
-    private val metadataRepository: MetadataUploadRepository
+    private val storageRepository: StorageUploadRepository
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
@@ -80,7 +78,8 @@ class PerformMintViewModel @Inject constructor(
             _viewState.update {
                 _viewState.value.copy(mintState = MintState.CREATING_METADATA)
             }
-            val metadataUrl = metadataRepository.uploadMetadata(title, desc, nftImageUrl)
+
+            val metadataUrl = storageRepository.uploadMetadata(title, desc, nftImageUrl)
 
             _viewState.update {
                 _viewState.value.copy(
