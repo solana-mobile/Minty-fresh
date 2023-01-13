@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.endpoints.NftStorageEndpoints
+import com.nft.gallery.endpoints.NftStorageResponseConverter
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import dagger.Module
 import dagger.Provides
@@ -11,7 +12,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 
 @Module
 @InstallIn(
@@ -23,7 +23,7 @@ class MintyModule {
     fun providesNftStorageApi(): NftStorageEndpoints {
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(NftStorageResponseConverter)
             .build()
 
         return retrofit.create(NftStorageEndpoints::class.java)
