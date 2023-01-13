@@ -1,13 +1,12 @@
 package com.nft.gallery.composables
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,31 +14,38 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
+import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.core.PublicKey
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun MyMintPage(
-    myMintsViewModel: MyMintsViewModel = hiltViewModel()
+    myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
+    walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
+    navigateToDetails: (Int) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
+    val walletState = walletConnectionViewModel.viewState.collectAsState().value
 
-    LaunchedEffect(
-        key1 = Unit,
-        block = {
-            myMintsViewModel.loadMyMints(
-                PublicKey("5nmoLTjaCYxDY2iZEAHEnbkTyPRrqtF6mrGwXxuJGr4C") // TODO real public key from MWA
-            )
+    LaunchedEffect(myMintsViewModel.wasLaunched) {
+        if (!myMintsViewModel.wasLaunched) {
+            if (walletState.userAddress.isNotEmpty()) {
+                myMintsViewModel.loadMyMints(
+                    PublicKey(walletState.userAddress)
+                )
+            }
         }
-    )
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,15 +74,17 @@ fun MyMintPage(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            itemsIndexed(items = uiState) { _, path ->
-                AsyncImage(
+            itemsIndexed(items = uiState) { index, myMint ->
+                GlideImage(
                     modifier = Modifier
                         .height(76.dp)
-                        .width(76.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(path.mediaUrl)
-                        .crossfade(true)
-                        .build(),
+                        .width(76.dp)
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .clickable {
+                            navigateToDetails(index)
+                        }
+                        .clip(RoundedCornerShape(8.dp)),
+                    model = myMint.mediaUrl,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )

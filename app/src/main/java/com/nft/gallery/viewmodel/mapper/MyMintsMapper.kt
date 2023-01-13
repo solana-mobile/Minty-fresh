@@ -10,6 +10,6 @@ import javax.inject.Singleton
 class MyMintsMapper @Inject constructor() {
 
     fun map(nft: NFT, metadata: JsonMetadata) = metadata.image?.let { imageUrl ->
-        MyMint(nft.mint.toString(), imageUrl)
+        MyMint(nft.mint.toString(), metadata.name, metadata.description, imageUrl)
     }
 }

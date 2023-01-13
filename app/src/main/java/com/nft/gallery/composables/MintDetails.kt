@@ -51,9 +51,12 @@ fun MintDetailsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = MaterialTheme.colorScheme.background
+                backgroundColor = MaterialTheme.colorScheme.background,
+                elevation = 0.dp
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     IconButton(
                         onClick = {
                             navigateUp()
@@ -65,7 +68,10 @@ fun MintDetailsPage(
                             contentDescription = "back"
                         )
                     }
-                    Text(text = "Add NFT details")
+                    Text(
+                        text = "Add NFT details",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
                 }
 
             }
@@ -74,6 +80,7 @@ fun MintDetailsPage(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(padding)
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 16.dp)
@@ -89,10 +96,12 @@ fun MintDetailsPage(
                     contentDescription = null,
                     modifier = Modifier
                         .padding(top = 16.dp)
-                        .width(110.dp)
-                        .height(110.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(color = MaterialTheme.colorScheme.surface),
+                        .width(210.dp)
+                        .height(210.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface
+                        )
+                        .clip(RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
                 ) {
                     it.thumbnail()
@@ -105,10 +114,24 @@ fun MintDetailsPage(
                 Text(
                     text = description.value.ifEmpty { "No description yet." },
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                    modifier = Modifier.padding(
+                        top = 10.dp
+                    )
                 )
-                Spacer(modifier = Modifier.weight(1.0f))
+                Spacer(
+                    modifier = Modifier.weight(1.0f)
+                )
                 OutlinedTextField(
+                    modifier = Modifier
+                        .focusRequester(focusRequester)
+                        .fillMaxWidth()
+                        .padding(
+                            top = 30.dp
+                        ),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                        placeholderColor = MaterialTheme.colorScheme.outline
+                    ),
                     value = title.value,
                     onValueChange = {
                         title.value = it.trimStart().take(32)
@@ -136,13 +159,17 @@ fun MintDetailsPage(
                         .padding(start = 16.dp),
                     text = "Use up to 32 characters",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.outline
                 )
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(top = 24.dp)
                         .focusRequester(focusRequester)
                         .fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                        placeholderColor = MaterialTheme.colorScheme.outline
+                    ),
                     value = description.value,
                     onValueChange = {
                         description.value = it.trimStart().take(256)
@@ -168,13 +195,16 @@ fun MintDetailsPage(
                         .padding(start = 16.dp, bottom = 24.dp),
                     text = "Use up to 256 characters",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.outline
                 )
-                Spacer(modifier = Modifier.weight(2f))
                 Button(
+                    modifier = Modifier
+                        .padding(
+                            top = 32.dp,
+                            bottom = 24.dp
+                        ),
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                    modifier = Modifier.padding(bottom = 32.dp),
                     enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
                     onClick = {
                         performMintViewModel.performMint(intentSender, title.value, description.value, imagePath)

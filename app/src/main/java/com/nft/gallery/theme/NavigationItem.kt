@@ -11,4 +11,5 @@ sealed class NavigationItem(var route: String, var icon: ImageVector, var title:
     object Photos : NavigationItem("photos", Icons.Outlined.Image, "Photos")
     object MintDetail : NavigationItem("mint", Icons.Outlined.AutoAwesome, "Mint")
     object MyMints : NavigationItem("mymints", Icons.Outlined.AutoAwesome, "My Mints")
+    object MyMintsDetails : NavigationItem("mymintsdetails", Icons.Outlined.AutoAwesome, "My Mints Details")
 }
