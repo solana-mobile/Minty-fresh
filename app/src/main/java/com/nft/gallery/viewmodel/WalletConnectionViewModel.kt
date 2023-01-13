@@ -13,7 +13,6 @@ import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,96 +34,47 @@ class WalletConnectionViewModel @Inject constructor(
     private val persistenceUseCase: PersistenceUseCase
 ) : ViewModel() {
 
-    private fun WalletViewState.updateViewState() {
-        _state.update { this }
-    }
-
     private val _state = MutableStateFlow(WalletViewState())
 
     val viewState: StateFlow<WalletViewState>
         get() = _state
 
-    fun loadConnection() {
-        val connection = persistenceUseCase.getWalletConnection()
-        if (connection is Connected) {
-            _state.value.copy(
-                isLoading = true,
-                canTransact = true,
-                userAddress = connection.publicKey.toBase58(),
-                userLabel = connection.accountLabel,
-            ).updateViewState()
+    init {
+        viewModelScope.launch {
+            persistenceUseCase.walletDetails
+                .collect { walletDetails ->
+                    val detailState = when (walletDetails) {
+                        is Connected -> {
+                            WalletViewState(
+                                isLoading = false,
+                                canTransact = true,
+                                solBalance = 0.0,
+                                userAddress = walletDetails.publicKey.toBase58(),
+                                userLabel = walletDetails.accountLabel
+                            )
+                        }
+                        is NotConnected -> WalletViewState()
+                    }
+
+                    _state.value = detailState
+                }
         }
     }
 
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
-            val conn = persistenceUseCase.getWalletConnection()
+            walletAdapter.transact(sender) {
+                val authed = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
 
-            val currentConn = walletAdapter.transact(sender) {
-                when (conn) {
-                    is NotConnected -> {
-                        val authed = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
-                        Connected(
-                            PublicKey(authed.publicKey),
-                            authed.accountLabel ?: "",
-                            authed.authToken
-                        )
-                    }
-                    is Connected -> {
-                        try {
-                            val reauthed =
-                                reauthorize(solanaUri, iconUri, identityName, conn.authToken)
-                            Connected(
-                                PublicKey(reauthed.publicKey),
-                                reauthed.accountLabel ?: "",
-                                reauthed.authToken
-                            )
-                        } catch (exception: Exception) {
-                            persistenceUseCase.clearConnection()
-                            persistenceUseCase.getWalletConnection()
-                        }
-                    }
-                }
+                persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
             }
 
-            if (currentConn is Connected) {
-                persistenceUseCase.persistConnection(
-                    currentConn.publicKey,
-                    currentConn.accountLabel,
-                    currentConn.authToken
-                )
-
-                _state.value.copy(
-                    isLoading = false,
-                    canTransact = false,
-                    userAddress = currentConn.publicKey.toBase58(),
-                    userLabel = currentConn.accountLabel,
-                ).updateViewState()
-            } else {
-                _state.value.copy(
-                    isLoading = false,
-                    canTransact = true,
-                    solBalance = 0.0,
-                    userAddress = "",
-                    userLabel = ""
-                ).updateViewState()
-            }
         }
     }
 
-    fun disconnect(sender: ActivityResultSender) {
+    fun disconnect() {
         viewModelScope.launch {
-            val conn = persistenceUseCase.getWalletConnection()
-
-            if (conn is Connected) {
-                walletAdapter.transact(sender) {
-                    deauthorize(conn.authToken)
-                }
-
-                persistenceUseCase.clearConnection()
-
-                WalletViewState().updateViewState()
-            }
+            persistenceUseCase.clearConnection()
         }
     }
 }
