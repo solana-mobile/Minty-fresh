@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +25,7 @@ import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.core.PublicKey
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -34,18 +34,12 @@ fun MyMintPage(
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     navigateToDetails: (Int) -> Unit,
 ) {
-    val uiState = myMintsViewModel.viewState.collectAsState().value
     val walletState = walletConnectionViewModel.viewState.collectAsState().value
+    val uiState = myMintsViewModel.viewState
+        .getOrDefault(walletState.userAddress, MutableStateFlow(listOf()))
+        .collectAsState().value
 
-    LaunchedEffect(myMintsViewModel.wasLaunched) {
-        if (!myMintsViewModel.wasLaunched) {
-            if (walletState.userAddress.isNotEmpty()) {
-                myMintsViewModel.loadMyMints(
-                    PublicKey(walletState.userAddress)
-                )
-            }
-        }
-    }
+    myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
