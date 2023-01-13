@@ -1,7 +1,16 @@
 package com.nft.gallery.usecase
 
+import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import com.portto.solana.web3.PublicKey
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 sealed class WalletConnection
@@ -14,9 +23,27 @@ data class Connected(
     val authToken: String
 ): WalletConnection()
 
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
+
 class PersistenceUseCase @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val sharedPreferences: SharedPreferences
 ) {
+
+    val EXAMPLE_COUNTER = intPreferencesKey("example_counter")
+
+    val exampleCounterFlow: Flow<Int> =
+        context.dataStore.data
+            .map { preferences ->
+                preferences[EXAMPLE_COUNTER] ?: 0
+            }
+
+    suspend fun incrementCounter() {
+        context.dataStore.edit { settings ->
+            val currentCounterValue = settings[EXAMPLE_COUNTER] ?: 0
+            settings[EXAMPLE_COUNTER] = currentCounterValue + 1
+        }
+    }
 
     private var connection: WalletConnection = NotConnected
 
