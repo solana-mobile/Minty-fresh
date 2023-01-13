@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -69,12 +68,6 @@ fun ScaffoldScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    LaunchedEffect(
-                        key1 = Unit,
-                        block = {
-                            walletConnectionViewModel.loadConnection()
-                        }
-                    )
                     Button(
                         shape = RoundedCornerShape(corner = CornerSize(24.dp)),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -85,7 +78,7 @@ fun ScaffoldScreen(
                             if (viewState.userAddress.isEmpty()) {
                                 walletConnectionViewModel.connect(activityResultSender)
                             } else {
-                                walletConnectionViewModel.disconnect(activityResultSender)
+                                walletConnectionViewModel.disconnect()
                             }
                         }
                     ) {
