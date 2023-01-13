@@ -2,7 +2,6 @@ package com.nft.gallery.viewmodel
 
 import android.app.Application
 import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.metaplex.lib.drivers.rpc.RpcRequest
@@ -10,7 +9,8 @@ import com.metaplex.lib.drivers.solana.Commitment
 import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
 import com.metaplex.lib.drivers.solana.TransactionOptions
-import com.metaplex.lib.experimental.jen.tokenmetadata.*
+import com.metaplex.lib.experimental.jen.tokenmetadata.Creator
+import com.metaplex.lib.experimental.jen.tokenmetadata.TokenMetadataInstructions
 import com.metaplex.lib.extensions.confirmTransaction
 import com.metaplex.lib.extensions.signSendAndConfirm
 import com.metaplex.lib.modules.nfts.NftClient
@@ -23,7 +23,8 @@ import com.nft.gallery.metaplex.MetaplexHttpDriver
 import com.nft.gallery.metaplex.MobileWalletIdentityWrapper
 import com.nft.gallery.repository.MetadataUploadRepository
 import com.nft.gallery.repository.StorageUploadRepository
-import com.solana.core.*
+import com.solana.core.HotAccount
+import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
@@ -49,11 +50,6 @@ data class PerformMintViewState(
     val mintingInProgress: Boolean = false,
     val mintState: MintState = MintState.NONE
 )
-
-val solanaUri = Uri.parse("https://solana.com")
-val iconUri = Uri.parse("favicon.ico")
-val identityName = "Solana"
-
 val rpcUrl = BuildConfig.SOLANA_RPC_URL
 
 @HiltViewModel

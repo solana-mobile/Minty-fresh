@@ -148,10 +148,7 @@ fun MintDetailsPage(
                     ),
                     keyboardActions = KeyboardActions(
                         onNext = { focusRequester.requestFocus() }
-                    ),
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .fillMaxWidth()
+                    )
                 )
                 Text(
                     modifier = Modifier
