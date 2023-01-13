@@ -19,6 +19,7 @@ import com.metaplex.lib.modules.nfts.models.Metadata
 import com.metaplex.lib.programs.token_metadata.MasterEditionAccount
 import com.metaplex.lib.programs.token_metadata.accounts.MetadataAccount
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.constant.mintyFreshCollectionName
 import com.nft.gallery.metaplex.MetaplexHttpDriver
 import com.nft.gallery.metaplex.MobileWalletIdentityWrapper
 import com.nft.gallery.repository.MetadataUploadRepository
@@ -117,14 +118,14 @@ class PerformMintViewModel @Inject constructor(
                         val existingCollection =
                             client.findAllByOwner(identityDriver.publicKey).getOrThrow().run {
                                 find {
-                                    it?.name == "Minty Fresh" && it.collection == null
+                                    it?.name == mintyFreshCollectionName && it.collection == null
                                 }
                             }
 
                         val collection: PublicKey = if (existingCollection == null) {
                             val collection = HotAccount()
                             val collectionMetadata = Metadata(
-                                name = "Minty Fresh",
+                                name = mintyFreshCollectionName,
                                 uri = "",
                                 sellerFeeBasisPoints = 0
                             )

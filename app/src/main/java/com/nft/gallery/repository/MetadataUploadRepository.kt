@@ -8,6 +8,7 @@
 package com.nft.gallery.repository
 
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.constant.mintyFreshCollectionName
 import com.nft.gallery.endpoints.NftStorageEndpoints
 import com.nft.gallery.metaplex.*
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ class MetadataUploadRepository @Inject constructor(
                     description = description,
                     image = imageUrl,
                     attributes = listOf(
-                        JsonMetadata.Attribute("Minty Fresh", "true")
+                        JsonMetadata.Attribute(mintyFreshCollectionName, "true")
                     ),
                     properties = JsonMetadata.Properties(
                         files = listOf(

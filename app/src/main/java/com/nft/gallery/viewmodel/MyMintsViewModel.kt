@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.nft.gallery.constant.mintyFreshCollectionName
 import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.solana.core.PublicKey
@@ -29,9 +30,6 @@ class MyMintsViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "MyMintsViewModel"
-
-        // TODO real name and shared constant between the mint and the fetch
-        private const val MINTY_NFT_COLLECTION_NAME = "Spaces NFT List"
     }
 
     private var _viewState = MutableStateFlow(mutableListOf<MyMint>())
@@ -49,7 +47,7 @@ class MyMintsViewModel @Inject constructor(
             wasLoaded = true
             val mintsUseCase = MyMintsUseCase(publicKey)
             try {
-                val nfts = mintsUseCase.getAllNftsForCollectionName(MINTY_NFT_COLLECTION_NAME)
+                val nfts = mintsUseCase.getAllNftsForCollectionName(mintyFreshCollectionName)
                 Log.d(TAG, "Found ${nfts.size} NFTs")
                 nfts.forEach { nft ->
                     val metadata = mintsUseCase.getNftsMetadata(nft)
