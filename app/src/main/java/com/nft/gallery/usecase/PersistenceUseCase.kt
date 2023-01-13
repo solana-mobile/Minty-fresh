@@ -19,8 +19,6 @@ class PersistenceUseCase @Inject constructor(
     private val dataStoreRepository: PrefsDataStoreRepository,
 ) {
 
-    private var connection: UserWalletDetails = NotConnected
-
     val walletDetails = combine(
         dataStoreRepository.publicKeyFlow,
         dataStoreRepository.accountLabelFlow,
@@ -43,12 +41,6 @@ class PersistenceUseCase @Inject constructor(
 
     suspend fun clearConnection() {
         dataStoreRepository.clearWalletDetails()
-    }
-
-    companion object {
-        const val PUBKEY_KEY = "stored_pubkey"
-        const val ACCOUNT_LABEL = "stored_account_label"
-        const val AUTH_TOKEN_KEY = "stored_auth_token"
     }
 
 }
