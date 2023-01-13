@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,11 +36,13 @@ fun MyMintPage(
     navigateToDetails: (Int) -> Unit,
 ) {
     val walletState = walletConnectionViewModel.viewState.collectAsState().value
-    val uiState = myMintsViewModel.viewState
-        .getOrDefault(walletState.userAddress, MutableStateFlow(listOf()))
-        .collectAsState().value
+    val uiState = myMintsViewModel.viewState.collectAsState().value
 
-    myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
+    LaunchedEffect(walletState) {
+        if (!myMintsViewModel.wasLoaded) {
+            myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

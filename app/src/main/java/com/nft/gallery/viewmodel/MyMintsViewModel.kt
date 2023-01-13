@@ -34,18 +34,19 @@ class MyMintsViewModel @Inject constructor(
         private const val MINTY_NFT_COLLECTION_NAME = "Spaces NFT List"
     }
 
-    private var _viewState: MutableMap<String, MutableStateFlow<List<MyMint>>> = mutableMapOf()
+    private var _viewState = MutableStateFlow(mutableListOf<MyMint>())
 
-    val viewState = mutableMapOf<String, StateFlow<List<MyMint>>>()
+    val viewState = _viewState
+
+    var wasLoaded = false
 
     fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
-        if (publicKey.toString().isEmpty() || (!forceRefresh && _viewState.containsKey(publicKey.toString()))) {
+        if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
             return
         }
 
-        _viewState.putIfAbsent(publicKey.toString(), MutableStateFlow(mutableListOf()))
-
         viewModelScope.launch {
+            wasLoaded = true
             val mintsUseCase = MyMintsUseCase(publicKey)
             try {
                 val nfts = mintsUseCase.getAllNftsForCollectionName(MINTY_NFT_COLLECTION_NAME)
@@ -53,7 +54,7 @@ class MyMintsViewModel @Inject constructor(
                 nfts.forEach { nft ->
                     val metadata = mintsUseCase.getNftsMetadata(nft)
                     Log.d(TAG, "Fetched ${nft.name} NFT metadata")
-                    _viewState[publicKey.toString()]?.getAndUpdate {
+                    _viewState.getAndUpdate {
                         it.toMutableList().apply {
                             myMintsMapper.map(nft, metadata)?.let { myMint ->
                                 add(myMint)
