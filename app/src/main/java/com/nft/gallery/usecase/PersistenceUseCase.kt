@@ -5,24 +5,24 @@ import com.nft.gallery.repository.PrefsDataStoreRepository
 import com.portto.solana.web3.PublicKey
 import javax.inject.Inject
 
-sealed class WalletConnection
+sealed class UserWalletDetails
 
-object NotConnected : WalletConnection()
+object NotConnected : UserWalletDetails()
 
 data class Connected(
     val publicKey: PublicKey,
     val accountLabel: String,
     val authToken: String
-): WalletConnection()
+): UserWalletDetails()
 
 class PersistenceUseCase @Inject constructor(
     private val dataStoreRepository: PrefsDataStoreRepository,
     private val sharedPreferences: SharedPreferences
 ) {
 
-    private var connection: WalletConnection = NotConnected
+    private var connection: UserWalletDetails = NotConnected
 
-    fun getWalletConnection(): WalletConnection {
+    fun getWalletConnection(): UserWalletDetails {
         return when(connection) {
             is Connected -> connection
             is NotConnected -> {
@@ -41,22 +41,14 @@ class PersistenceUseCase @Inject constructor(
         }
     }
 
-    fun persistConnection(pubKey: PublicKey, accountLabel: String, token: String) {
-        sharedPreferences.edit().apply {
-            putString(PUBKEY_KEY, pubKey.toBase58())
-            putString(ACCOUNT_LABEL, accountLabel)
-            putString(AUTH_TOKEN_KEY, token)
-        }.apply()
+    suspend fun persistConnection(pubKey: PublicKey, accountLabel: String, token: String) {
+        dataStoreRepository.updateWalletDetails(pubKey.toBase58(), accountLabel, token)
 
         connection = Connected(pubKey, accountLabel, token)
     }
 
-    fun clearConnection() {
-        sharedPreferences.edit().apply {
-            putString(PUBKEY_KEY, "")
-            putString(ACCOUNT_LABEL, "")
-            putString(AUTH_TOKEN_KEY, "")
-        }.apply()
+    suspend fun clearConnection() {
+        dataStoreRepository.clearWalletDetails()
 
         connection = NotConnected
     }

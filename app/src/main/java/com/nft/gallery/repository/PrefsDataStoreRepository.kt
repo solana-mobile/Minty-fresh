@@ -43,6 +43,10 @@ class PrefsDataStoreRepository @Inject constructor(
         }
     }
 
+    suspend fun clearWalletDetails() {
+        context.dataStore.edit { it.clear() }
+    }
+
     companion object {
         val pubkeyPref = stringPreferencesKey("public_key")
         val accountLabelPref = stringPreferencesKey("account_label")
