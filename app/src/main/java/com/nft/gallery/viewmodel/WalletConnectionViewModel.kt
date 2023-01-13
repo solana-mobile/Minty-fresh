@@ -29,6 +29,13 @@ data class WalletViewState(
     val userLabel: String = "",
 )
 
+data class MyMint(
+    val id: String,
+    val name: String?,
+    val description: String?,
+    val mediaUrl: String,
+)
+
 val solanaUri: Uri = Uri.parse("https://solana.com")
 val iconUri: Uri = Uri.parse("favicon.ico")
 const val identityName = "Solana"
@@ -57,7 +64,6 @@ class WalletConnectionViewModel @Inject constructor(
     }
 
     private var _mintState: MutableStateFlow<List<MyMint>> = MutableStateFlow(listOf())
-    private var _wasLaunched = false
 
     val mintState = _mintState.asStateFlow()
 
@@ -129,6 +135,7 @@ class WalletConnectionViewModel @Inject constructor(
                     userAddress = "",
                     userLabel = ""
                 ).updateViewState()
+                _mintState.update { listOf() }
             }
         }
     }
@@ -143,6 +150,7 @@ class WalletConnectionViewModel @Inject constructor(
                 }
 
                 persistenceUseCase.clearConnection()
+                _mintState.update { listOf() }
 
                 WalletViewState().updateViewState()
             }
