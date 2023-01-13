@@ -1,7 +1,7 @@
 package com.nft.gallery.usecase
 
 import com.nft.gallery.repository.PrefsDataStoreRepository
-import com.portto.solana.web3.PublicKey
+import com.solana.core.PublicKey
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ class PersistenceUseCase @Inject constructor(
         dataStoreRepository.accountLabelFlow,
         dataStoreRepository.authTokenFlow)
     { pubKey, label, authToken ->
-        if (pubKey.isEmpty() && label.isEmpty() && authToken.isEmpty()) {
+        if (pubKey.isEmpty() || label.isEmpty() || authToken.isEmpty()) {
             NotConnected
         } else {
             Connected(
