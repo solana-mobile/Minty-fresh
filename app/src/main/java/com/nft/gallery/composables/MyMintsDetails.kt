@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -80,11 +81,14 @@ fun MyMintsDetails(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
+                val configuration = LocalConfiguration.current
+                val imageHeight = configuration.screenHeightDp.dp * 0.4f
                 GlideImage(
                     modifier = Modifier
+                        .height(imageHeight)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
-                        .background(color = MaterialTheme.colorScheme.surface),
+                        .background(color = MaterialTheme.colorScheme.background),
                     model = uiState[page].mediaUrl,
                     contentDescription = "Detail of My Mint",
                     contentScale = ContentScale.Fit,
