@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -27,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.viewmodel.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
@@ -37,9 +40,13 @@ import com.nft.gallery.viewmodel.PerformMintViewModel
 fun MintDetailsPage(
     imagePath: String,
     navigateUp: () -> Boolean = { true },
-    performMintViewModel: PerformMintViewModel = hiltViewModel()
+    performMintViewModel: PerformMintViewModel = hiltViewModel(),
+    intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
+
+    if (uiState.mintState == MintState.COMPLETE)
+        navigateUp()
 
     Scaffold(
         topBar = {
@@ -195,14 +202,35 @@ fun MintDetailsPage(
                         ),
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
+                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
                     onClick = {
-                        performMintViewModel.performMint(title.value, description.value, imagePath)
+                        performMintViewModel.performMint(intentSender, title.value, description.value, imagePath)
                     }
                 ) {
                     Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
                 }
             }
+
+            if (uiState.mintState != MintState.NONE)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .padding(padding)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                        .background(Color.hsv(0f, 0f, 0f, .8f))
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Text(text = when (uiState.mintState) {
+                        MintState.UPLOADING_FILE -> "Uploading file..."
+                        MintState.CREATING_METADATA -> "Creating NFT metadata..."
+                        MintState.MINTING -> "Minting your NFT..."
+                        else -> ""
+                    })
+                    CircularProgressIndicator()
+                }
         },
         containerColor = MaterialTheme.colorScheme.background
     )

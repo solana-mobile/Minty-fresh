@@ -19,7 +19,10 @@ class StorageUploadRepository @Inject constructor(
 
             val result = endpoints.uploadFile(reqBody, token)
 
-            "https://${result.value.cid}${ipfsUrlSuffix}"
+            (result as? Map<*, *>)?.let { json ->
+                val cid1 = (json["value"] as? Map<*, *>)?.get("cid")
+                "https://${cid1}${ipfsUrlSuffix}"
+            } ?: throw Error("StorageUploadRepository: Failed to deserialize response: $result")
         }
     }
 

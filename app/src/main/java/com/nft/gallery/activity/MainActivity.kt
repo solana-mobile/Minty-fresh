@@ -5,6 +5,8 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -21,8 +23,11 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nft.gallery.composables.*
 import com.nft.gallery.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
+import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import javax.annotation.concurrent.GuardedBy
 
 
 @AndroidEntryPoint
@@ -101,7 +106,17 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                     NavController.KEY_DEEP_LINK_INTENT
                                 )
                             }
-                        val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri?.toString()
+                        val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri
+                        val clipDataPath = clipDataUri?.let {
+                            val input = contentResolver.openInputStream(clipDataUri)
+                            val file = File.createTempFile("shared", ".image", cacheDir)
+
+                            input?.let {
+                                file.writeBytes(input.readBytes())
+                                input.close()
+                                file.toPath()
+                            }
+                        }?.toString()
 
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MintDetail.route,
@@ -109,10 +124,17 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                             navController = animNavController
                         ) {
                             MintDetailsPage(
-                                imagePath = imagePath ?: clipDataUri
+                                imagePath = imagePath ?: clipDataPath
                                     ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                                 navigateUp = {
                                     animNavController.navigateUp()
+                                },
+                                intentSender = object : ActivityResultSender {
+                                    override fun launch(intent: Intent) {
+                                        intentSender.startActivityForResult(intent) {
+                                            // ???
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -145,6 +167,34 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private val activityResultLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            intentSender.onActivityComplete()
+        }
+
+    private val intentSender = object : PerformMintViewModel.StartActivityForResultSender {
+        @GuardedBy("this")
+        private var callback: (() -> Unit)? = null
+
+        override fun startActivityForResult(
+            intent: Intent,
+            onActivityCompleteCallback: () -> Unit
+        ) {
+            synchronized(this) {
+                check(callback == null) { "Received an activity start request while another is pending" }
+                callback = onActivityCompleteCallback
+            }
+            activityResultLauncher.launch(intent)
+        }
+
+        fun onActivityComplete() {
+            synchronized(this) {
+                callback?.let { it() }
+                callback = null
             }
         }
     }
