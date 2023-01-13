@@ -26,6 +26,7 @@ import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.core.PublicKey
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -34,16 +35,12 @@ fun MyMintPage(
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     navigateToDetails: (Int) -> Unit,
 ) {
-    val uiState = myMintsViewModel.viewState.collectAsState().value
     val walletState = walletConnectionViewModel.viewState.collectAsState().value
+    val uiState = myMintsViewModel.viewState.collectAsState().value
 
-    LaunchedEffect(myMintsViewModel.wasLaunched) {
-        if (!myMintsViewModel.wasLaunched) {
-            if (walletState.userAddress.isNotEmpty()) {
-                myMintsViewModel.loadMyMints(
-                    PublicKey(walletState.userAddress)
-                )
-            }
+    LaunchedEffect(walletState) {
+        if (!myMintsViewModel.wasLoaded) {
+            myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
         }
     }
 

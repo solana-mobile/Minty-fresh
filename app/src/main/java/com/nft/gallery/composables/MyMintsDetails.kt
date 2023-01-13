@@ -7,12 +7,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +25,7 @@ import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.core.PublicKey
+import kotlinx.coroutines.flow.MutableStateFlow
 
 @OptIn(
     ExperimentalPagerApi::class,
@@ -38,19 +39,11 @@ fun MyMintsDetails(
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel()
 ) {
-    val uiState = myMintsViewModel.viewState.collectAsState().value
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val walletState = walletConnectionViewModel.viewState.collectAsState().value
+    val uiState = myMintsViewModel.viewState.collectAsState().value
 
-    LaunchedEffect(myMintsViewModel.wasLaunched) {
-        if (!myMintsViewModel.wasLaunched) {
-            if (walletState.userAddress.isNotEmpty()) {
-                myMintsViewModel.loadMyMints(
-                    PublicKey(walletState.userAddress)
-                )
-            }
-        }
-    }
+    myMintsViewModel.loadMyMints(PublicKey(walletState.userAddress))
 
     Scaffold(
         topBar = {
@@ -88,11 +81,14 @@ fun MyMintsDetails(
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
+                val configuration = LocalConfiguration.current
+                val imageHeight = configuration.screenHeightDp.dp * 0.4f
                 GlideImage(
                     modifier = Modifier
+                        .height(imageHeight)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
-                        .background(color = MaterialTheme.colorScheme.surface),
+                        .background(color = MaterialTheme.colorScheme.background),
                     model = uiState[page].mediaUrl,
                     contentDescription = "Detail of My Mint",
                     contentScale = ContentScale.Fit,
