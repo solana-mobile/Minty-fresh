@@ -3,6 +3,7 @@ package com.nft.gallery.activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -14,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.*
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -26,15 +28,26 @@ import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.annotation.concurrent.GuardedBy
-
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), ActivityResultSender {
 
     override fun launch(intent: Intent) {
-        startActivityForResult(intent, 0)
+        try {
+            startActivityForResult(intent, 0)
+        } catch (exception: Exception) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                Toast.makeText(
+                    this@MainActivity,
+                    "You need to install a Solana Wallet first (Solflare or Phantom)",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
     @OptIn(
@@ -125,7 +138,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ) {
                             MintDetailsPage(
                                 imagePath = imagePath ?: clipDataPath
-                                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                                ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                                 navigateUp = {
                                     animNavController.navigateUp()
                                 },
