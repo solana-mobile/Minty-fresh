@@ -11,7 +11,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId 'com.nft.gallery'
+        applicationId 'com.solana.mintyfresh'
         minSdk 26
         targetSdk 33
         versionCode 1
