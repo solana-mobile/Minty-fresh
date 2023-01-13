@@ -24,7 +24,7 @@ class PersistenceUseCase @Inject constructor(
         dataStoreRepository.accountLabelFlow,
         dataStoreRepository.authTokenFlow)
     { pubKey, label, authToken ->
-        if (pubKey == "" || label == "" || authToken == "") {
+        if (pubKey.isEmpty() || label.isEmpty() || authToken.isEmpty()) {
             NotConnected
         } else {
             Connected(
