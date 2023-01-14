@@ -95,6 +95,7 @@ dependencies {
     implementation project(path: ':common')
 
     implementation 'com.google.dagger:hilt-android-gradle-plugin:2.44.2'
+    implementation 'androidx.room:room-ktx:2.4.3'
     kapt 'com.google.dagger:hilt-compiler:2.44.2'
     implementation 'com.google.dagger:dagger:2.44.2'
     kapt 'com.google.dagger:dagger-compiler:2.44.2'

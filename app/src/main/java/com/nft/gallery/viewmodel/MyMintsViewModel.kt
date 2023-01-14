@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.constant.mintyFreshCollectionName
+import com.nft.gallery.diskcache.MyMint
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.usecase.PersistenceUseCase
@@ -15,13 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-data class MyMint(
-    val id: String,
-    val name: String?,
-    val description: String?,
-    val mediaUrl: String,
-)
 
 @HiltViewModel
 class MyMintsViewModel @Inject constructor(
