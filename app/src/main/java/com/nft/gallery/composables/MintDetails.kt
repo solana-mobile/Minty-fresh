@@ -72,7 +72,6 @@ fun MintDetailsPage(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-
             }
         },
         content = { padding ->
@@ -94,6 +93,7 @@ fun MintDetailsPage(
                             MintState.UPLOADING_FILE -> "Uploading file..."
                             MintState.CREATING_METADATA -> "Processing..."
                             MintState.MINTING -> "Minting..."
+                            MintState.SIGNING -> "Requesting wallet signature..."
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium

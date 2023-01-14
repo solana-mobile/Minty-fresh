@@ -30,6 +30,7 @@ import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,6 +47,7 @@ enum class MintState {
     UPLOADING_FILE,
     CREATING_METADATA,
     MINTING,
+    SIGNING,
     COMPLETE
 }
 
@@ -122,6 +124,12 @@ class PerformMintViewModel @Inject constructor(
                                     it?.name == mintyFreshCollectionName && it.collection == null
                                 }
                             }
+
+                        //A bit of a fake "delay" so users have a chance to see the tx signing coming via the UI
+                        _viewState.update {
+                            _viewState.value.copy(mintState = MintState.SIGNING)
+                        }
+                        delay(700)
 
                         val collection: PublicKey = if (existingCollection == null) {
                             val collection = HotAccount()
