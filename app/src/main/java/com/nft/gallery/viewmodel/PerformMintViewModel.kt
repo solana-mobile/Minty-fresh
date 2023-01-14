@@ -42,13 +42,16 @@ import javax.inject.Inject
 import kotlin.math.pow
 
 enum class MintState {
-    NONE, UPLOADING_FILE, CREATING_METADATA, MINTING, COMPLETE
+    NONE,
+    UPLOADING_FILE,
+    CREATING_METADATA,
+    MINTING,
+    COMPLETE
 }
 
 data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
-    val mintingInProgress: Boolean = false,
-    val mintState: MintState = MintState.NONE
+    val mintState: MintState = MintState.UPLOADING_FILE
 )
 val rpcUrl = BuildConfig.SOLANA_RPC_URL
 
@@ -83,7 +86,6 @@ class PerformMintViewModel @Inject constructor(
 
             _viewState.update {
                 _viewState.value.copy(
-                    mintingInProgress = true,
                     mintState = MintState.MINTING
                 )
             }
@@ -177,7 +179,6 @@ class PerformMintViewModel @Inject constructor(
 
                         _viewState.update {
                             _viewState.value.copy(
-                                mintingInProgress = false,
                                 mintState = MintState.COMPLETE
                             )
                         }
