@@ -51,14 +51,13 @@ class MyMintsViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            if (!forceRefresh) {
-                val cachedNfts = myMintsRepository.get()
-                if (cachedNfts.isNotEmpty()) {
-                    _viewState.getAndUpdate {
-                        cachedNfts.toMutableList()
-                    }
-                    return@launch
+            val cachedNfts = myMintsRepository.get()
+            if (cachedNfts.isNotEmpty()) {
+                _viewState.getAndUpdate {
+                    cachedNfts.toMutableList()
                 }
+                if (!forceRefresh && cachedNfts.isNotEmpty())
+                    return@launch
             }
 
             wasLoaded = true
