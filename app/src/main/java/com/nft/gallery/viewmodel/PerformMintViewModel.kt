@@ -53,7 +53,7 @@ enum class MintState {
 
 data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
-    val mintState: MintState = MintState.UPLOADING_FILE
+    val mintState: MintState = MintState.NONE
 )
 val rpcUrl = BuildConfig.SOLANA_RPC_URL
 
