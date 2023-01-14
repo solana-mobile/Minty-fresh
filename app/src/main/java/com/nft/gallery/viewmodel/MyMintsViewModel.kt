@@ -73,11 +73,13 @@ class MyMintsViewModel @Inject constructor(
 
                     Log.d(TAG, "Fetched ${nft.name} NFT metadata")
                     _viewState.getAndUpdate {
-                        it.toMutableList().apply {
+                        val myNfts = it.toMutableList().apply {
                             myMintsMapper.map(nft, metadata)?.let { myMint ->
                                 add(myMint)
                             }
                         }
+                        myMintsRepository.insertAll(myNfts)
+                        myNfts
                     }
                 }
             } catch (e: Exception) {
