@@ -13,4 +13,7 @@ interface MyMintsDao {
 
     @Query("SELECT * FROM MyMint")
     suspend fun get(): List<MyMint>
+
+    @Query("DELETE FROM MyMint")
+    suspend fun deleteAll()
 }

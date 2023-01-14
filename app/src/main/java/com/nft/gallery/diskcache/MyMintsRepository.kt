@@ -14,4 +14,5 @@ class MyMintsRepository @Inject constructor(
 
     suspend fun get() = myMintsDatabaseProvider.roomDb.myMintsDao().get()
 
+    suspend fun deleteAll() = myMintsDatabaseProvider.roomDb.myMintsDao().deleteAll()
 }
