@@ -2,7 +2,7 @@ package com.nft.gallery.viewmodel.mapper
 
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT
-import com.nft.gallery.viewmodel.viewstate.MyMint
+import com.nft.gallery.diskcache.MyMint
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import javax.inject.Inject
 import javax.inject.Singleton

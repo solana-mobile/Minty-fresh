@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.constant.mintyFreshCollectionName
+import com.nft.gallery.diskcache.MyMint
+import com.nft.gallery.diskcache.MyMintsRepository
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.usecase.PersistenceUseCase
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class MyMintsViewModel @Inject constructor(
     application: Application,
     private val myMintsMapper: MyMintsMapper,
-    private val persistenceUseCase: PersistenceUseCase
+    private val persistenceUseCase: PersistenceUseCase,
+    private val myMintsRepository: MyMintsRepository
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<MyMintsViewState> =
@@ -59,6 +62,15 @@ class MyMintsViewModel @Inject constructor(
                 _viewState.value = myMintsMapper.mapLoading()
             }
 
+            val cachedNfts = myMintsRepository.get()
+            if (cachedNfts.isNotEmpty()) {
+                _viewState.getAndUpdate {
+                    cachedNfts.toMutableList()
+                }
+                if (!forceRefresh && cachedNfts.isNotEmpty())
+                    return@launch
+            }
+
             wasLoaded = true
             val mintsUseCase = MyMintsUseCase(publicKey)
 
@@ -74,16 +86,15 @@ class MyMintsViewModel @Inject constructor(
                     nfts.forEachIndexed { index, nft ->
                         val metadata = mintsUseCase.getNftsMetadata(nft)
 
-                        Log.d(TAG, "Fetched ${nft.name} NFT metadata")
-                        _viewState.getAndUpdate { myMintsViewState ->
-                            MyMintsViewState.Loaded(
-                                myMintsViewState.myMints.toMutableList().apply {
-                                    myMintsMapper.map(nft, metadata)?.let { myMint ->
-                                        this[index] = myMint
-                                    }
-                                }
-                            )
+                    Log.d(TAG, "Fetched ${nft.name} NFT metadata")
+                    _viewState.getAndUpdate {
+                        val myNfts = myMintsViewState.myMints.apply {
+                            myMintsMapper.map(nft, metadata)?.let { myMint ->
+                                this[index] = myMint
+                            }
                         }
+                        myMintsRepository.insertAll(myNfts)
+                        MyMintsViewState.Loaded(myNfts)
                     }
                 }
             } catch (e: Exception) {
