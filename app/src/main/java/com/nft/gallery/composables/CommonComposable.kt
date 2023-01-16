@@ -94,3 +94,29 @@ fun PermissionView(
         emptyView(permissionState)
     }
 }
+
+@Composable
+fun ErrorView(
+    text: String,
+    buttonText: String,
+    onButtonClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+        Button(
+            onClick = {
+                onButtonClick()
+            },
+            content = {
+                Text(buttonText)
+            }
+        )
+    }
+}

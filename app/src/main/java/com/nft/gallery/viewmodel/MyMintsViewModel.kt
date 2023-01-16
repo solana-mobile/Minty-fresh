@@ -32,11 +32,15 @@ class MyMintsViewModel @Inject constructor(
     var wasLoaded = false
 
     init {
+        loadMyMints()
+    }
+
+    fun loadMyMints(forceRefresh: Boolean = false) {
         viewModelScope.launch {
             persistenceUseCase.walletDetails
                 .collect {
                     if (it is Connected) {
-                        loadMyMints(it.publicKey)
+                        loadMyMints(it.publicKey, forceRefresh)
                     } else {
                         _viewState.value =
                             MyMintsViewState.Empty("Connect your wallet to see your mints")
@@ -45,12 +49,16 @@ class MyMintsViewModel @Inject constructor(
         }
     }
 
-    private fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
+    private fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean) {
         if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
             return
         }
 
         viewModelScope.launch {
+            if (forceRefresh) {
+                _viewState.value = myMintsMapper.mapLoading()
+            }
+
             wasLoaded = true
             val mintsUseCase = MyMintsUseCase(publicKey)
 

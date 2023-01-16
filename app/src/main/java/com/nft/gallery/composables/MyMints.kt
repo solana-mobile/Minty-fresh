@@ -57,7 +57,12 @@ fun MyMintPage(
 
         when (uiState) {
             is MyMintsViewState.Error -> {
-                EmptyView(uiState.error.message ?: "An error happened while fetching your Mints")
+                ErrorView(
+                    uiState.error.message ?: "An error happened while fetching your Mints",
+                    "Retry",
+                ) {
+                    myMintsViewModel.loadMyMints(forceRefresh = true)
+                }
             }
             is MyMintsViewState.Empty -> {
                 EmptyView(uiState.message)
@@ -76,7 +81,10 @@ fun MyMintPage(
                                 .width(76.dp)
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(color = MaterialTheme.colorScheme.surface)
-                                .loadingPlaceholder(isLoading = uiState is MyMintsViewState.Loading, cornerRoundedShapeSize = 8.dp)
+                                .loadingPlaceholder(
+                                    isLoading = uiState is MyMintsViewState.Loading,
+                                    cornerRoundedShapeSize = 8.dp
+                                )
                                 .clickable {
                                     navigateToDetails(index)
                                 },
