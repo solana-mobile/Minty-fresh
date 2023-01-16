@@ -80,6 +80,7 @@ class MyMintsViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e(TAG, e.toString())
+                _viewState.value = MyMintsViewState.Error(e)
             }
         }
     }
