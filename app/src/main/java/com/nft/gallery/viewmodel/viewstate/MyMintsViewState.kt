@@ -1,11 +1,6 @@
 package com.nft.gallery.viewmodel.viewstate
 
-data class MyMint(
-    val id: String,
-    val name: String?,
-    val description: String?,
-    val mediaUrl: String,
-)
+import com.nft.gallery.diskcache.MyMint
 
 sealed class MyMintsViewState(
     val myMints: List<MyMint> = listOf(),

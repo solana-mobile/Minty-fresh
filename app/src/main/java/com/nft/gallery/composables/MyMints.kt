@@ -22,7 +22,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
-import com.nft.gallery.viewmodel.viewstate.MyMint
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 
 @OptIn(ExperimentalGlideComposeApi::class)

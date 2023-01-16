@@ -20,7 +20,7 @@ import java.net.URL
 class NFTRepository(private val publicKey: PublicKey) {
 
     private val connection = SolanaConnectionDriver(
-        JdkRpcDriver(URL("https://api.devnet.solana.com")),
+        JdkRpcDriver(URL("https://rpc.helius.xyz/?api-key=b69b0dc6-9e7b-4da5-9931-63f6956c9aec")),
         TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
     )
     private val identityDriver = ReadOnlyIdentityDriver(publicKey, connection)

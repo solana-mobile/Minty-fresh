@@ -65,7 +65,7 @@ class MyMintsViewModel @Inject constructor(
             val cachedNfts = myMintsRepository.get()
             if (cachedNfts.isNotEmpty()) {
                 _viewState.getAndUpdate {
-                    cachedNfts.toMutableList()
+                    MyMintsViewState.Loaded(cachedNfts)
                 }
                 if (!forceRefresh && cachedNfts.isNotEmpty())
                     return@launch
@@ -86,15 +86,20 @@ class MyMintsViewModel @Inject constructor(
                     nfts.forEachIndexed { index, nft ->
                         val metadata = mintsUseCase.getNftsMetadata(nft)
 
-                    Log.d(TAG, "Fetched ${nft.name} NFT metadata")
-                    _viewState.getAndUpdate {
-                        val myNfts = myMintsViewState.myMints.apply {
-                            myMintsMapper.map(nft, metadata)?.let { myMint ->
-                                this[index] = myMint
+                        Log.d(TAG, "Fetched ${nft.name} NFT metadata")
+                        _viewState.getAndUpdate { myMintsViewState ->
+                            val myNfts = myMintsViewState.myMints.toMutableList().apply {
+                                myMintsMapper.map(nft, metadata)?.let { myMint ->
+                                    this[index] = myMint
+                                }
                             }
+
+                            if (index == nfts.size - 1) {
+                                // Inserting in database when we fetched all the NFTs
+                                myMintsRepository.insertAll(myNfts)
+                            }
+                            MyMintsViewState.Loaded(myNfts)
                         }
-                        myMintsRepository.insertAll(myNfts)
-                        MyMintsViewState.Loaded(myNfts)
                     }
                 }
             } catch (e: Exception) {

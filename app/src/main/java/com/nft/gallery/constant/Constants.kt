@@ -1,3 +1,3 @@
 package com.nft.gallery.constant
 
-const val mintyFreshCollectionName = "Minty Fresh"
+const val mintyFreshCollectionName = "Spaces NFT List"
