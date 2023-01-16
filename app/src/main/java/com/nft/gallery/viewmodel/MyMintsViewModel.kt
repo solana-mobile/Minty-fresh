@@ -45,7 +45,7 @@ class MyMintsViewModel @Inject constructor(
         }
     }
 
-    fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
+    private fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
         if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
             return
         }
