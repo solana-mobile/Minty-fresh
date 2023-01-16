@@ -72,7 +72,7 @@ fun MyMintPage(
                     modifier = Modifier.padding(top = 16.dp),
                     columns = GridCells.Adaptive(minSize = 76.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     itemsIndexed(items = uiState.myMints) { index, myMint ->
                         GlideImage(
@@ -82,7 +82,7 @@ fun MyMintPage(
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(color = MaterialTheme.colorScheme.surface)
                                 .loadingPlaceholder(
-                                    isLoading = uiState is MyMintsViewState.Loading,
+                                    isLoading = uiState is MyMintsViewState.Loading || myMint.mediaUrl.isEmpty(),
                                     cornerRoundedShapeSize = 8.dp
                                 )
                                 .clickable {
