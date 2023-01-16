@@ -1,0 +1,88 @@
+name: Minty Fresh Continuous Delivery
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Setup
+      - uses: actions/checkout@v3
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Replace versionName from the release TAG before building - the TAG should use semantic versioning (https://semver.org/)
+      - name: Update version name from release TAG
+        run: ./scripts/publish/updateVersionName.sh ${TAG}
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+
+      # Build
+      - name: Build with Gradle, run tests and sign the APKs
+        run: ./gradlew buildDebug
+        # PS: if we want a specific signing key (through Github secrets) + build release, we'll need to add env variables
+
+      # Upload APKs to workflow artifacts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: apk
+          path: app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 5
+
+  upload-to-release:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    permissions:
+      contents: write # needed for uploading files to releases
+
+    steps:
+      - uses: actions/checkout@v3
+      # Download artifacts from the build workflow
+      - uses: actions/download-artifact@v3
+        with:
+          name: apk
+          path: apk
+
+      # Upload to GitHub Release
+      - name: Upload all the APKs to release
+        run: gh release -R ${GITHUB_REPOSITORY} upload ${TAG} ${FILES}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.release.tag_name }}
+          FILES: |
+            apk/**/*.apk
+
+  increment-versions:
+    runs-on: ubuntu-latest
+
+    needs: upload-to-release
+
+    steps:
+      # Setup
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DAILY_BUILD_VERSION_INCREMENT_TOKEN }} # TODO we need a real token
+
+      # Increment version code, update version name, and auto-commit
+      - name: Increment the version code
+        run: ./scripts/publish/incrementVersionCode.sh
+      - name: Update version name from release TAG
+        run: ./scripts/publish/updateVersionName.sh ${TAG}
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: main
+          commit_message: Incremented version code from CI/CD workflow
