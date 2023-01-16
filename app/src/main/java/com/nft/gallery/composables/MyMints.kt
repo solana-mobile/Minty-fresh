@@ -22,6 +22,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
+import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -52,26 +53,50 @@ fun MyMintPage(
                 .padding(bottom = 30.dp)
                 .align(Alignment.Start)
         )
-        LazyVerticalGrid(
-            modifier = Modifier.padding(top = 16.dp),
-            columns = GridCells.Adaptive(minSize = 76.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            itemsIndexed(items = uiState) { index, myMint ->
-                GlideImage(
-                    modifier = Modifier
-                        .height(76.dp)
-                        .width(76.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(color = MaterialTheme.colorScheme.surface)
-                        .clickable {
-                            navigateToDetails(index)
-                        },
-                    model = myMint.mediaUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+
+        when (uiState) {
+            is MyMintsViewState.Error -> {
+                ErrorView(
+                    text = uiState.error.message ?: "An error happened while fetching your Mints",
+                    buttonText = "Retry",
+                    modifier = Modifier.padding(vertical = 16.dp)
+                ) {
+                    myMintsViewModel.loadMyMints(forceRefresh = true)
+                }
+            }
+            is MyMintsViewState.Empty -> {
+                EmptyView(
+                    text = uiState.message,
+                    modifier = Modifier.padding(vertical = 16.dp)
                 )
+            }
+            else -> {
+                LazyVerticalGrid(
+                    modifier = Modifier.padding(top = 16.dp),
+                    columns = GridCells.Adaptive(minSize = 76.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    itemsIndexed(items = uiState.myMints) { index, myMint ->
+                        GlideImage(
+                            modifier = Modifier
+                                .height(76.dp)
+                                .width(76.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(color = MaterialTheme.colorScheme.surface)
+                                .loadingPlaceholder(
+                                    isLoading = uiState is MyMintsViewState.Loading || myMint.mediaUrl.isEmpty(),
+                                    cornerRoundedShapeSize = 8.dp
+                                )
+                                .clickable {
+                                    navigateToDetails(index)
+                                },
+                            model = myMint.mediaUrl,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                }
             }
         }
     }

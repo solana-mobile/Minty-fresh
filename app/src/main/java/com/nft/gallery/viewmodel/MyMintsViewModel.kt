@@ -11,6 +11,7 @@ import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.usecase.PersistenceUseCase
 import com.nft.gallery.viewmodel.mapper.MyMintsMapper
+import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,35 +27,45 @@ class MyMintsViewModel @Inject constructor(
     private val myMintsRepository: MyMintsRepository
 ) : AndroidViewModel(application) {
 
-    private var _viewState = MutableStateFlow(mutableListOf<MyMint>())
+    private var _viewState: MutableStateFlow<MyMintsViewState> =
+        MutableStateFlow(myMintsMapper.mapLoading())
 
     val viewState = _viewState
 
     var wasLoaded = false
 
     init {
+        loadMyMints()
+    }
+
+    fun loadMyMints(forceRefresh: Boolean = false) {
         viewModelScope.launch {
             persistenceUseCase.walletDetails
                 .collect {
                     if (it is Connected) {
-                        loadMyMints(it.publicKey)
+                        loadMyMints(it.publicKey, forceRefresh)
                     } else {
-                        _viewState.value = mutableListOf()
+                        _viewState.value =
+                            MyMintsViewState.Empty("Connect your wallet to see your mints")
                     }
                 }
         }
     }
 
-    private fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean = false) {
+    private fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean) {
         if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
             return
         }
 
         viewModelScope.launch {
+            if (forceRefresh) {
+                _viewState.value = myMintsMapper.mapLoading()
+            }
+
             val cachedNfts = myMintsRepository.get()
             if (cachedNfts.isNotEmpty()) {
                 _viewState.getAndUpdate {
-                    cachedNfts.toMutableList()
+                    MyMintsViewState.Loaded(cachedNfts)
                 }
                 if (!forceRefresh && cachedNfts.isNotEmpty())
                     return@launch
@@ -67,22 +78,33 @@ class MyMintsViewModel @Inject constructor(
                 val nfts = mintsUseCase.getAllNftsForCollectionName(mintyFreshCollectionName)
                 Log.d(TAG, "Found ${nfts.size} NFTs")
 
-                nfts.forEach { nft ->
-                    val metadata = mintsUseCase.getNftsMetadata(nft)
+                if (nfts.isEmpty()) {
+                    _viewState.value =
+                        MyMintsViewState.Empty("No mints yet. Start minting pictures with Minty Fresh!")
+                } else {
+                    _viewState.value = MyMintsViewState.Loaded(myMintsMapper.map(nfts))
+                    nfts.forEachIndexed { index, nft ->
+                        val metadata = mintsUseCase.getNftsMetadata(nft)
 
-                    Log.d(TAG, "Fetched ${nft.name} NFT metadata")
-                    _viewState.getAndUpdate {
-                        val myNfts = it.toMutableList().apply {
-                            myMintsMapper.map(nft, metadata)?.let { myMint ->
-                                add(myMint)
+                        Log.d(TAG, "Fetched ${nft.name} NFT metadata")
+                        _viewState.getAndUpdate { myMintsViewState ->
+                            val myNfts = myMintsViewState.myMints.toMutableList().apply {
+                                myMintsMapper.map(nft, metadata)?.let { myMint ->
+                                    this[index] = myMint
+                                }
                             }
+
+                            if (index == nfts.size - 1) {
+                                // Inserting in database when we fetched all the NFTs
+                                myMintsRepository.insertAll(myNfts)
+                            }
+                            MyMintsViewState.Loaded(myNfts)
                         }
-                        myMintsRepository.insertAll(myNfts)
-                        myNfts
                     }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, e.toString())
+                _viewState.value = MyMintsViewState.Error(e)
             }
         }
     }
