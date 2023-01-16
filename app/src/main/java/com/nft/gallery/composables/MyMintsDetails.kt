@@ -64,7 +64,7 @@ fun MyMintsDetails(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            count = uiState.size,
+            count = uiState.myMints.size,
             state = PagerState(index),
         ) { page ->
             Column(
@@ -81,7 +81,7 @@ fun MyMintsDetails(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(8.dp))
                         .background(color = MaterialTheme.colorScheme.background),
-                    model = uiState[page].mediaUrl,
+                    model = uiState.myMints[page].mediaUrl,
                     contentDescription = "Detail of My Mint",
                     contentScale = ContentScale.Fit,
                 ) {
@@ -90,7 +90,7 @@ fun MyMintsDetails(
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     style = MaterialTheme.typography.titleLarge,
-                    text = uiState[page].name ?: "",
+                    text = uiState.myMints[page].name ?: "",
                 )
                 Text(
                     modifier = Modifier.padding(top = 36.dp),
@@ -100,7 +100,7 @@ fun MyMintsDetails(
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    text = uiState[page].description ?: "",
+                    text = uiState.myMints[page].description ?: "",
                 )
                 Text(
                     modifier = Modifier.padding(top = 36.dp),
@@ -118,7 +118,7 @@ fun MyMintsDetails(
                     Text(
                         modifier = Modifier.size(96.dp),
                         style = MaterialTheme.typography.bodyMedium,
-                        text = uiState[page].id,
+                        text = uiState.myMints[page].id,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
                     )

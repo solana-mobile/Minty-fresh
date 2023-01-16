@@ -32,6 +32,20 @@ private val PERMISSION_TO_DESCRIPTION = if (Build.VERSION.SDK_INT >= Build.VERSI
     )
 }
 
+@Composable
+fun EmptyView(text: String) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+    }
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EmptyView(permissionState: MultiplePermissionsState) {
@@ -40,7 +54,12 @@ fun EmptyView(permissionState: MultiplePermissionsState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val revokedPermissions = permissionState.revokedPermissions.map { PERMISSION_TO_DESCRIPTION.getOrDefault(it.permission, "") }
+        val revokedPermissions = permissionState.revokedPermissions.map {
+            PERMISSION_TO_DESCRIPTION.getOrDefault(
+                it.permission,
+                ""
+            )
+        }
         val textToShow = if (permissionState.shouldShowRationale) {
             "${revokedPermissions.joinToString(separator = ", ")} permission is important for this app. Please grant the permission."
         } else {
