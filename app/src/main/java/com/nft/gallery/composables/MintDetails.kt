@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -73,164 +72,173 @@ fun MintDetailsPage(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-
             }
         },
         content = { padding ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(padding)
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp)
-                    .fillMaxWidth()
-            ) {
-                val title = rememberSaveable { mutableStateOf("") }
-                val description = rememberSaveable { mutableStateOf("") }
-                val (focusRequester) = FocusRequester.createRefs()
-                val keyboardController = LocalSoftwareKeyboardController.current
-
-                GlideImage(
-                    model = imagePath,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .width(210.dp)
-                        .height(210.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(
-                            color = MaterialTheme.colorScheme.surface
-                        ),
-                    contentScale = ContentScale.Crop
-                ) {
-                    it.thumbnail()
-                }
-                Text(
-                    text = title.value.ifEmpty { "Your NFT" },
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                Text(
-                    text = description.value.ifEmpty { "No description yet." },
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(
-                        top = 10.dp
-                    )
-                )
-                Spacer(
-                    modifier = Modifier.weight(1.0f)
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .focusRequester(focusRequester)
-                        .fillMaxWidth()
-                        .padding(
-                            top = 30.dp
-                        ),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-                        placeholderColor = MaterialTheme.colorScheme.outline
-                    ),
-                    value = title.value,
-                    onValueChange = {
-                        title.value = it.trimStart().take(32)
-                    },
-                    label = {
-                        Text(text = "NFT title")
-                    },
-                    placeholder = {
-                        Text(text = "Enter a title")
-                    },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusRequester.requestFocus() }
-                    )
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp),
-                    text = "Use up to 32 characters",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .focusRequester(focusRequester)
-                        .fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-                        placeholderColor = MaterialTheme.colorScheme.outline
-                    ),
-                    value = description.value,
-                    onValueChange = {
-                        description.value = it.trimStart().take(256)
-                    },
-                    label = {
-                        Text(text = "Description")
-                    },
-                    placeholder = {
-                        Text(text = "Describe your NFT here")
-                    },
-                    minLines = 3,
-                    maxLines = 3,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { keyboardController?.hide() }
-                    )
-                )
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, bottom = 24.dp),
-                    text = "Use up to 256 characters",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.outline
-                )
-                Button(
-                    modifier = Modifier
-                        .padding(
-                            top = 32.dp,
-                            bottom = 24.dp
-                        ),
-                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
-                    onClick = {
-                        performMintViewModel.performMint(intentSender, title.value, description.value, imagePath)
-                    }
-                ) {
-                    Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
-                }
-            }
-
-            if (uiState.mintState != MintState.NONE)
+            if (uiState.mintState != MintState.NONE) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .padding(padding)
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp)
-                        .background(Color.hsv(0f, 0f, 0f, .8f))
+                        .background(MaterialTheme.colorScheme.background)
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    Text(text = when (uiState.mintState) {
-                        MintState.UPLOADING_FILE -> "Uploading file..."
-                        MintState.CREATING_METADATA -> "Creating NFT metadata..."
-                        MintState.MINTING -> "Minting your NFT..."
-                        else -> ""
-                    })
                     CircularProgressIndicator()
+                    Text(
+                        modifier = Modifier.padding(
+                            top = 28.dp
+                        ),
+                        text = when (uiState.mintState) {
+                            MintState.UPLOADING_FILE -> "Uploading file..."
+                            MintState.CREATING_METADATA -> "Processing..."
+                            MintState.MINTING -> "Minting..."
+                            MintState.SIGNING -> "Requesting wallet signature..."
+                            else -> ""
+                        },
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(padding)
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    val title = rememberSaveable { mutableStateOf("") }
+                    val description = rememberSaveable { mutableStateOf("") }
+                    val (focusRequester) = FocusRequester.createRefs()
+                    val keyboardController = LocalSoftwareKeyboardController.current
+
+                    GlideImage(
+                        model = imagePath,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .width(210.dp)
+                            .height(210.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(
+                                color = MaterialTheme.colorScheme.surface
+                            ),
+                        contentScale = ContentScale.Crop
+                    ) {
+                        it.thumbnail()
+                    }
+                    Text(
+                        text = title.value.ifEmpty { "Your NFT" },
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                    Text(
+                        text = description.value.ifEmpty { "No description yet." },
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(
+                            top = 10.dp
+                        )
+                    )
+                    Spacer(
+                        modifier = Modifier.weight(1.0f)
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .focusRequester(focusRequester)
+                            .fillMaxWidth()
+                            .padding(
+                                top = 30.dp
+                            ),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                            placeholderColor = MaterialTheme.colorScheme.outline
+                        ),
+                        value = title.value,
+                        onValueChange = {
+                            title.value = it.trimStart().take(32)
+                        },
+                        label = {
+                            Text(text = "NFT title")
+                        },
+                        placeholder = {
+                            Text(text = "Enter a title")
+                        },
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusRequester.requestFocus() }
+                        )
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp),
+                        text = "Use up to 32 characters",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .padding(top = 24.dp)
+                            .focusRequester(focusRequester)
+                            .fillMaxWidth(),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                            placeholderColor = MaterialTheme.colorScheme.outline
+                        ),
+                        value = description.value,
+                        onValueChange = {
+                            description.value = it.trimStart().take(256)
+                        },
+                        label = {
+                            Text(text = "Description")
+                        },
+                        placeholder = {
+                            Text(text = "Describe your NFT here")
+                        },
+                        minLines = 3,
+                        maxLines = 3,
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { keyboardController?.hide() }
+                        )
+                    )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, bottom = 24.dp),
+                        text = "Use up to 256 characters",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                    Button(
+                        modifier = Modifier
+                            .padding(
+                                top = 32.dp,
+                                bottom = 24.dp
+                            ),
+                        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
+                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
+                        onClick = {
+                            performMintViewModel.performMint(
+                                intentSender,
+                                title.value,
+                                description.value,
+                                imagePath
+                            )
+                        }
+                    ) {
+                        Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
+                    }
+                }
+            }
         },
         containerColor = MaterialTheme.colorScheme.background
     )

@@ -30,6 +30,7 @@ import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,12 +43,16 @@ import javax.inject.Inject
 import kotlin.math.pow
 
 enum class MintState {
-    NONE, UPLOADING_FILE, CREATING_METADATA, MINTING, COMPLETE
+    NONE,
+    UPLOADING_FILE,
+    CREATING_METADATA,
+    MINTING,
+    SIGNING,
+    COMPLETE
 }
 
 data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
-    val mintingInProgress: Boolean = false,
     val mintState: MintState = MintState.NONE
 )
 val rpcUrl = BuildConfig.SOLANA_RPC_URL
@@ -83,7 +88,6 @@ class PerformMintViewModel @Inject constructor(
 
             _viewState.update {
                 _viewState.value.copy(
-                    mintingInProgress = true,
                     mintState = MintState.MINTING
                 )
             }
@@ -120,6 +124,12 @@ class PerformMintViewModel @Inject constructor(
                                     it?.name == mintyFreshCollectionName && it.collection == null
                                 }
                             }
+
+                        //A bit of a fake "delay" so users have a chance to see the tx signing coming via the UI
+                        _viewState.update {
+                            _viewState.value.copy(mintState = MintState.SIGNING)
+                        }
+                        delay(700)
 
                         val collection: PublicKey = if (existingCollection == null) {
                             val collection = HotAccount()
@@ -177,7 +187,6 @@ class PerformMintViewModel @Inject constructor(
 
                         _viewState.update {
                             _viewState.value.copy(
-                                mintingInProgress = false,
                                 mintState = MintState.COMPLETE
                             )
                         }
