@@ -57,14 +57,18 @@ fun MyMintPage(
         when (uiState) {
             is MyMintsViewState.Error -> {
                 ErrorView(
-                    uiState.error.message ?: "An error happened while fetching your Mints",
-                    "Retry",
+                    text = uiState.error.message ?: "An error happened while fetching your Mints",
+                    buttonText = "Retry",
+                    modifier = Modifier.padding(vertical = 16.dp)
                 ) {
                     myMintsViewModel.loadMyMints(forceRefresh = true)
                 }
             }
             is MyMintsViewState.Empty -> {
-                EmptyView(uiState.message)
+                EmptyView(
+                    text = uiState.message,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
             }
             else -> {
                 LazyVerticalGrid(

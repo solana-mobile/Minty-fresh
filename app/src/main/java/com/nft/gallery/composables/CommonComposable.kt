@@ -33,7 +33,10 @@ private val PERMISSION_TO_DESCRIPTION = if (Build.VERSION.SDK_INT >= Build.VERSI
 }
 
 @Composable
-fun EmptyView(text: String) {
+fun EmptyView(
+    text: String,
+    modifier: Modifier,
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -41,7 +44,7 @@ fun EmptyView(text: String) {
     ) {
         Text(
             text,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = modifier,
         )
     }
 }
@@ -99,6 +102,7 @@ fun PermissionView(
 fun ErrorView(
     text: String,
     buttonText: String,
+    modifier: Modifier,
     onButtonClick: () -> Unit,
 ) {
     Column(
@@ -108,7 +112,7 @@ fun ErrorView(
     ) {
         Text(
             text,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = modifier,
         )
         Button(
             onClick = {
