@@ -92,7 +92,7 @@ dependencies {
 
     implementation 'com.portto.solana:web3:0.1.3'
 
-    implementation project(path: ':ktx-clientlib')
+    implementation project(path: ':ktx-clientlib') // TODO need to reference the remote dependency for CI to pass
     implementation project(path: ':clientlib')
     implementation project(path: ':common')
 
