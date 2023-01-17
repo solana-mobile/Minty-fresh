@@ -18,6 +18,4 @@ class MyMintsRepository @Inject constructor(
             pubKey = pubKey,
             clusterName = BuildConfig.RPC_CLUSTER.name
         )
-
-    suspend fun deleteAll() = myMintsDatabaseProvider.roomDb.myMintsDao().deleteAll()
 }
