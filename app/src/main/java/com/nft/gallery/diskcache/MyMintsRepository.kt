@@ -1,5 +1,6 @@
 package com.nft.gallery.diskcache
 
+import com.nft.gallery.BuildConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,7 +13,11 @@ class MyMintsRepository @Inject constructor(
         myMintsDatabaseProvider.roomDb.myMintsDao()
             .insertAll(myMints)
 
-    suspend fun get() = myMintsDatabaseProvider.roomDb.myMintsDao().get()
+    suspend fun get(pubKey: String) =
+        myMintsDatabaseProvider.roomDb.myMintsDao().get(
+            pubKey = pubKey,
+            clusterName = BuildConfig.RPC_CLUSTER.name
+        )
 
     suspend fun deleteAll() = myMintsDatabaseProvider.roomDb.myMintsDao().deleteAll()
 }

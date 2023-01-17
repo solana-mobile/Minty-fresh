@@ -73,7 +73,7 @@ class MyMintsViewModel @Inject constructor(
                 _viewState.value = myMintsMapper.mapLoading()
             }
 
-            val cachedNfts = myMintsRepository.get()
+            val cachedNfts = myMintsRepository.get(publicKey.toString())
             if (cachedNfts.isNotEmpty()) {
                 _viewState.getAndUpdate {
                     MyMintsViewState.Loaded(cachedNfts)

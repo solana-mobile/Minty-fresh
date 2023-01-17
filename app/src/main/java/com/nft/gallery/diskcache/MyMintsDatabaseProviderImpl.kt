@@ -17,7 +17,7 @@ class MyMintsDatabaseProviderImpl @Inject constructor(@ApplicationContext applic
         applicationContext,
         MyMintsDatabase::class.java,
         "myMintsDb",
-    ).build()
+    ).addMigrations(MIGRATION_1_2).build()
 }
 
 @Module
