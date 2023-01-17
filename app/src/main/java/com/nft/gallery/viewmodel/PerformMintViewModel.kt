@@ -4,12 +4,12 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.nft.gallery.BuildConfig
 import com.nft.gallery.repository.StorageUploadRepository
 import com.nft.gallery.usecase.*
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -67,10 +67,7 @@ class PerformMintViewModel @Inject constructor(
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
             MobileWalletAdapter().transact(sender) {
-
-                // TODO: need to change to mainnet, or intelligently pick based on the RPC url
-                //  being used (currently using BuildConfig.SOLANA_RPC_URL)
-                val authed = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
+                val authed = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
 
                 persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
             }
