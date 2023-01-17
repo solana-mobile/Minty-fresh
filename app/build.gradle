@@ -15,12 +15,14 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 1
-        versionName '1.0'
+        versionName 'v0.1.0'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         Properties properties = new Properties()
-        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        if (project.rootProject.file("local.properties").exists()) {
+            properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        }
 
         buildConfigField "String", "NFTSTORAGE_KEY", "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
         buildConfigField "String", "API_BASE_URL", "\"https://api.nft.storage/\""
