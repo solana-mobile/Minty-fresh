@@ -10,6 +10,7 @@ import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
 import com.metaplex.lib.modules.nfts.NftClient
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT
+import com.nft.gallery.BuildConfig
 import com.solana.core.PublicKey
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ import java.net.URL
 class NFTRepository(private val publicKey: PublicKey) {
 
     private val connection = SolanaConnectionDriver(
-        JdkRpcDriver(URL("https://api.devnet.solana.com")),
+        JdkRpcDriver(URL(BuildConfig.SOLANA_RPC_URL)),
         TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
     )
     private val identityDriver = ReadOnlyIdentityDriver(publicKey, connection)

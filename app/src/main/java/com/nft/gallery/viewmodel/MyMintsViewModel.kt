@@ -14,7 +14,6 @@ import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
