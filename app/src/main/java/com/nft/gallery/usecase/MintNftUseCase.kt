@@ -7,49 +7,34 @@
 
 package com.nft.gallery.usecase
 
-import com.metaplex.lib.drivers.indenty.IdentityDriver
-import com.metaplex.lib.drivers.solana.Commitment
-import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
-import com.metaplex.lib.drivers.solana.TransactionOptions
+import com.metaplex.lib.drivers.solana.*
 import com.metaplex.lib.experimental.jen.tokenmetadata.Creator
-import com.metaplex.lib.modules.nfts.NftClient
 import com.metaplex.lib.modules.nfts.builders.CreateNftTransactionBuilder
 import com.metaplex.lib.modules.nfts.models.Metadata
-import com.metaplex.lib.modules.nfts.models.NFT
-import com.nft.gallery.BuildConfig
-import com.nft.gallery.metaplex.MetaplexHttpDriver
 import com.nft.gallery.metaplex.MintyFreshCreatorPda
 import com.solana.core.PublicKey
+import javax.inject.Inject
 
-class MintNftUseCase(private val identityDriver: IdentityDriver) {
-
-    private val rpcUrl = BuildConfig.SOLANA_RPC_URL
-    private val connection = SolanaConnectionDriver(
-        MetaplexHttpDriver(rpcUrl),
-        TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
-    )
-
-    val client = NftClient(connection, identityDriver)
-
-    suspend fun mintNft(title: String, metadataUrl: String): Result<NFT> =
-        client.create(createNftMetadata(title, metadataUrl))
+class BuildMintTransactionUseCase @Inject constructor(private val connectionDriver: Connection)  {
 
     // not currently used, but shows how you could build the minting transaction
-    suspend fun buildMintTransaction(title: String, metadataUrl: String, mint: PublicKey) =
+    suspend fun buildMintTransaction(title: String, metadataUrl: String, mint: PublicKey, payer: PublicKey) =
         CreateNftTransactionBuilder(
-            mint,
-            createNftMetadata(title, metadataUrl),
-            payer = identityDriver.publicKey,
-            connection = connection
-        ).build().getOrThrow()
+            newMint = mint,
+            metadata = createNftMetadata(title, metadataUrl, payer),
+            payer = payer,
+            connection = connectionDriver
+        ).build().getOrThrow().apply {
+            feePayer = payer
+        }
 
-    private fun createNftMetadata(title: String, metadataUrl: String) = Metadata(
+    private fun createNftMetadata(title: String, metadataUrl: String, creator: PublicKey) = Metadata(
         name = title,
         uri = metadataUrl,
         sellerFeeBasisPoints = 0,
         creators = listOf(
-            Creator(identityDriver.publicKey, true, 100.toUByte()),
-            Creator(MintyFreshCreatorPda(identityDriver.publicKey), false, 0.toUByte())
+            Creator(creator, true, 100.toUByte()),
+            Creator(MintyFreshCreatorPda(creator), false, 0.toUByte())
         ),
     )
 }

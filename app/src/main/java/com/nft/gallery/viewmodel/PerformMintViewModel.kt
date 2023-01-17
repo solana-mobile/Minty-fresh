@@ -4,13 +4,9 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.metaplex.*
 import com.nft.gallery.repository.StorageUploadRepository
-import com.nft.gallery.usecase.Connected
-import com.nft.gallery.usecase.MintNftUseCase
-import com.nft.gallery.usecase.NotConnected
-import com.nft.gallery.usecase.PersistenceUseCase
-import com.solana.core.PublicKey
+import com.nft.gallery.usecase.*
+import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
@@ -40,6 +36,9 @@ class PerformMintViewModel @Inject constructor(
     application: Application,
     private val storageRepository: StorageUploadRepository,
     private val persistenceUseCase: PersistenceUseCase,
+    private val mintNftUseCase: BuildMintTransactionUseCase,
+    private val blockhashUseCase: GetLatestBlockhashUseCase,
+    private val sendTransactionUseCase: SendTransactionUseCase
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
@@ -103,46 +102,58 @@ class PerformMintViewModel @Inject constructor(
 
             val metadataUrl = storageRepository.uploadMetadata(title, desc, nftImageUrl)
 
-            val identityDriver = buildSigningIdentityDriver(publicKey) { transaction ->
-                //A bit of a fake "delay" so users have a chance to see the tx signing coming via the UI
-                _viewState.update {
-                    _viewState.value.copy(mintState = MintState.SIGNING)
-                }
-                delay(700)
+            // TODO: should we ad another state here for "Building Transaction..."?
 
-                MobileWalletAdapter().transact(sender) {
-                    reauthorize(solanaUri, iconUri, identityName, authToken)
+            val mintAccount = HotAccount()
+            val mintTxn = mintNftUseCase.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, publicKey)
 
-                    val result = signTransactions(arrayOf(transaction))
+            mintTxn.setRecentBlockHash(blockhashUseCase.getlatestBlockHash())
 
-                    _viewState.update {
-                        _viewState.value.copy(mintState = MintState.MINTING)
-                    }
+            // begin signing transaction step
+            _viewState.update {
+                _viewState.value.copy(mintState = MintState.SIGNING)
+            }
+            delay(700)
 
-                    return@transact result.signedPayloads[0]
-                }
+            val primarySignature = MobileWalletAdapter().transact(sender) {
+                reauthorize(solanaUri, iconUri, identityName, authToken)
+
+                val transactionBytes =
+                    mintTxn.serialize(SerializeConfig(
+                        requireAllSignatures = false,
+                        verifySignatures = false
+                    ))
+
+                val signingResult = signTransactions(arrayOf(transactionBytes))
+
+                return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
             }
 
-            // Dear reviewer: this code also works and is probably easier to understand, but
-            // it does not allow us to inject that slight 700ms delay before launching MWA
-//            val identityDriver =
-//                MobileWalletIdentityDriver(publicKey, authToken, sender, this).apply {
-//                    signingState.map {
-//                        if (it is SigningState.InProgress)
-//                            _viewState.update {
-//                                _viewState.value.copy(mintState = MintState.SIGNING)
-//                            }
-//
-//                        if (it is SigningState.Complete)
-//                            _viewState.update {
-//                                _viewState.value.copy(mintState = MintState.MINTING)
-//                            }
-//                    }.stateIn(this@launch)
-//                }
+            // rebuild transaction object from signed bytes
+            // there is a deserialization bug in solana.core.Message.from(byteArray) so have to
+            // build up the Message (and Transaction) object manually (for now)
+            // val signed = Transaction.from(signedBytes)
+            val signed = Transaction().apply {
+                setRecentBlockHash(mintTxn.recentBlockhash)
+                feePayer = publicKey
+                addInstruction(*mintTxn.instructions.toTypedArray())
+                addSignature(publicKey, primarySignature)
+            }
 
-            val mintNftUseCase = MintNftUseCase(identityDriver)
+            // now that the primary signer (creator) has signed, the mint account can sign
+            signed.partialSign(mintAccount)
 
-            val theNft = mintNftUseCase.mintNft(title, metadataUrl).getOrThrow()
+            _viewState.update {
+                _viewState.value.copy(
+                    mintState = MintState.MINTING
+                )
+            }
+
+            // send the signed transaction to the cluster
+            val transactionSignature = sendTransactionUseCase.sendTransaction(signed)
+
+            // Await for transaction confirmation
+            sendTransactionUseCase.confirmTransaction(transactionSignature)
 
             // TODO: we should do something here ie show the user their newly minted NFT
 
