@@ -87,7 +87,7 @@ class MyMintsViewModel @Inject constructor(
             val mintsUseCase = MyMintsUseCase(publicKey)
 
             try {
-                val nfts = mintsUseCase.getAllNftsForCollectionName(mintyFreshCollectionName)
+                val nfts = mintsUseCase.getAllUserMintyFreshNfts()
                 Log.d(TAG, "Found ${nfts.size} NFTs")
 
                 if (nfts.isEmpty()) {

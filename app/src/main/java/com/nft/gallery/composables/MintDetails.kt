@@ -225,17 +225,20 @@ fun MintDetailsPage(
                             ),
                         shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
+                        enabled = (title.value.isNotEmpty() && description.value.isNotEmpty()) xor !uiState.isWalletConnected,
                         onClick = {
-                            performMintViewModel.performMint(
-                                intentSender,
-                                title.value,
-                                description.value,
-                                imagePath
-                            )
+                            if (!uiState.isWalletConnected)
+                                performMintViewModel.connect(intentSender)
+                            else
+                                performMintViewModel.performMint(
+                                    intentSender,
+                                    title.value,
+                                    description.value,
+                                    imagePath
+                                )
                         }
                     ) {
-                        Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
+                        Text(text = if (uiState.isWalletConnected) "Mint" else "Connect")
                     }
                 }
             }

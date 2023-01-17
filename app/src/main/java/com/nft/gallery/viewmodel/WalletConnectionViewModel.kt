@@ -64,6 +64,9 @@ class WalletConnectionViewModel @Inject constructor(
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
             walletAdapter.transact(sender) {
+
+                // TODO: need to change to mainnet, or intelligently pick based on the RPC url
+                //  being used (currently using BuildConfig.SOLANA_RPC_URL)
                 val authed = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
 
                 persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
