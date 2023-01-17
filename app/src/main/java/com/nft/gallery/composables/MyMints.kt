@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -72,22 +74,34 @@ fun MyMintPage(
         ) {
             when (uiState) {
                 is MyMintsViewState.Error -> {
-                    ErrorView(
-                        text = uiState.error.message
-                            ?: "An error happened while fetching your Mints",
-                        buttonText = "Retry",
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
                     ) {
-                        myMintsViewModel.loadMyMints(forceRefresh = true)
+                        ErrorView(
+                            text = uiState.error.message
+                                ?: "An error happened while fetching your Mints",
+                            buttonText = "Retry",
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        ) {
+                            myMintsViewModel.loadMyMints(forceRefresh = true)
+                        }
                     }
                 }
                 is MyMintsViewState.Empty -> {
-                    EmptyView(
-                        text = uiState.message,
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
-                    )
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        EmptyView(
+                            text = uiState.message,
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        )
+                    }
                 }
                 else -> {
                     LazyVerticalGrid(
