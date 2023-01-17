@@ -94,7 +94,7 @@ class PerformMintViewModel @Inject constructor(
 
             MobileWalletAdapter().apply {
                 transact(sender) {
-                    val auth = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
+                    val auth = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
 
                     val connection = SolanaConnectionDriver(
                         MetaplexHttpDriver(rpcUrl),
