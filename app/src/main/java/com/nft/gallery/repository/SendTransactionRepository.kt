@@ -5,7 +5,7 @@
  * Created by Funkatronics on 1/17/2023
  */
 
-package com.nft.gallery.usecase
+package com.nft.gallery.repository
 
 import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.drivers.solana.sendTransaction
@@ -14,7 +14,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
-class SendTransactionUseCase @Inject constructor(private val connectionDriver: Connection)  {
+class SendTransactionRepository @Inject constructor(private val connectionDriver: Connection)  {
     suspend fun sendTransaction(transaction: Transaction) =
         connectionDriver.sendTransaction(transaction).getOrThrow()
 
