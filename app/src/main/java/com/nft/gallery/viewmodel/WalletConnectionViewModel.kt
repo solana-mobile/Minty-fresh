@@ -3,6 +3,7 @@ package com.nft.gallery.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nft.gallery.BuildConfig
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.NotConnected
 import com.nft.gallery.usecase.PersistenceUseCase
@@ -64,7 +65,7 @@ class WalletConnectionViewModel @Inject constructor(
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
             walletAdapter.transact(sender) {
-                val authed = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
+                val authed = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
 
                 persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
             }
