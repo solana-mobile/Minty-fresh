@@ -14,8 +14,11 @@ import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.getAndUpdate
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,6 +36,15 @@ class MyMintsViewModel @Inject constructor(
     val viewState = _viewState
 
     var wasLoaded = false
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
+    fun refresh() = viewModelScope.launch {
+        _isRefreshing.update { true }
+        loadMyMints(forceRefresh = true)
+        _isRefreshing.update { false }
+    }
 
     init {
         loadMyMints()
