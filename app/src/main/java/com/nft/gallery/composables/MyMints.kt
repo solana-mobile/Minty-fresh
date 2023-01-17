@@ -7,6 +7,10 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,17 +28,24 @@ import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MyMintPage(
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
     navigateToDetails: (Int) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
+    val isRefreshing = myMintsViewModel.isRefreshing.collectAsState().value
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = {
+            myMintsViewModel.refresh()
+        })
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .fillMaxSize()
             .padding(top = 16.dp)
             .padding(horizontal = 16.dp)
     ) {
@@ -54,50 +65,66 @@ fun MyMintPage(
                 .align(Alignment.Start)
         )
 
-        when (uiState) {
-            is MyMintsViewState.Error -> {
-                ErrorView(
-                    text = uiState.error.message ?: "An error happened while fetching your Mints",
-                    buttonText = "Retry",
-                    modifier = Modifier.padding(vertical = 16.dp)
-                ) {
-                    myMintsViewModel.loadMyMints(forceRefresh = true)
+        Box(
+            Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
+        ) {
+            when (uiState) {
+                is MyMintsViewState.Error -> {
+                    ErrorView(
+                        text = uiState.error.message
+                            ?: "An error happened while fetching your Mints",
+                        buttonText = "Retry",
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                    ) {
+                        myMintsViewModel.loadMyMints(forceRefresh = true)
+                    }
                 }
-            }
-            is MyMintsViewState.Empty -> {
-                EmptyView(
-                    text = uiState.message,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-            }
-            else -> {
-                LazyVerticalGrid(
-                    modifier = Modifier.padding(top = 16.dp),
-                    columns = GridCells.Adaptive(minSize = 76.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    itemsIndexed(items = uiState.myMints) { index, myMint ->
-                        GlideImage(
-                            modifier = Modifier
-                                .height(76.dp)
-                                .width(76.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(color = MaterialTheme.colorScheme.surface)
-                                .loadingPlaceholder(
-                                    isLoading = uiState is MyMintsViewState.Loading || myMint.mediaUrl.isEmpty(),
-                                    cornerRoundedShapeSize = 8.dp
-                                )
-                                .clickable {
-                                    navigateToDetails(index)
-                                },
-                            model = myMint.mediaUrl,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                        )
+                is MyMintsViewState.Empty -> {
+                    EmptyView(
+                        text = uiState.message,
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                    )
+                }
+                else -> {
+                    LazyVerticalGrid(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 16.dp),
+                        columns = GridCells.Adaptive(minSize = 76.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        itemsIndexed(items = uiState.myMints) { index, myMint ->
+                            GlideImage(
+                                modifier = Modifier
+                                    .height(76.dp)
+                                    .width(76.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(color = MaterialTheme.colorScheme.surface)
+                                    .loadingPlaceholder(
+                                        isLoading = uiState is MyMintsViewState.Loading || myMint.mediaUrl.isEmpty(),
+                                        cornerRoundedShapeSize = 8.dp
+                                    )
+                                    .clickable {
+                                        navigateToDetails(index)
+                                    },
+                                model = myMint.mediaUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
                     }
                 }
             }
+            PullRefreshIndicator(
+                isRefreshing,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
