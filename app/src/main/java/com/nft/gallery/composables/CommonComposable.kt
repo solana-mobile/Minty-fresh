@@ -32,6 +32,23 @@ private val PERMISSION_TO_DESCRIPTION = if (Build.VERSION.SDK_INT >= Build.VERSI
     )
 }
 
+@Composable
+fun EmptyView(
+    text: String,
+    modifier: Modifier,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text,
+            modifier = modifier,
+        )
+    }
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EmptyView(permissionState: MultiplePermissionsState) {
@@ -40,7 +57,12 @@ fun EmptyView(permissionState: MultiplePermissionsState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val revokedPermissions = permissionState.revokedPermissions.map { PERMISSION_TO_DESCRIPTION.getOrDefault(it.permission, "") }
+        val revokedPermissions = permissionState.revokedPermissions.map {
+            PERMISSION_TO_DESCRIPTION.getOrDefault(
+                it.permission,
+                ""
+            )
+        }
         val textToShow = if (permissionState.shouldShowRationale) {
             "${revokedPermissions.joinToString(separator = ", ")} permission is important for this app. Please grant the permission."
         } else {
@@ -73,5 +95,32 @@ fun PermissionView(
         content()
     } else {
         emptyView(permissionState)
+    }
+}
+
+@Composable
+fun ErrorView(
+    text: String,
+    buttonText: String,
+    modifier: Modifier,
+    onButtonClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text,
+            modifier = modifier,
+        )
+        Button(
+            onClick = {
+                onButtonClick()
+            },
+            content = {
+                Text(buttonText)
+            }
+        )
     }
 }
