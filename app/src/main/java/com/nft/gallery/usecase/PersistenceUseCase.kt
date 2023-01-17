@@ -43,7 +43,6 @@ class PersistenceUseCase @Inject constructor(
 
     suspend fun clearConnection() {
         dataStoreRepository.clearWalletDetails()
-        myMintsRepository.deleteAll()
     }
 
 }

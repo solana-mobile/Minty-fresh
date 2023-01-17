@@ -3,13 +3,13 @@ package com.nft.gallery.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nft.gallery.BuildConfig
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.NotConnected
 import com.nft.gallery.usecase.PersistenceUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -65,9 +65,7 @@ class WalletConnectionViewModel @Inject constructor(
         viewModelScope.launch {
             walletAdapter.transact(sender) {
 
-                // TODO: need to change to mainnet, or intelligently pick based on the RPC url
-                //  being used (currently using BuildConfig.SOLANA_RPC_URL)
-                val authed = authorize(solanaUri, iconUri, identityName, RpcCluster.Devnet)
+                val authed = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
 
                 persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
             }
