@@ -10,11 +10,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.BottomDrawerValue
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.rememberBottomDrawerState
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -72,9 +69,6 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = !isSystemInDarkTheme()
 
-            val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
-            val scope = rememberCoroutineScope()
-
             SideEffect {
                 systemUiController.setSystemBarsColor(
                     Color.Transparent,
@@ -93,8 +87,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.Camera.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController,
-                            drawerState = drawerState
+                            navController = animNavController
                         ) {
                             Camera(
                                 navigateToDetails = {
@@ -107,8 +100,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.Photos.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController,
-                            drawerState = drawerState
+                            navController = animNavController
                         ) {
                             Gallery(
                                 navigateToDetails = {
@@ -156,8 +148,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MintDetail.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController,
-                            drawerState = drawerState
+                            navController = animNavController
                         ) {
                             MintDetailsPage(
                                 imagePath = imagePath ?: clipDataPath
@@ -166,12 +157,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                     animNavController.navigateUp()
                                 },
                                 onMintCompleted = {
-                                    scope.launch {
-                                        drawerState.expand()
-
-                                        animNavController.navigate(NavigationItem.MyMints.route) {
-                                            popUpTo(NavigationItem.Photos.route) { inclusive = true }
-                                        }
+                                    animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
+                                        popUpTo(NavigationItem.Photos.route) { inclusive = true }
                                     }
                                 },
                                 intentSender = object : ActivityResultSender {
@@ -184,14 +171,24 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                             )
                         }
                     }
-                    composable(NavigationItem.MyMints.route) {
+                    composable(
+                        route = "${NavigationItem.MyMints.route}?forceRefresh={forceRefresh}",
+                        arguments = listOf(navArgument("forceRefresh") {
+                            type = NavType.BoolType
+                            defaultValue = false
+                        }),
+                    ) { backStackEntry ->
+                        val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
+
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MyMints.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController,
-                            drawerState = drawerState
+                            navController = animNavController
                         ) {
-                            MyMintPage {
+                            MyMintPage(
+                                forceRefresh = forceRefresh ?:
+                                    throw IllegalStateException("Argument required")
+                            ) {
                                 animNavController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
                             }
                         }
@@ -203,8 +200,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MyMintsDetails.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController,
-                            drawerState = drawerState
+                            navController = animNavController
                         ) {
                             MyMintsDetails(
                                 index = backStackEntry.arguments?.getInt("index")

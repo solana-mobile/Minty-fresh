@@ -1,40 +1,32 @@
 package com.nft.gallery.composables
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.nft.gallery.R
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -45,20 +37,100 @@ fun ScaffoldScreen(
     currentRoute: String,
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
-    drawerState: BottomDrawerState,
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     content: @Composable () -> Unit
 ) {
     val viewState = walletConnectionViewModel.viewState.collectAsState().value
-    val scope = rememberCoroutineScope()
 
-    BackHandler(
-        enabled = drawerState.isExpanded
-    ) {
-        scope.launch {
-            drawerState.close()
-        }
-    }
+//    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+//    val scope = rememberCoroutineScope()
+
+//    val scope = rememberCoroutineScope()
+//
+//    BackHandler(
+//        enabled = drawerState.isExpanded
+//    ) {
+//        scope.launch {
+//            drawerState.close()
+//        }
+//    }
+//
+//    BottomDrawer(
+//        drawerContent = {
+//            Column(
+//                modifier = Modifier
+//                    .padding(
+//                        bottom = 80.dp
+//                    )
+//                    .navigationBarsPadding()
+//                    .fillMaxWidth()
+//                    .wrapContentHeight()
+//                    .background(
+//                        color = MaterialTheme.colorScheme.background,
+//                        shape = RoundedCornerShape(
+//                            topStart = 24.dp,
+//                            topEnd = 24.dp
+//                        )
+//                    ),
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Image(
+//                    modifier = Modifier
+//                        .padding(
+//                            top = 42.dp
+//                        )
+//                        .width(293.dp)
+//                        .height(122.dp),
+//                    painter = painterResource(
+//                        id = R.drawable.mint_confirm
+//                    ),
+//                    contentDescription = "Sparkle image",
+//                    contentScale = ContentScale.Inside
+//                )
+//                Text(
+//                    modifier = Modifier
+//                        .padding(
+//                            top = 19.dp
+//                        ),
+//                    text = "You minted an NFT!",
+//                    style = MaterialTheme.typography.titleLarge,
+//                    color = MaterialTheme.colorScheme.onBackground
+//                )
+//                Text(
+//                    modifier = Modifier
+//                        .padding(
+//                            top = 10.dp
+//                        ),
+//                    text = "It's been added to your connected wallet",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurface
+//                )
+//                Button(
+//                    modifier = Modifier
+//                        .padding(
+//                            top = 70.dp,
+//                            bottom = 44.dp
+//                        ),
+//                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+//                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
+//                    onClick = {
+//                        scope.launch {
+//                            drawerState.close()
+//                        }
+//                    }
+//                ) {
+//                    Text(
+//                        text = "Done"
+//                    )
+//                }
+//            }
+//        },
+//        drawerState = drawerState,
+//        drawerBackgroundColor = Color.Transparent,
+//        gesturesEnabled = false
+//    ) {
+//
+//    }
 
     Scaffold(
         floatingActionButton = {
@@ -144,85 +216,10 @@ fun ScaffoldScreen(
             }
         },
         content = { padding ->
-            BottomDrawer(
-                drawerContent = {
-                    Column(
-                        modifier = Modifier
-                            .padding(
-                                bottom = 80.dp
-                            )
-                            .navigationBarsPadding()
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .background(
-                                color = MaterialTheme.colorScheme.background,
-                                shape = RoundedCornerShape(
-                                    topStart = 24.dp,
-                                    topEnd = 24.dp
-                                )
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .padding(
-                                    top = 42.dp
-                                )
-                                .width(293.dp)
-                                .height(122.dp),
-                            painter = painterResource(
-                                id = R.drawable.mint_confirm
-                            ),
-                            contentDescription = "Sparkle image",
-                            contentScale = ContentScale.Inside
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(
-                                    top = 19.dp
-                                ),
-                            text = "You minted an NFT!",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(
-                                    top = 10.dp
-                                ),
-                            text = "It's been added to your connected wallet",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Button(
-                            modifier = Modifier
-                                .padding(
-                                    top = 70.dp,
-                                    bottom = 44.dp
-                                ),
-                            shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                            onClick = {
-                                scope.launch {
-                                    drawerState.close()
-                                }
-                            }
-                        ) {
-                            Text(
-                                text = "Done"
-                            )
-                        }
-                    }
-                },
-                drawerState = drawerState,
-                drawerBackgroundColor = Color.Transparent,
-                gesturesEnabled = false
+            Box(
+                modifier = Modifier.padding(padding)
             ) {
-                Box(
-                    modifier = Modifier.padding(padding)
-                ) {
-                    content()
-                }
+                content()
             }
         },
         containerColor = MaterialTheme.colorScheme.background

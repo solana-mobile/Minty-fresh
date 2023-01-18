@@ -16,6 +16,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,16 +34,27 @@ import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MyMintPage(
+    forceRefresh: Boolean,
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
     navigateToDetails: (Int) -> Unit,
 ) {
     val uiState = myMintsViewModel.viewState.collectAsState().value
     val isRefreshing = myMintsViewModel.isRefreshing.collectAsState().value
+
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = {
             myMintsViewModel.refresh()
         })
+
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            if (forceRefresh) {
+                myMintsViewModel.refresh()
+            }
+        }
+    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
