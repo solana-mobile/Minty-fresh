@@ -14,12 +14,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+data class Media(
+    val path: String,
+    val dateAdded: String,
+    val mediaType: String,
+    val mimeType: String,
+    val title: String
+)
+
 @HiltViewModel
 class MediaViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    private var mediaLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    private var mediaLiveData: MutableStateFlow<List<Media>> = MutableStateFlow(listOf())
 
-    fun getMediaList(): StateFlow<List<String>> {
+    fun getMediaList(): StateFlow<List<Media>> {
         return mediaLiveData.asStateFlow()
     }
 
@@ -30,16 +39,14 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
      *
      * @return ArrayList with images Path
      */
-    private fun loadImagesFromSDCard(): ArrayList<String> {
+    private fun loadImagesFromSDCard(): ArrayList<Media> {
         val uri: Uri = MediaStore.Files.getContentUri("external")
         val cursor: Cursor?
-        val listOfAllImages = ArrayList<String>()
-        var absolutePathOfImage: String?
+        val listOfAllImages = ArrayList<Media>()
         val context = getApplication<Application>().applicationContext
 
         val projection =
             arrayOf(
-                MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns.DATE_ADDED,
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
@@ -62,10 +69,28 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
             MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
         )
 
-        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
+        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+        val columnIndexDateAdded = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED)
+        val columnIndexMediaType = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+        val columnIndexMimeType = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+        val columnIndexTitle = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE)
+
         while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(columnIndexData)
-            listOfAllImages.add(absolutePathOfImage)
+            val absolutePathOfImage = cursor.getString(columnIndexData)
+            val dateAdded = cursor.getString(columnIndexDateAdded)
+            val mediaType = cursor.getString(columnIndexMediaType)
+            val mimeType = cursor.getString(columnIndexMimeType)
+            val title = cursor.getString(columnIndexTitle)
+
+            listOfAllImages.add(
+                Media(
+                    path = absolutePathOfImage,
+                    dateAdded = dateAdded,
+                    mediaType = mediaType,
+                    mimeType = mimeType,
+                    title = title
+                )
+            )
         }
         cursor.close()
         return listOfAllImages

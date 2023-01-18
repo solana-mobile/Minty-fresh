@@ -93,9 +93,9 @@ fun Gallery(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    itemsIndexed(items = uiState) { _, path ->
+                    itemsIndexed(items = uiState) { _, media ->
                         GlideImage(
-                            model = path,
+                            model = media.path,
                             contentDescription = null,
                             modifier = Modifier
                                 .width(76.dp)
@@ -103,7 +103,7 @@ fun Gallery(
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(color = MaterialTheme.colorScheme.surface)
                                 .clickable {
-                                    navigateToDetails(path)
+                                    navigateToDetails(media.path)
                                 },
                             contentScale = ContentScale.Crop
                         ) {
