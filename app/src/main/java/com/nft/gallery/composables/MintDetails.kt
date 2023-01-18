@@ -41,6 +41,7 @@ import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 fun MintDetailsPage(
     imagePath: String,
     navigateUp: () -> Boolean = { true },
+    onMintCompleted: () -> Unit = { },
     performMintViewModel: PerformMintViewModel = hiltViewModel(),
     intentSender: ActivityResultSender
 ) {
@@ -228,14 +229,19 @@ fun MintDetailsPage(
                             ),
                         shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
+                        //TODO: Uncomment this you slacker
+//                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
+                        enabled = true,
                         onClick = {
-                            performMintViewModel.performMint(
-                                intentSender,
-                                title.value,
-                                description.value,
-                                imagePath
-                            )
+                            //TODO: Uncomment this you slacker
+//                            performMintViewModel.performMint(
+//                                intentSender,
+//                                title.value,
+//                                description.value,
+//                                imagePath
+//                            )
+
+                            onMintCompleted()
                         }
                     ) {
                         Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")

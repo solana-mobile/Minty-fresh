@@ -10,7 +10,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.BottomDrawerValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberBottomDrawerState
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
@@ -55,7 +59,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
     }
 
     @OptIn(
-        ExperimentalAnimationApi::class
+        ExperimentalAnimationApi::class,
+        ExperimentalMaterialApi::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +71,9 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
             val animNavController = rememberAnimatedNavController()
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = !isSystemInDarkTheme()
+
+            val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Closed)
+            val scope = rememberCoroutineScope()
 
             SideEffect {
                 systemUiController.setSystemBarsColor(
@@ -85,7 +93,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.Camera.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController
+                            navController = animNavController,
+                            drawerState = drawerState
                         ) {
                             Camera(
                                 navigateToDetails = {
@@ -98,7 +107,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.Photos.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController
+                            navController = animNavController,
+                            drawerState = drawerState
                         ) {
                             Gallery(
                                 navigateToDetails = {
@@ -146,13 +156,23 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MintDetail.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController
+                            navController = animNavController,
+                            drawerState = drawerState
                         ) {
                             MintDetailsPage(
                                 imagePath = imagePath ?: clipDataPath
-                                ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                                 navigateUp = {
                                     animNavController.navigateUp()
+                                },
+                                onMintCompleted = {
+                                    scope.launch {
+                                        drawerState.expand()
+
+                                        animNavController.navigate(NavigationItem.MyMints.route) {
+                                            popUpTo(NavigationItem.Photos.route) { inclusive = true }
+                                        }
+                                    }
                                 },
                                 intentSender = object : ActivityResultSender {
                                     override fun launch(intent: Intent) {
@@ -168,7 +188,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MyMints.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController
+                            navController = animNavController,
+                            drawerState = drawerState
                         ) {
                             MyMintPage {
                                 animNavController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
@@ -182,7 +203,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         ScaffoldScreen(
                             currentRoute = NavigationItem.MyMintsDetails.route,
                             activityResultSender = this@MainActivity,
-                            navController = animNavController
+                            navController = animNavController,
+                            drawerState = drawerState
                         ) {
                             MyMintsDetails(
                                 index = backStackEntry.arguments?.getInt("index")

@@ -45,11 +45,11 @@ fun ScaffoldScreen(
     currentRoute: String,
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
+    drawerState: BottomDrawerState,
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     content: @Composable () -> Unit
 ) {
     val viewState = walletConnectionViewModel.viewState.collectAsState().value
-    val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Expanded)
     val scope = rememberCoroutineScope()
 
     BackHandler(
