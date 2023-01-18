@@ -83,11 +83,17 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                     startDestination = NavigationItem.Photos.route,
                 ) {
                     composable(NavigationItem.Camera.route) {
-                        Camera(
-                            navigateToDetails = {
-                                animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
-                            }
-                        )
+                        ScaffoldScreen(
+                            currentRoute = NavigationItem.Camera.route,
+                            activityResultSender = this@MainActivity,
+                            navController = animNavController
+                        ) {
+                            Camera(
+                                navigateToDetails = {
+                                    animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                                }
+                            )
+                        }
                     }
                     composable(NavigationItem.Photos.route) {
                         ScaffoldScreen(
