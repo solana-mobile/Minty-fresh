@@ -96,7 +96,7 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
 
     fun loadAllMediaFiles() {
         viewModelScope.launch(Dispatchers.IO) {
-            mediaLiveData.value = loadMediaFromSDCard()
+            mediaLiveData.value = loadMediaFromSDCard().filter { it.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE }
         }
     }
 }
