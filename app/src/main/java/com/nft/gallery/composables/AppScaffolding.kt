@@ -1,6 +1,5 @@
 package com.nft.gallery.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
@@ -10,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,14 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.nft.gallery.R
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -55,7 +52,7 @@ fun ScaffoldScreen(
                 ) {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        imageVector = ImageVector.vectorResource(id = NavigationItem.Camera.icon),
+                        imageVector = NavigationItem.Camera.icon,
                         contentDescription = "Take Picture",
                         tint = MaterialTheme.colorScheme.background
                     )
@@ -94,7 +91,7 @@ fun ScaffoldScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (pubKey.isNotEmpty()) {
+                            if(pubKey.isNotEmpty()) {
                                 Box(
                                     modifier = Modifier
                                         .size(24.dp)
@@ -104,7 +101,7 @@ fun ScaffoldScreen(
                                 ) {
                                     Icon(
                                         modifier = Modifier.size(16.dp),
-                                        imageVector = ImageVector.vectorResource(id = R.drawable.multiple_stop),
+                                        imageVector = Icons.Filled.MultipleStop,
                                         tint = MaterialTheme.colorScheme.background,
                                         contentDescription = null
                                     )
@@ -186,11 +183,11 @@ fun BottomNavigationBar(
                                                 .padding(horizontal = 12.dp)
                                         )
                                 ) {
-                                    Image(
-                                        painterResource(id = item.icon),
+                                    Icon(
                                         modifier = Modifier
                                             .padding(top = 5.dp, bottom = 3.dp)
                                             .size(24.dp),
+                                        imageVector = item.icon,
                                         contentDescription = item.title
                                     )
                                     Text(
