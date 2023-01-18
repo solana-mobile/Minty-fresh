@@ -9,9 +9,20 @@ class MyMintsRepository @Inject constructor(
     private val myMintsDatabaseProvider: MyMintsDatabaseProvider
 ) {
 
-    suspend fun insertAll(myMints: List<MyMint>) =
-        myMintsDatabaseProvider.roomDb.myMintsDao()
-            .insertAll(myMints)
+    suspend fun insertAll(myMints: List<MyMint>) {
+        if (myMints.isEmpty()) {
+            return
+        }
+
+        val cachedIds = get(myMints.first().pubKey).map { it.id }.toSet()
+        val newIds = myMints.map { it.id }.toSet()
+
+        val staleData = cachedIds.filter { !newIds.contains(it) }
+
+        myMintsDatabaseProvider.roomDb.myMintsDao().delete(staleData)
+
+        myMintsDatabaseProvider.roomDb.myMintsDao().insertAll(myMints)
+    }
 
     suspend fun get(pubKey: String) =
         myMintsDatabaseProvider.roomDb.myMintsDao().get(

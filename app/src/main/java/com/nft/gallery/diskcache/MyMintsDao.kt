@@ -13,4 +13,7 @@ interface MyMintsDao {
 
     @Query("SELECT * FROM MyMint WHERE rpc_cluster = :clusterName AND pub_key = :pubKey")
     suspend fun get(pubKey: String, clusterName: String): List<MyMint>
+
+    @Query("DELETE FROM MyMint WHERE id in (:ids)")
+    suspend fun delete(ids: List<String>)
 }
