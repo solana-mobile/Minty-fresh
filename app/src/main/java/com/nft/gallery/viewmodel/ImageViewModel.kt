@@ -19,8 +19,6 @@ class ImageViewModel @Inject constructor(application: Application) : AndroidView
 
     private var imagesLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
-    private var videosLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
-
     fun getImageList(): StateFlow<List<String>> {
         return imagesLiveData.asStateFlow()
     }
