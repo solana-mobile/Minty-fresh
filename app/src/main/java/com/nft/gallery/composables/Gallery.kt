@@ -24,17 +24,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.nft.gallery.viewmodel.ImageViewModel
+import com.nft.gallery.viewmodel.MediaViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun Gallery(
-    imageViewModel: ImageViewModel = hiltViewModel(),
+    mediaViewModel: MediaViewModel = hiltViewModel(),
     navigateToDetails: (String) -> Unit = { },
 ) {
     val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(
             Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
         )
     } else {
         listOf(
@@ -73,12 +74,12 @@ fun Gallery(
         PermissionView(
             permissionsRequired,
             content = {
-                val uiState = imageViewModel.getImageList().collectAsState().value
+                val uiState = mediaViewModel.getMediaList().collectAsState().value
 
                 LaunchedEffect(
                     key1 = Unit,
                     block = {
-                        imageViewModel.loadAllImages()
+                        mediaViewModel.loadAllMediaFiles()
                     }
                 )
 
@@ -92,9 +93,9 @@ fun Gallery(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    itemsIndexed(items = uiState) { _, path ->
+                    itemsIndexed(items = uiState) { _, media ->
                         GlideImage(
-                            model = path,
+                            model = media.path,
                             contentDescription = null,
                             modifier = Modifier
                                 .width(76.dp)
@@ -102,7 +103,7 @@ fun Gallery(
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(color = MaterialTheme.colorScheme.surface)
                                 .clickable {
-                                    navigateToDetails(path)
+                                    navigateToDetails(media.path)
                                 },
                             contentScale = ContentScale.Crop
                         ) {
