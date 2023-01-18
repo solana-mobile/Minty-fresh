@@ -1,5 +1,6 @@
 package com.nft.gallery.composables
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +34,7 @@ import com.nft.gallery.R
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalMaterial3Api::class,
@@ -47,6 +50,15 @@ fun ScaffoldScreen(
 ) {
     val viewState = walletConnectionViewModel.viewState.collectAsState().value
     val drawerState = rememberBottomDrawerState(initialValue = BottomDrawerValue.Expanded)
+    val scope = rememberCoroutineScope()
+
+    BackHandler(
+        enabled = drawerState.isExpanded
+    ) {
+        scope.launch {
+            drawerState.close()
+        }
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -191,7 +203,9 @@ fun ScaffoldScreen(
                             shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
                             onClick = {
-
+                                scope.launch {
+                                    drawerState.close()
+                                }
                             }
                         ) {
                             Text(
@@ -202,7 +216,7 @@ fun ScaffoldScreen(
                 },
                 drawerState = drawerState,
                 drawerBackgroundColor = Color.Transparent,
-                gesturesEnabled = true
+                gesturesEnabled = false
             ) {
                 Box(
                     modifier = Modifier.padding(padding)
