@@ -31,16 +31,36 @@ class ImageViewModel @Inject constructor(application: Application) : AndroidView
      * @return ArrayList with images Path
      */
     private fun loadImagesFromSDCard(): ArrayList<String> {
-        val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val uri: Uri = MediaStore.Files.getContentUri("external")
         val cursor: Cursor?
         val listOfAllImages = ArrayList<String>()
         var absolutePathOfImage: String?
         val context = getApplication<Application>().applicationContext
 
         val projection =
-            arrayOf(MediaStore.MediaColumns.DATA, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.ImageColumns.DATE_TAKEN)
+            arrayOf(
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DATA,
+                MediaStore.Files.FileColumns.DATE_ADDED,
+                MediaStore.Files.FileColumns.MEDIA_TYPE,
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.TITLE
+            )
 
-        cursor = context.contentResolver.query(uri, projection, null, null, MediaStore.Images.ImageColumns.DATE_TAKEN + " DESC")
+        // Return only video and image metadata.
+        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                + " OR "
+                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+
+        cursor = context.contentResolver.query(
+            uri,
+            projection,
+            selection,
+            null,
+            MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+        )
 
         val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
         while (cursor.moveToNext()) {
