@@ -35,11 +35,19 @@ fun Gallery(
     val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(
             Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.ACCESS_MEDIA_LOCATION
         )
     } else {
-        listOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_MEDIA_LOCATION
+            )
+        } else {
+            listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+            )
+        }
     }
 
     Column(

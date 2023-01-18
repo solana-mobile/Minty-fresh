@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -48,6 +49,7 @@ fun MintDetailsPage(
     intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
+    val exifLocation = exifDataViewModel.viewState.collectAsState().value
 
     if (uiState.mintState == MintState.COMPLETE)
         navigateUp()
@@ -230,6 +232,18 @@ fun MintDetailsPage(
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline
                     )
+                    exifLocation?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .padding(
+                                    top = 10.dp
+                                )
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Start
+                        )
+                    }
                     Button(
                         modifier = Modifier
                             .padding(
