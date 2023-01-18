@@ -18,7 +18,7 @@ import javax.inject.Inject
 data class Media(
     val path: String,
     val dateAdded: String,
-    val mediaType: String,
+    val mediaType: Int,
     val mimeType: String,
     val title: String
 )
@@ -76,7 +76,7 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
         while (cursor.moveToNext()) {
             val absolutePathOfImage = cursor.getString(columnIndexData)
             val dateAdded = cursor.getString(columnIndexDateAdded)
-            val mediaType = cursor.getString(columnIndexMediaType)
+            val mediaType = cursor.getInt(columnIndexMediaType)
             val mimeType = cursor.getString(columnIndexMimeType)
             val title = cursor.getString(columnIndexTitle)
 
