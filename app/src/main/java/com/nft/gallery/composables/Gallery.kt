@@ -24,12 +24,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.nft.gallery.viewmodel.ImageViewModel
+import com.nft.gallery.viewmodel.MediaViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun Gallery(
-    imageViewModel: ImageViewModel = hiltViewModel(),
+    mediaViewModel: MediaViewModel = hiltViewModel(),
     navigateToDetails: (String) -> Unit = { },
 ) {
     val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -74,12 +74,12 @@ fun Gallery(
         PermissionView(
             permissionsRequired,
             content = {
-                val uiState = imageViewModel.getImageList().collectAsState().value
+                val uiState = mediaViewModel.getMediaList().collectAsState().value
 
                 LaunchedEffect(
                     key1 = Unit,
                     block = {
-                        imageViewModel.loadAllImages()
+                        mediaViewModel.loadAllImages()
                     }
                 )
 

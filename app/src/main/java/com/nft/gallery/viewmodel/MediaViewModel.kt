@@ -15,12 +15,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ImageViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
+class MediaViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    private var imagesLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    private var mediaLiveData: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 
-    fun getImageList(): StateFlow<List<String>> {
-        return imagesLiveData.asStateFlow()
+    fun getMediaList(): StateFlow<List<String>> {
+        return mediaLiveData.asStateFlow()
     }
 
     /**
@@ -73,7 +73,7 @@ class ImageViewModel @Inject constructor(application: Application) : AndroidView
 
     fun loadAllImages() {
         viewModelScope.launch(Dispatchers.IO) {
-            imagesLiveData.value = loadImagesFromSDCard()
+            mediaLiveData.value = loadImagesFromSDCard()
         }
     }
 }
