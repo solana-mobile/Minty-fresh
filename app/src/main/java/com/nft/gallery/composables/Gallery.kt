@@ -2,6 +2,7 @@ package com.nft.gallery.composables
 
 import android.Manifest
 import android.os.Build
+import android.provider.MediaStore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -94,20 +95,27 @@ fun Gallery(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     itemsIndexed(items = uiState) { _, media ->
-                        GlideImage(
-                            model = media.path,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(76.dp)
-                                .aspectRatio(1.0f)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(color = MaterialTheme.colorScheme.surface)
-                                .clickable {
-                                    navigateToDetails(media.path)
-                                },
-                            contentScale = ContentScale.Crop
-                        ) {
-                            it.thumbnail()
+                        when (media.mediaType) {
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
+                                GlideImage(
+                                    model = media.path,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .width(76.dp)
+                                        .aspectRatio(1.0f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(color = MaterialTheme.colorScheme.surface)
+                                        .clickable {
+                                            navigateToDetails(media.path)
+                                        },
+                                    contentScale = ContentScale.Crop
+                                ) {
+                                    it.thumbnail()
+                                }
+                            }
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
+                                VideoView(media)
+                            }
                         }
                     }
                 }
