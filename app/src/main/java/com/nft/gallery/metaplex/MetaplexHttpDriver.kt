@@ -15,7 +15,7 @@ import com.metaplex.lib.drivers.rpc.RpcResponse
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 
-class MetaplexHttpDriver(val url: String) : JsonRpcDriver {
+class MetaplexHttpDriver(private val url: String) : JsonRpcDriver {
 
     private val json = Json {
         encodeDefaults = true

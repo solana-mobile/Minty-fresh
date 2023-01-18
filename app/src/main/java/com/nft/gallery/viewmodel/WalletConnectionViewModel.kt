@@ -10,7 +10,6 @@ import com.nft.gallery.usecase.PersistenceUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

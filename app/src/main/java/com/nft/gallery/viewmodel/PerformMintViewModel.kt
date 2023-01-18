@@ -1,8 +1,7 @@
 package com.nft.gallery.viewmodel
 
-import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.metaplex.lib.drivers.rpc.RpcRequest
 import com.metaplex.lib.drivers.solana.Commitment
@@ -27,7 +26,6 @@ import com.solana.core.HotAccount
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -55,13 +53,12 @@ data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
     val mintState: MintState = MintState.NONE
 )
-val rpcUrl = BuildConfig.SOLANA_RPC_URL
+const val rpcUrl = BuildConfig.SOLANA_RPC_URL
 
 @HiltViewModel
 class PerformMintViewModel @Inject constructor(
-    application: Application,
     private val storageRepository: StorageUploadRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
 
@@ -71,14 +68,14 @@ class PerformMintViewModel @Inject constructor(
      * We should perhaps think about updating the ViewState with form input, then it wouldn't
      * have to be passed here. Also we'll want to support dynamic attributes in the future.
      */
-    fun performMint(sender: ActivityResultSender, title: String, desc: String, imgUrl: String) {
+    fun performMint(sender: ActivityResultSender, title: String, desc: String, filePath: String) {
         viewModelScope.launch {
 
             _viewState.update {
                 _viewState.value.copy(mintState = MintState.UPLOADING_FILE)
             }
 
-            val nftImageUrl = storageRepository.uploadFile(imgUrl)
+            val nftImageUrl = storageRepository.uploadFile(filePath)
 
             _viewState.update {
                 _viewState.value.copy(mintState = MintState.CREATING_METADATA)
