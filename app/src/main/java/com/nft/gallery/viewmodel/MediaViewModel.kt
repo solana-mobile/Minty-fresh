@@ -33,16 +33,14 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
     }
 
     /**
-     * Getting All Images Path.
+     * Load all media (Images and Videos) from contentResolver.
      *
      * Required Storage Permission
-     *
-     * @return ArrayList with images Path
      */
-    private fun loadImagesFromSDCard(): ArrayList<Media> {
+    private fun loadMediaFromSDCard(): ArrayList<Media> {
         val uri: Uri = MediaStore.Files.getContentUri("external")
         val cursor: Cursor?
-        val listOfAllImages = ArrayList<Media>()
+        val mediaFiles = ArrayList<Media>()
         val context = getApplication<Application>().applicationContext
 
         val projection =
@@ -82,7 +80,7 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
             val mimeType = cursor.getString(columnIndexMimeType)
             val title = cursor.getString(columnIndexTitle)
 
-            listOfAllImages.add(
+            mediaFiles.add(
                 Media(
                     path = absolutePathOfImage,
                     dateAdded = dateAdded,
@@ -93,12 +91,12 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
             )
         }
         cursor.close()
-        return listOfAllImages
+        return mediaFiles
     }
 
-    fun loadAllImages() {
+    fun loadAllMediaFiles() {
         viewModelScope.launch(Dispatchers.IO) {
-            mediaLiveData.value = loadImagesFromSDCard()
+            mediaLiveData.value = loadMediaFromSDCard()
         }
     }
 }

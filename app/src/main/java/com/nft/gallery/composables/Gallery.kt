@@ -79,7 +79,7 @@ fun Gallery(
                 LaunchedEffect(
                     key1 = Unit,
                     block = {
-                        mediaViewModel.loadAllImages()
+                        mediaViewModel.loadAllMediaFiles()
                     }
                 )
 
