@@ -9,8 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,13 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.R
 import com.nft.gallery.viewmodel.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -65,7 +66,7 @@ fun MintDetailsPage(
                     ) {
                         Icon(
                             tint = MaterialTheme.colorScheme.onSurface,
-                            imageVector = Icons.Filled.ArrowBack,
+                            imageVector = ImageVector.vectorResource(id = R.drawable.arrow_back),
                             contentDescription = "back"
                         )
                     }
