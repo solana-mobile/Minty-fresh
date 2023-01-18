@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.viewmodel.ExifDataViewModel
 import com.nft.gallery.viewmodel.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -42,12 +44,20 @@ fun MintDetailsPage(
     imagePath: String,
     navigateUp: () -> Boolean = { true },
     performMintViewModel: PerformMintViewModel = hiltViewModel(),
+    exifDataViewModel: ExifDataViewModel = hiltViewModel(),
     intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
     if (uiState.mintState == MintState.COMPLETE)
         navigateUp()
+
+    LaunchedEffect(
+        key1 = Unit,
+        block = {
+            exifDataViewModel.loadExifData(imagePath)
+        }
+    )
 
     Scaffold(
         topBar = {
