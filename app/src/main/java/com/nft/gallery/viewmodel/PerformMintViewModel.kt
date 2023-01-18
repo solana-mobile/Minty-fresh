@@ -75,13 +75,8 @@ class PerformMintViewModel @Inject constructor(
      * have to be passed here. Also we'll want to support dynamic attributes in the future.
      */
     fun performMint(sender: ActivityResultSender, title: String, desc: String, imgUrl: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-
-            // TODO: handle case if public key is null?
-            val creatorPublicKey = publicKey.value ?: return@launch //connect(sender)
-            val authToken = authToken.value ?: return@launch
-
-            performMintUseCase.performMint(sender, creatorPublicKey, authToken, title, desc, imgUrl)
+        viewModelScope.launch {
+            performMintUseCase.performMint(sender, title, desc, imgUrl)
         }
     }
 
