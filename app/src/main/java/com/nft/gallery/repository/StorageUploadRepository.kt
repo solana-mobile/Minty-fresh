@@ -61,12 +61,12 @@ class StorageUploadRepository @Inject constructor(
                 throw Error("NFT.Storage returned error: ${err.name}: $${err.message}")
             }
 
-            "https://${result.value?.cid}${ipfsUrlSuffix}"
+            "$ipfsUrlPrefix${result.value?.cid}"
         }
     }
 
     companion object {
         const val token = "Bearer ${BuildConfig.NFTSTORAGE_KEY}"
-        const val ipfsUrlSuffix = ".ipfs.nftstorage.link"
+        const val ipfsUrlPrefix = "https://ipfs.io/ipfs/"
     }
 }
