@@ -46,7 +46,7 @@ fun MintDetailsPage(
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
-    if (uiState.mintState == MintState.COMPLETE)
+    if (uiState.mintState is MintState.Complete)
         navigateUp()
 
     Scaffold(
@@ -77,7 +77,7 @@ fun MintDetailsPage(
             }
         },
         content = { padding ->
-            if (uiState.mintState != MintState.NONE) {
+            if (uiState.mintState !is MintState.None) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -92,10 +92,10 @@ fun MintDetailsPage(
                             top = 28.dp
                         ),
                         text = when (uiState.mintState) {
-                            MintState.UPLOADING_FILE -> "Uploading file..."
-                            MintState.CREATING_METADATA -> "Processing..."
-                            MintState.MINTING -> "Minting..."
-                            MintState.SIGNING -> "Requesting wallet signature..."
+                            is MintState.UploadingMedia -> "Uploading file..."
+                            is MintState.CreatingMetadata -> "Processing..."
+                            is MintState.Minting -> "Minting..."
+                            is MintState.Signing-> "Requesting wallet signature..."
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium

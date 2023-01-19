@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 data class PerformMintViewState(
     val isWalletConnected: Boolean = false,
-    val mintState: MintState = MintState.NONE
+    val mintState: MintState = MintState.None
 )
 
 @HiltViewModel
@@ -30,23 +30,6 @@ class PerformMintViewModel @Inject constructor(
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
 
     val viewState: StateFlow<PerformMintViewState> = _viewState.asStateFlow()
-
-    val authToken =
-        persistenceUseCase.walletDetails.map {
-            (it as? Connected)?.authToken
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
-
-    val publicKey =
-        persistenceUseCase.walletDetails.map {
-            when (it) {
-                is Connected -> it.publicKey
-                is NotConnected -> null
-            }.also { pubkey ->
-                _viewState.update {
-                    _viewState.value.copy(isWalletConnected = pubkey != null)
-                }
-            }
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = null)
 
     init {
         viewModelScope.launch {

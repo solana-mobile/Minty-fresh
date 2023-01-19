@@ -15,24 +15,24 @@ import com.nft.gallery.viewmodel.solanaUri
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-enum class MintState {
-    NONE,
-    UPLOADING_FILE,
-    CREATING_METADATA,
-    BUILDING_TRANSACTION,
-    SIGNING,
-    MINTING,
-    COMPLETE
+sealed interface MintState {
+    object None : MintState
+    object UploadingMedia : MintState
+    object CreatingMetadata : MintState
+    object BuildingTransaction : MintState
+    class Signing(val transaction: ByteArray) : MintState
+    class Minting(val mintAddress: PublicKey) : MintState
+    class Complete(val transactionSignature: String) : MintState
 }
 
 class PerformMintUseCase @Inject constructor(
+    private val walletAdapter: MobileWalletAdapter,
     private val storageRepository: StorageUploadRepository,
     private val persistenceUseCase: PersistenceUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
@@ -40,7 +40,7 @@ class PerformMintUseCase @Inject constructor(
     private val sendTransactionRepository: SendTransactionRepository
 ) {
 
-    private val _mintState = MutableStateFlow(MintState.NONE)
+    private val _mintState = MutableStateFlow<MintState>(MintState.None)
 
     val mintState: StateFlow<MintState> = _mintState
 
@@ -59,38 +59,38 @@ class PerformMintUseCase @Inject constructor(
             check(creator != null)
 
             // upload the media file
-            _mintState.value = MintState.UPLOADING_FILE
+            _mintState.value = MintState.UploadingMedia
 
             val nftImageUrl = storageRepository.uploadFile(imgUrl)
 
             // create and upload the NFT metadata
-            _mintState.value = MintState.CREATING_METADATA
+            _mintState.value = MintState.CreatingMetadata
 
             val metadataUrl = storageRepository.uploadMetadata(title, desc, nftImageUrl)
 
             // begin building the transaction
-            _mintState.value = MintState.BUILDING_TRANSACTION
+            _mintState.value = MintState.BuildingTransaction
 
             val mintAccount = HotAccount()
             val mintTxn = mintTransactionRepository.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, creator)
 
             mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
 
+            val transactionBytes =
+                mintTxn.serialize(SerializeConfig(
+                    requireAllSignatures = false,
+                    verifySignatures = false
+                ))
+
             // begin signing transaction step
-            _mintState.value = MintState.SIGNING
+            _mintState.value = MintState.Signing(transactionBytes)
             delay(700)
 
-            val primarySignature = MobileWalletAdapter().transact(sender) {
+            val primarySignature = walletAdapter.transact(sender) {
 
                 authToken?.let {
                     reauthorize(solanaUri, iconUri, identityName, authToken)
                 } ?: authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
-
-                val transactionBytes =
-                    mintTxn.serialize(SerializeConfig(
-                        requireAllSignatures = false,
-                        verifySignatures = false
-                    ))
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 
@@ -111,7 +111,7 @@ class PerformMintUseCase @Inject constructor(
             // now that the primary signer (creator) has signed, the mint account can sign
             signed.partialSign(mintAccount)
 
-            _mintState.value = MintState.MINTING
+            _mintState.value = MintState.Minting(mintAccount.publicKey)
 
             // send the signed transaction to the cluster
             val transactionSignature = sendTransactionRepository.sendTransaction(signed)
@@ -119,6 +119,6 @@ class PerformMintUseCase @Inject constructor(
             // Await for transaction confirmation
             sendTransactionRepository.confirmTransaction(transactionSignature)
 
-            _mintState.value = MintState.COMPLETE
+            _mintState.value = MintState.Complete(transactionSignature)
         }
 }
