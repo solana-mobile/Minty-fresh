@@ -9,11 +9,8 @@ class MyMintsRepository @Inject constructor(
     private val myMintsDatabaseProvider: MyMintsDatabaseProvider
 ) {
 
-    suspend fun insertAll(myMints: List<MyMint>, pubKey: String) {
-        deleteStaleData(myMints, pubKey)
-
+    suspend fun insertAll(myMints: List<MyMint>) =
         myMintsDatabaseProvider.roomDb.myMintsDao().insertAll(myMints)
-    }
 
     suspend fun deleteStaleData(currentMintList: List<MyMint>, pubKey: String) {
         val newIds = currentMintList.map { it.id }.toSet()

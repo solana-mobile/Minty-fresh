@@ -129,7 +129,7 @@ class MyMintsViewModel @Inject constructor(
 
                             if (index == nfts.size - 1) {
                                 // Inserting in database when we fetched all the NFTs
-                                myMintsRepository.insertAll(myNfts, publicKey.toString())
+                                myMintsRepository.insertAll(myNfts)
                             }
                             MyMintsViewState.Loaded(myNfts)
                         }
