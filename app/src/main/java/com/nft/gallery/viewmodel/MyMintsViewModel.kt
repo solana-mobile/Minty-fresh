@@ -96,7 +96,7 @@ class MyMintsViewModel @Inject constructor(
 
             try {
                 // TODO: Sort by mint date
-                val nfts = mintsUseCase.getAllNftsForCollectionName(mintyFreshCollectionName)
+                val nfts = mintsUseCase.getAllUserMintyFreshNfts()
                     .sortedBy { it.mint.toString() }
                 Log.d(TAG, "Found ${nfts.size} NFTs")
 

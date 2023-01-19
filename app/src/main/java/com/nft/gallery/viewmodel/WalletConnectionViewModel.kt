@@ -64,6 +64,7 @@ class WalletConnectionViewModel @Inject constructor(
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
             walletAdapter.transact(sender) {
+
                 val authed = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
 
                 persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)

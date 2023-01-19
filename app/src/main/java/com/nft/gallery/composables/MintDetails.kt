@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.nft.gallery.viewmodel.MintState
+import com.nft.gallery.usecase.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 
@@ -47,7 +47,7 @@ fun MintDetailsPage(
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
-    if (uiState.mintState == MintState.COMPLETE) {
+    if (uiState.mintState is MintState.Complete){
         onMintCompleted()
     }
 
@@ -79,7 +79,7 @@ fun MintDetailsPage(
             }
         },
         content = { padding ->
-            if (uiState.mintState != MintState.NONE) {
+            if (uiState.mintState !is MintState.None) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
@@ -94,10 +94,10 @@ fun MintDetailsPage(
                             top = 28.dp
                         ),
                         text = when (uiState.mintState) {
-                            MintState.UPLOADING_FILE -> "Uploading file..."
-                            MintState.CREATING_METADATA -> "Processing..."
-                            MintState.MINTING -> "Minting..."
-                            MintState.SIGNING -> "Requesting wallet signature..."
+                            is MintState.UploadingMedia -> "Uploading file..."
+                            is MintState.CreatingMetadata -> "Processing..."
+                            is MintState.Minting -> "Minting..."
+                            is MintState.Signing-> "Requesting wallet signature..."
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium
@@ -230,17 +230,20 @@ fun MintDetailsPage(
                             ),
                         shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
+                        enabled = (title.value.isNotEmpty() && description.value.isNotEmpty()) xor !uiState.isWalletConnected,
                         onClick = {
-                            performMintViewModel.performMint(
-                                intentSender,
-                                title.value,
-                                description.value,
-                                imagePath
-                            )
+                            if (!uiState.isWalletConnected)
+                                performMintViewModel.connect(intentSender)
+                            else
+                                performMintViewModel.performMint(
+                                    intentSender,
+                                    title.value,
+                                    description.value,
+                                    imagePath
+                                )
                         }
                     ) {
-                        Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
+                        Text(text = if (uiState.isWalletConnected) "Mint" else "Connect")
                     }
                 }
             }
