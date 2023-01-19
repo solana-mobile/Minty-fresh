@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.constant.mintyFreshCollectionName
-import com.nft.gallery.diskcache.MyMint
 import com.nft.gallery.diskcache.MyMintsRepository
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MyMintsUseCase
@@ -34,7 +33,7 @@ class MyMintsViewModel @Inject constructor(
 
     val viewState = _viewState
 
-    var wasLoaded = false
+    private var wasLoaded = false
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()

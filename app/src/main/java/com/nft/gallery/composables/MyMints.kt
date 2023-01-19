@@ -115,8 +115,8 @@ fun MyMintPage(
                         itemsIndexed(items = uiState.myMints) { index, myMint ->
                             GlideImage(
                                 modifier = Modifier
-                                    .height(76.dp)
                                     .width(76.dp)
+                                    .aspectRatio(1.0f)
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(color = MaterialTheme.colorScheme.surface)
                                     .loadingPlaceholder(

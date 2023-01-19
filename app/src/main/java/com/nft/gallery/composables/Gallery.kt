@@ -2,6 +2,7 @@ package com.nft.gallery.composables
 
 import android.Manifest
 import android.os.Build
+import android.provider.MediaStore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,17 +25,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.nft.gallery.viewmodel.ImageViewModel
+import com.nft.gallery.viewmodel.MediaViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun Gallery(
-    imageViewModel: ImageViewModel = hiltViewModel(),
+    mediaViewModel: MediaViewModel = hiltViewModel(),
     navigateToDetails: (String) -> Unit = { },
 ) {
     val permissionsRequired = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         listOf(
             Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
         )
     } else {
         listOf(
@@ -73,12 +75,12 @@ fun Gallery(
         PermissionView(
             permissionsRequired,
             content = {
-                val uiState = imageViewModel.getImageList().collectAsState().value
+                val uiState = mediaViewModel.getMediaList().collectAsState().value
 
                 LaunchedEffect(
                     key1 = Unit,
                     block = {
-                        imageViewModel.loadAllImages()
+                        mediaViewModel.loadAllMediaFiles()
                     }
                 )
 
@@ -92,21 +94,28 @@ fun Gallery(
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    itemsIndexed(items = uiState) { _, path ->
-                        GlideImage(
-                            model = path,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .width(76.dp)
-                                .aspectRatio(1.0f)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(color = MaterialTheme.colorScheme.surface)
-                                .clickable {
-                                    navigateToDetails(path)
-                                },
-                            contentScale = ContentScale.Crop
-                        ) {
-                            it.thumbnail()
+                    itemsIndexed(items = uiState) { _, media ->
+                        when (media.mediaType) {
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
+                                GlideImage(
+                                    model = media.path,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .width(76.dp)
+                                        .aspectRatio(1.0f)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(color = MaterialTheme.colorScheme.surface)
+                                        .clickable {
+                                            navigateToDetails(media.path)
+                                        },
+                                    contentScale = ContentScale.Crop
+                                ) {
+                                    it.thumbnail()
+                                }
+                            }
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
+                                VideoView(media)
+                            }
                         }
                     }
                 }

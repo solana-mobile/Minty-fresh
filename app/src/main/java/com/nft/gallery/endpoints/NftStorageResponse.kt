@@ -29,7 +29,7 @@ data class Error(
 
 object NftStorageResponseConverter : Converter.Factory() {
 
-    val json = Json { ignoreUnknownKeys = true }
+    private val json = Json { ignoreUnknownKeys = true }
 
     override fun responseBodyConverter(
         type: Type,
