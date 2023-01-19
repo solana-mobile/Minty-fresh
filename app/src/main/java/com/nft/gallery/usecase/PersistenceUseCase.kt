@@ -1,6 +1,5 @@
 package com.nft.gallery.usecase
 
-import com.nft.gallery.diskcache.MyMintsRepository
 import com.nft.gallery.repository.PrefsDataStoreRepository
 import com.solana.core.PublicKey
 import kotlinx.coroutines.flow.combine
@@ -18,7 +17,6 @@ data class Connected(
 
 class PersistenceUseCase @Inject constructor(
     private val dataStoreRepository: PrefsDataStoreRepository,
-    private val myMintsRepository: MyMintsRepository
 ) {
 
     val walletDetails = combine(

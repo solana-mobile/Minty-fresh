@@ -171,7 +171,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                             ) {
                                 MintDetailsPage(
                                     imagePath = imagePath ?: clipDataPath
-                                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                                        ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                                     navigateUp = {
                                         animNavController.navigateUp()
                                     },
