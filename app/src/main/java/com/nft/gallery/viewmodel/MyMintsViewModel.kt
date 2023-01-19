@@ -72,7 +72,7 @@ class MyMintsViewModel @Inject constructor(
             if (forceRefresh) {
                 val loadingMints =
                     _viewState.value.myMints.filter { it.id.isNotEmpty() }.toMutableList().apply {
-                        for (i in 0..2) {
+                        for (i in 0 until 1) {
                             add(MyMint("", "", "", "", "", ""))
                         }
                     }
@@ -109,12 +109,12 @@ class MyMintsViewModel @Inject constructor(
                     )
                     val currentCachedData = myMintsRepository.get(publicKey.toString())
                     val loadingData = currentCachedData.toMutableList().apply {
-                        for (i in 0..(currentMintList.size - currentCachedData.size)) {
+                        for (i in 0 until currentMintList.size - currentCachedData.size) {
                             add(MyMint("", "", "", "", "", ""))
                         }
                     }
                     _viewState.update {
-                        MyMintsViewState.Loaded(currentCachedData)
+                        MyMintsViewState.Loaded(loadingData)
                     }
                     nfts.forEachIndexed { index, nft ->
                         val metadata = mintsUseCase.getNftsMetadata(nft)
@@ -134,9 +134,9 @@ class MyMintsViewModel @Inject constructor(
                             MyMintsViewState.Loaded(myNfts)
                         }
                     }
-                }
-                _viewState.update {
-                    MyMintsViewState.Loaded(_viewState.value.myMints.filter { it.id.isNotEmpty() })
+                    _viewState.update {
+                        MyMintsViewState.Loaded(_viewState.value.myMints.filter { it.id.isNotEmpty() })
+                    }
                 }
             } catch (e: Exception) {
                 Log.e(TAG, e.toString())
