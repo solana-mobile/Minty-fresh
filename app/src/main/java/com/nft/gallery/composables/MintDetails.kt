@@ -47,8 +47,9 @@ fun MintDetailsPage(
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
-    if (uiState.mintState == MintState.COMPLETE)
-        navigateUp()
+    if (uiState.mintState == MintState.COMPLETE) {
+        onMintCompleted()
+    }
 
     Scaffold(
         topBar = {
@@ -229,19 +230,14 @@ fun MintDetailsPage(
                             ),
                         shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                        //TODO: Uncomment this you slacker
-//                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
-                        enabled = true,
+                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty() && uiState.mintState == MintState.NONE,
                         onClick = {
-                            //TODO: Uncomment this you slacker
-//                            performMintViewModel.performMint(
-//                                intentSender,
-//                                title.value,
-//                                description.value,
-//                                imagePath
-//                            )
-
-                            onMintCompleted()
+                            performMintViewModel.performMint(
+                                intentSender,
+                                title.value,
+                                description.value,
+                                imagePath
+                            )
                         }
                     ) {
                         Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
