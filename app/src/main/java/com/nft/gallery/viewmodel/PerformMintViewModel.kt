@@ -5,8 +5,11 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
-import com.nft.gallery.usecase.*
-import com.solana.core.*
+import com.nft.gallery.usecase.Connected
+import com.nft.gallery.usecase.MintState
+import com.nft.gallery.usecase.PerformMintUseCase
+import com.nft.gallery.usecase.PersistenceUseCase
+import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,21 +35,16 @@ class PerformMintViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            performMintUseCase.mintState.collect { mintState ->
-                _viewState.update {
-                    _viewState.value.copy(mintState = mintState)
-                }
-            }
-        }
-    }
-
-    // duplicated from WalletConnectionViewModel - would it be better to inject that vm here and call it?
-    fun connect(sender: ActivityResultSender) {
-        viewModelScope.launch {
-            MobileWalletAdapter().transact(sender) {
-                val authed = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
-
-                persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
+            combine(
+                performMintUseCase.mintState,
+                persistenceUseCase.walletDetails
+            ) { mintState, walletDetails ->
+                PerformMintViewState(
+                    isWalletConnected = walletDetails is Connected,
+                    mintState = mintState
+                )
+            }.collect { newState ->
+                _viewState.update { newState }
             }
         }
     }
@@ -57,6 +55,14 @@ class PerformMintViewModel @Inject constructor(
      */
     fun performMint(sender: ActivityResultSender, title: String, desc: String, imgUrl: String) {
         viewModelScope.launch {
+            if (!_viewState.value.isWalletConnected) {
+                MobileWalletAdapter().transact(sender) {
+                    val authed = authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
+
+                    persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
+                }
+            }
+
             performMintUseCase.performMint(sender, title, desc, imgUrl)
         }
     }

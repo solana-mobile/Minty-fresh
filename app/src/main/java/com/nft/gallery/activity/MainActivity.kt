@@ -238,6 +238,10 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
         }
     }
 
+    /**
+     * NOTE: This block of code is going to be integrated into MWA itself. It should have
+     * been there from the start.
+     */
     private val activityResultLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             intentSender.onActivityComplete()
