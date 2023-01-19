@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.constant.mintyFreshCollectionName
+import com.nft.gallery.diskcache.MyMint
 import com.nft.gallery.diskcache.MyMintsRepository
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MyMintsUseCase
@@ -69,16 +70,23 @@ class MyMintsViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (forceRefresh) {
-                _viewState.value = myMintsMapper.mapLoading()
-            }
-
-            val cachedNfts = myMintsRepository.get(publicKey.toString())
-            if (cachedNfts.isNotEmpty()) {
-                _viewState.getAndUpdate {
-                    MyMintsViewState.Loaded(cachedNfts)
+                val loadingMints =
+                    _viewState.value.myMints.filter { it.id.isNotEmpty() }.toMutableList().apply {
+                        for (i in 0..2) {
+                            add(MyMint("", "", "", "", "", ""))
+                        }
+                    }
+                _viewState.update {
+                    MyMintsViewState.Loaded(loadingMints)
                 }
-                if (!forceRefresh && cachedNfts.isNotEmpty())
+            } else {
+                val cachedNfts = myMintsRepository.get(publicKey.toString())
+                if (cachedNfts.isNotEmpty()) {
+                    _viewState.update {
+                        MyMintsViewState.Loaded(cachedNfts)
+                    }
                     return@launch
+                }
             }
 
             wasLoaded = true
@@ -86,13 +94,28 @@ class MyMintsViewModel @Inject constructor(
 
             try {
                 val nfts = mintsUseCase.getAllNftsForCollectionName(mintyFreshCollectionName)
+                    .sortedBy { it.mint.toString() }
                 Log.d(TAG, "Found ${nfts.size} NFTs")
 
                 if (nfts.isEmpty()) {
-                    _viewState.value =
+                    _viewState.update {
                         MyMintsViewState.Empty("No mints yet. Start minting pictures with Minty Fresh!")
+                    }
                 } else {
-                    _viewState.value = MyMintsViewState.Loaded(myMintsMapper.map(nfts))
+                    val currentMintList = myMintsMapper.map(nfts)
+                    myMintsRepository.deleteStaleData(
+                        currentMintList = currentMintList,
+                        publicKey.toString()
+                    )
+                    val currentCachedData = myMintsRepository.get(publicKey.toString())
+                    val loadingData = currentCachedData.toMutableList().apply {
+                        for (i in 0..(currentMintList.size - currentCachedData.size)) {
+                            add(MyMint("", "", "", "", "", ""))
+                        }
+                    }
+                    _viewState.update {
+                        MyMintsViewState.Loaded(currentCachedData)
+                    }
                     nfts.forEachIndexed { index, nft ->
                         val metadata = mintsUseCase.getNftsMetadata(nft)
 
@@ -106,11 +129,14 @@ class MyMintsViewModel @Inject constructor(
 
                             if (index == nfts.size - 1) {
                                 // Inserting in database when we fetched all the NFTs
-                                myMintsRepository.insertAll(myNfts)
+                                myMintsRepository.insertAll(myNfts, publicKey.toString())
                             }
                             MyMintsViewState.Loaded(myNfts)
                         }
                     }
+                }
+                _viewState.update {
+                    MyMintsViewState.Loaded(_viewState.value.myMints.filter { it.id.isNotEmpty() })
                 }
             } catch (e: Exception) {
                 Log.e(TAG, e.toString())
