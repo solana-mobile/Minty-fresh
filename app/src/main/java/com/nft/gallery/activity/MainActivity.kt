@@ -171,7 +171,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                             ) {
                                 MintDetailsPage(
                                     imagePath = imagePath ?: clipDataPath
-                                    ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                                        ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
                                     navigateUp = {
                                         animNavController.navigateUp()
                                     },
@@ -238,6 +238,10 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
         }
     }
 
+    /**
+     * NOTE: This block of code is going to be integrated into MWA itself. It should have
+     * been there from the start.
+     */
     private val activityResultLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             intentSender.onActivityComplete()
