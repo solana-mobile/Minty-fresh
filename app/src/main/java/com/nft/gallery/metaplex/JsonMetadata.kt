@@ -1,10 +1,3 @@
-/*
- * Metadata2
- * Gallery
- * 
- * Created by Funkatronics on 1/12/2023
- */
-
 package com.nft.gallery.metaplex
 
 import kotlinx.serialization.SerialName

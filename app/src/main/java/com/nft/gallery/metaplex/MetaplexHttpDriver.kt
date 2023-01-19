@@ -1,10 +1,3 @@
-/*
- * MetaplexHttpDriver
- * Gallery
- * 
- * Created by Funkatronics on 1/11/2023
- */
-
 package com.nft.gallery.metaplex
 
 import com.metaplex.lib.drivers.network.HttpPostRequest
