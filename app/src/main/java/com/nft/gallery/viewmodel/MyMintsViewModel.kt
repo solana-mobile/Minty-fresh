@@ -72,9 +72,8 @@ class MyMintsViewModel @Inject constructor(
             if (forceRefresh) {
                 val loadingMints =
                     _viewState.value.myMints.filter { it.id.isNotEmpty() }.toMutableList().apply {
-                        for (i in 0 until 1) {
-                            add(MyMint("", "", "", "", "", ""))
-                        }
+                        // Add a loading placeholder to existing data.
+                        add(MyMint("", "", "", "", "", ""))
                     }
                 _viewState.update {
                     MyMintsViewState.Loaded(loadingMints)
@@ -93,6 +92,7 @@ class MyMintsViewModel @Inject constructor(
             val mintsUseCase = MyMintsUseCase(publicKey)
 
             try {
+                // TODO: Sort by mint date
                 val nfts = mintsUseCase.getAllNftsForCollectionName(mintyFreshCollectionName)
                     .sortedBy { it.mint.toString() }
                 Log.d(TAG, "Found ${nfts.size} NFTs")
@@ -109,6 +109,7 @@ class MyMintsViewModel @Inject constructor(
                     )
                     val currentCachedData = myMintsRepository.get(publicKey.toString())
                     val loadingData = currentCachedData.toMutableList().apply {
+                        // Add the exact number of loaders based on the total number of mints.
                         for (i in 0 until currentMintList.size - currentCachedData.size) {
                             add(MyMint("", "", "", "", "", ""))
                         }
@@ -116,6 +117,7 @@ class MyMintsViewModel @Inject constructor(
                     _viewState.update {
                         MyMintsViewState.Loaded(loadingData)
                     }
+                    // Fetch and update each NFT data.
                     nfts.forEachIndexed { index, nft ->
                         val metadata = mintsUseCase.getNftsMetadata(nft)
 
@@ -127,13 +129,15 @@ class MyMintsViewModel @Inject constructor(
                                 }
                             }
 
+                            // Inserting in database when we fetched all the NFTs
                             if (index == nfts.size - 1) {
-                                // Inserting in database when we fetched all the NFTs
                                 myMintsRepository.insertAll(myNfts)
                             }
+                            // Update view state as we receive data.
                             MyMintsViewState.Loaded(myNfts)
                         }
                     }
+                    // Remove loading placeholders if necessary.
                     _viewState.update {
                         MyMintsViewState.Loaded(_viewState.value.myMints.filter { it.id.isNotEmpty() })
                     }

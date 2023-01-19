@@ -21,6 +21,7 @@ class MyMintsRepository @Inject constructor(
     }
 
     suspend fun get(pubKey: String) =
+        // TODO: Sort by mint date
         myMintsDatabaseProvider.roomDb.myMintsDao().get(
             pubKey = pubKey,
             clusterName = BuildConfig.RPC_CLUSTER.name
