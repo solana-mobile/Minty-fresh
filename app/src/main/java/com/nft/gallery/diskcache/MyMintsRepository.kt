@@ -9,24 +9,21 @@ class MyMintsRepository @Inject constructor(
     private val myMintsDatabaseProvider: MyMintsDatabaseProvider
 ) {
 
-    suspend fun insertAll(myMints: List<MyMint>) {
-        if (myMints.isEmpty()) {
-            return
-        }
+    suspend fun insertAll(myMints: List<MyMint>) =
+        myMintsDatabaseProvider.roomDb.myMintsDao().insertAll(myMints)
 
-        val cachedIds = get(myMints.first().pubKey).map { it.id }.toSet()
-        val newIds = myMints.map { it.id }.toSet()
+    suspend fun deleteStaleData(currentMintList: List<MyMint>, pubKey: String) {
+        val newIds = currentMintList.map { it.id }.toSet()
+        val cachedIds = get(pubKey).map { it.id }.toSet()
 
         val staleData = cachedIds.filter { !newIds.contains(it) }
-
         myMintsDatabaseProvider.roomDb.myMintsDao().delete(staleData)
-
-        myMintsDatabaseProvider.roomDb.myMintsDao().insertAll(myMints)
     }
 
     suspend fun get(pubKey: String) =
+        // TODO: Sort by mint date
         myMintsDatabaseProvider.roomDb.myMintsDao().get(
             pubKey = pubKey,
             clusterName = BuildConfig.RPC_CLUSTER.name
-        )
+        ).sortedBy { it.id }
 }
