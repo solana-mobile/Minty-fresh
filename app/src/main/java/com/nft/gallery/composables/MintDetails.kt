@@ -41,13 +41,15 @@ import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 fun MintDetailsPage(
     imagePath: String,
     navigateUp: () -> Boolean = { true },
+    onMintCompleted: () -> Unit = { },
     performMintViewModel: PerformMintViewModel = hiltViewModel(),
     intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
 
-    if (uiState.mintState == MintState.COMPLETE)
-        navigateUp()
+    if (uiState.mintState == MintState.COMPLETE) {
+        onMintCompleted()
+    }
 
     Scaffold(
         topBar = {
