@@ -40,7 +40,6 @@ class PerformMintViewModel @Inject constructor(
         }
     }
 
-
     // duplicated from WalletConnectionViewModel - would it be better to inject that vm here and call it?
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
