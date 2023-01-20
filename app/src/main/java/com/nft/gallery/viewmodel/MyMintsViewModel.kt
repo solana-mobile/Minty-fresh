@@ -118,12 +118,12 @@ class MyMintsViewModel @Inject constructor(
         val nfts = mintsUseCase.getAllUserMintyFreshNfts()
         Log.d(TAG, "Found ${nfts.size} NFTs")
 
+        val currentMintList = myMintsMapper.map(nfts)
+        myMintsRepository.deleteStaleData(
+            currentMintList = currentMintList,
+            publicKey.toString()
+        )
         if (nfts.isNotEmpty()) {
-            val currentMintList = myMintsMapper.map(nfts)
-            myMintsRepository.deleteStaleData(
-                currentMintList = currentMintList,
-                publicKey.toString()
-            )
             // Fetch and update each NFT data.
             nfts.forEach { nft ->
                 val metadata = mintsUseCase.getNftsMetadata(nft)
