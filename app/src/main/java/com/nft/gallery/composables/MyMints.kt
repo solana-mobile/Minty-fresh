@@ -98,7 +98,7 @@ fun MyMintPage(
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
                         ) {
-                            myMintsViewModel.loadMyMints(forceRefresh = true)
+                            myMintsViewModel.refresh()
                         }
                     }
                 }
