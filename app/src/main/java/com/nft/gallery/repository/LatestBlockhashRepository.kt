@@ -1,10 +1,3 @@
-/*
- * LatestBlockhashRepository
- * Gallery
- * 
- * Created by Funkatronics on 1/17/2023
- */
-
 package com.nft.gallery.repository
 
 import com.metaplex.lib.drivers.solana.Connection

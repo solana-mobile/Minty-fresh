@@ -1,17 +1,10 @@
-/*
- * MintNftUseCase
- * Gallery
- * 
- * Created by Funkatronics on 1/17/2023
- */
-
 package com.nft.gallery.repository
 
 import com.metaplex.lib.drivers.solana.*
 import com.metaplex.lib.experimental.jen.tokenmetadata.Creator
 import com.metaplex.lib.modules.nfts.builders.CreateNftTransactionBuilder
 import com.metaplex.lib.modules.nfts.models.Metadata
-import com.nft.gallery.metaplex.MintyFreshCreatorPda
+import com.nft.gallery.metaplex.mintyFreshCreatorPda
 import com.solana.core.PublicKey
 import javax.inject.Inject
 
@@ -34,7 +27,7 @@ class MintTransactionRepository @Inject constructor(private val connectionDriver
         sellerFeeBasisPoints = 0,
         creators = listOf(
             Creator(creator, true, 100.toUByte()),
-            Creator(MintyFreshCreatorPda(creator), false, 0.toUByte())
+            Creator(mintyFreshCreatorPda, false, 0.toUByte())
         ),
     )
 }

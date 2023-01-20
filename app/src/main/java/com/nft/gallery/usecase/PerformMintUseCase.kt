@@ -1,10 +1,3 @@
-/*
- * PerformMintUseCase
- * Gallery
- * 
- * Created by Funkatronics on 1/17/2023
- */
-
 package com.nft.gallery.usecase
 
 import com.nft.gallery.BuildConfig

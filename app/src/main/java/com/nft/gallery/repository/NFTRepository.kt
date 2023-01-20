@@ -10,7 +10,7 @@ import com.metaplex.lib.modules.nfts.NftClient
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.metaplex.lib.modules.token.models.metadata
 import com.nft.gallery.BuildConfig
-import com.nft.gallery.metaplex.MintyFreshCreatorPda
+import com.nft.gallery.metaplex.mintyFreshCreatorPda
 import com.solana.core.PublicKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,8 +27,6 @@ class NFTRepository(private val publicKey: PublicKey) {
     private val identityDriver = ReadOnlyIdentityDriver(publicKey, connection)
     private val storageDriver = OkHttpSharedStorageDriver(OkHttpClient())
     private val nftClient = NftClient(connection, identityDriver)
-
-    private val mintyFreshCreatorPda = MintyFreshCreatorPda(publicKey)
 
     suspend fun getAllMintyFreshNfts() = withContext(Dispatchers.IO) {
         nftClient.findAllByCreator(mintyFreshCreatorPda, 2)
