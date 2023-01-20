@@ -5,6 +5,9 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.iconUri
+import com.nft.gallery.identityName
+import com.nft.gallery.solanaUri
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MintState
 import com.nft.gallery.usecase.PerformMintUseCase

@@ -1,9 +1,11 @@
 package com.nft.gallery.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.iconUri
+import com.nft.gallery.identityName
+import com.nft.gallery.solanaUri
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.NotConnected
 import com.nft.gallery.usecase.PersistenceUseCase
@@ -23,10 +25,6 @@ data class WalletViewState(
     val userAddress: String = "",
     val userLabel: String = "",
 )
-
-val solanaUri: Uri = Uri.parse("https://solanamobile.com")
-val iconUri: Uri = Uri.parse("favicon.ico")
-const val identityName = "Minty Fresh"
 
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
