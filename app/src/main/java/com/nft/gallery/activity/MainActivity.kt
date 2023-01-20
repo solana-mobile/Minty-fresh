@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
@@ -17,6 +18,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -87,6 +89,10 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                 val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
                 ModalBottomSheetLayout(
+                    sheetShape = RoundedCornerShape(
+                        topStart = 24.dp,
+                        topEnd = 24.dp
+                    ),
                     sheetContent = {
                         MintConfirmLayout(
                             onDoneClick = {
