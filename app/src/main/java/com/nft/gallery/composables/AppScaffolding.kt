@@ -6,18 +6,14 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,14 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 
-@OptIn(
-    ExperimentalMaterial3Api::class
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldScreen(
     currentRoute: String,
@@ -94,7 +87,7 @@ fun ScaffoldScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if(pubKey.isNotEmpty()) {
+                            if (pubKey.isNotEmpty()) {
                                 Box(
                                     modifier = Modifier
                                         .size(24.dp)
@@ -123,7 +116,10 @@ fun ScaffoldScreen(
         },
         bottomBar = {
             if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                BottomNavigationBar(navController = navController)
+                BottomNavigationBar(
+                    navController = navController,
+                    currentRoute = currentRoute
+                )
             }
         },
         content = { padding ->
@@ -138,8 +134,9 @@ fun ScaffoldScreen(
 }
 
 @Composable
-fun BottomNavigationBar(
-    navController: NavHostController
+private fun BottomNavigationBar(
+    navController: NavHostController,
+    currentRoute: String
 ) {
     val items = listOf(
         NavigationItem.Photos,
@@ -164,9 +161,6 @@ fun BottomNavigationBar(
                     .selectableGroup(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 content = {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentRoute = navBackStackEntry?.destination?.route
-
                     items.forEach { item ->
                         BottomNavigationItem(
                             icon = {
