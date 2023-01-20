@@ -44,11 +44,7 @@ fun MyMintsDetails(
                 navigationIcon = {
                     BackButton(navigateUp)
                 },
-                title = {
-                    Text(
-                        text = "",
-                    )
-                },
+                title = {},
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     scrolledContainerColor = MaterialTheme.colorScheme.background,
