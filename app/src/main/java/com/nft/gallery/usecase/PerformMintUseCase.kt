@@ -10,11 +10,11 @@ package com.nft.gallery.usecase
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.iconUri
 import com.nft.gallery.identityName
+import com.nft.gallery.identityUri
 import com.nft.gallery.repository.LatestBlockhashRepository
 import com.nft.gallery.repository.MintTransactionRepository
 import com.nft.gallery.repository.SendTransactionRepository
 import com.nft.gallery.repository.StorageUploadRepository
-import com.nft.gallery.solanaUri
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
@@ -95,8 +95,8 @@ class PerformMintUseCase @Inject constructor(
             val primarySignature = walletAdapter.transact(sender) {
 
                 authToken?.let {
-                    reauthorize(solanaUri, iconUri, identityName, authToken)
-                } ?: authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
+                    reauthorize(identityUri, iconUri, identityName, authToken)
+                } ?: authorize(identityUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 
