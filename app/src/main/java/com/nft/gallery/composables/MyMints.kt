@@ -102,7 +102,7 @@ fun MyMintPage(
                         }
                     }
                 }
-                is MyMintsViewState.NoConnection -> {
+                is MyMintsViewState.Empty -> {
                     Column(
                         Modifier
                             .fillMaxSize()
@@ -115,7 +115,7 @@ fun MyMintPage(
                         )
                     }
                 }
-                is MyMintsViewState.Empty -> {
+                is MyMintsViewState.NoConnection -> {
                     Column(
                         Modifier
                             .fillMaxSize()
