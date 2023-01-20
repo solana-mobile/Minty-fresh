@@ -98,7 +98,7 @@ fun MyMintPage(
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
                         ) {
-                            myMintsViewModel.loadMyMints(forceRefresh = true)
+                            myMintsViewModel.refresh()
                         }
                     }
                 }
@@ -109,7 +109,20 @@ fun MyMintPage(
                             .verticalScroll(rememberScrollState())
                     ) {
                         EmptyView(
-                            text = uiState.message,
+                            text = "No mints yet. Start minting pictures with Minty Fresh!",
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        )
+                    }
+                }
+                is MyMintsViewState.NoConnection -> {
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        EmptyView(
+                            text = "Connect your wallet to see your mints",
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
                         )
@@ -132,7 +145,7 @@ fun MyMintPage(
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(color = MaterialTheme.colorScheme.surface)
                                     .loadingPlaceholder(
-                                        isLoading = uiState is MyMintsViewState.Loading || myMint.mediaUrl.isEmpty(),
+                                        isLoading = myMint.mediaUrl.isEmpty(),
                                         cornerRoundedShapeSize = 8.dp
                                     )
                                     .clickable {

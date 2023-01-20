@@ -10,7 +10,9 @@ sealed class MyMintsViewState(
 
     class Loaded(myMints: List<MyMint>) : MyMintsViewState(myMints)
 
-    data class Empty(val message: String) : MyMintsViewState()
+    class Empty : MyMintsViewState()
+
+    class NoConnection : MyMintsViewState()
 
     data class Error(val error: Exception) : MyMintsViewState()
 }
