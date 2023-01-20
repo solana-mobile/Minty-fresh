@@ -145,7 +145,7 @@ fun MyMintPage(
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(color = MaterialTheme.colorScheme.surface)
                                     .loadingPlaceholder(
-                                        isLoading = uiState is MyMintsViewState.Loading || myMint.mediaUrl.isEmpty(),
+                                        isLoading = myMint.mediaUrl.isEmpty(),
                                         cornerRoundedShapeSize = 8.dp
                                     )
                                     .clickable {

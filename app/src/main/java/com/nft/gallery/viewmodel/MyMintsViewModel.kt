@@ -51,7 +51,13 @@ class MyMintsViewModel @Inject constructor(
                 persistenceUseCase.walletDetails.map { isRefreshing to it }
             }.collect { (isRefreshing, userWalletDetails) ->
                 if (userWalletDetails is Connected) {
-                    loadMyMints(userWalletDetails.publicKey, isRefreshing)
+                    try {
+                        loadMyMints(userWalletDetails.publicKey, isRefreshing)
+                    } catch (e: Exception) {
+                        Log.e(TAG, e.toString())
+                        _viewState.update { MyMintsViewState.Error(e) }
+                    }
+                    _isRefreshing.update { false }
                 } else {
                     _isRefreshing.update { false }
                 }
@@ -70,18 +76,12 @@ class MyMintsViewModel @Inject constructor(
             }.collect { (userWalletDetail, myMints) ->
                 if (userWalletDetail is Connected) {
                     if (myMints.isEmpty()) {
-                        _viewState.update {
-                            MyMintsViewState.Empty()
-                        }
+                        _viewState.update { MyMintsViewState.Empty() }
                     } else {
-                        _viewState.update {
-                            MyMintsViewState.Loaded(myMints)
-                        }
+                        _viewState.update { MyMintsViewState.Loaded(myMints) }
                     }
                 } else {
-                    _viewState.update {
-                        MyMintsViewState.NoConnection()
-                    }
+                    _viewState.update { MyMintsViewState.NoConnection() }
                 }
             }
         }
@@ -104,12 +104,10 @@ class MyMintsViewModel @Inject constructor(
                         }
                     }
 
-            // This update to insert loading placeholders.
-            _viewState.update {
-                MyMintsViewState.Loaded(loadingMints)
-            }
+            // This update to insert loading placeholders. Note that some data is cached (Non loading state)
+            _viewState.update { MyMintsViewState.Loading(loadingMints) }
         } else {
-            if (_viewState.value is MyMintsViewState.Loaded) {
+            if (_viewState.value is MyMintsViewState.Loading || _viewState.value is MyMintsViewState.Loaded) {
                 return
             }
         }
@@ -117,37 +115,27 @@ class MyMintsViewModel @Inject constructor(
         wasLoaded = true
         val mintsUseCase = MyMintsUseCase(publicKey)
 
-        try {
-            val nfts = mintsUseCase.getAllUserMintyFreshNfts()
-            Log.d(TAG, "Found ${nfts.size} NFTs")
+        val nfts = mintsUseCase.getAllUserMintyFreshNfts()
+        Log.d(TAG, "Found ${nfts.size} NFTs")
 
-            if (nfts.isNotEmpty()) {
-                val currentMintList = myMintsMapper.map(nfts)
-                myMintsRepository.deleteStaleData(
-                    currentMintList = currentMintList,
-                    publicKey.toString()
-                )
-                // Fetch and update each NFT data.
-                nfts.forEach { nft ->
-                    val metadata = mintsUseCase.getNftsMetadata(nft)
-                    val mint = myMintsMapper.map(nft, metadata)
-                    if (mint != null) {
-                        myMintsRepository.insertAll(listOf(mint))
-                    }
-                }
-            } else {
-                // This update is needed because flow wouldn't update above.
-                _viewState.update {
-                    MyMintsViewState.Empty()
+        if (nfts.isNotEmpty()) {
+            val currentMintList = myMintsMapper.map(nfts)
+            myMintsRepository.deleteStaleData(
+                currentMintList = currentMintList,
+                publicKey.toString()
+            )
+            // Fetch and update each NFT data.
+            nfts.forEach { nft ->
+                val metadata = mintsUseCase.getNftsMetadata(nft)
+                val mint = myMintsMapper.map(nft, metadata)
+                if (mint != null) {
+                    myMintsRepository.insertAll(listOf(mint))
                 }
             }
-        } catch (e: Exception) {
-            Log.e(TAG, e.toString())
-            _viewState.update {
-                MyMintsViewState.Error(e)
-            }
+        } else {
+            // This update is needed because flow from roomDb wouldn't update above.
+            _viewState.update { MyMintsViewState.Empty() }
         }
-        _isRefreshing.update { false }
     }
 
     companion object {
