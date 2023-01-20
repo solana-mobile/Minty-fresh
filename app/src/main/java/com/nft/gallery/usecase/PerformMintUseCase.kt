@@ -8,8 +8,8 @@
 package com.nft.gallery.usecase
 
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.appName
 import com.nft.gallery.iconUri
-import com.nft.gallery.identityName
 import com.nft.gallery.identityUri
 import com.nft.gallery.repository.LatestBlockhashRepository
 import com.nft.gallery.repository.MintTransactionRepository
@@ -95,8 +95,8 @@ class PerformMintUseCase @Inject constructor(
             val primarySignature = walletAdapter.transact(sender) {
 
                 authToken?.let {
-                    reauthorize(identityUri, iconUri, identityName, authToken)
-                } ?: authorize(identityUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
+                    reauthorize(identityUri, iconUri, appName, authToken)
+                } ?: authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 

@@ -5,8 +5,8 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.appName
 import com.nft.gallery.iconUri
-import com.nft.gallery.identityName
 import com.nft.gallery.identityUri
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MintState
@@ -60,7 +60,7 @@ class PerformMintViewModel @Inject constructor(
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
                 MobileWalletAdapter().transact(sender) {
-                    val authed = authorize(identityUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
+                    val authed = authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
 
                     persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
                 }

@@ -6,7 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 
 val identityUri: Uri = Uri.parse(BuildConfig.IDENTITY_URI)
 val iconUri: Uri = Uri.parse(BuildConfig.IDENTITY_ICO)
-const val identityName = BuildConfig.IDENTITY_NAME
+const val appName = BuildConfig.IDENTITY_NAME
 
 @HiltAndroidApp
 class GalleryApplication: Application()
