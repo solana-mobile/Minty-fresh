@@ -24,9 +24,9 @@ data class WalletViewState(
     val userLabel: String = "",
 )
 
-val solanaUri: Uri = Uri.parse("https://solana.com")
+val solanaUri: Uri = Uri.parse("https://solanamobile.com")
 val iconUri: Uri = Uri.parse("favicon.ico")
-const val identityName = "Solana"
+const val identityName = "Minty Fresh"
 
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
