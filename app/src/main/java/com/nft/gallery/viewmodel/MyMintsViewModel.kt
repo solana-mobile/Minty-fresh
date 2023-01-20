@@ -68,14 +68,18 @@ class MyMintsViewModel @Inject constructor(
             }.collect { (userWalletDetail, myMints) ->
                 if (userWalletDetail is Connected) {
                     if (myMints.isEmpty()) {
-                        _viewState.value =
-                            MyMintsViewState.Empty("No mints yet. Start minting pictures with Minty Fresh!")
+                        _viewState.update {
+                            MyMintsViewState.Empty()
+                        }
                     } else {
-                        _viewState.value = MyMintsViewState.Loaded(myMints)
+                        _viewState.update {
+                            MyMintsViewState.Loaded(myMints)
+                        }
                     }
                 } else {
-                    _viewState.value =
-                        MyMintsViewState.Empty("Connect your wallet to see your mints")
+                    _viewState.update {
+                        MyMintsViewState.NoConnection()
+                    }
                 }
             }
         }
@@ -131,14 +135,16 @@ class MyMintsViewModel @Inject constructor(
             } else {
                 // This update is needed because flow wouldn't update above.
                 _viewState.update {
-                    MyMintsViewState.Empty("No mints yet. Start minting pictures with Minty Fresh!")
+                    MyMintsViewState.Empty()
                 }
             }
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
-            _viewState.value = MyMintsViewState.Error(e)
+            _viewState.update {
+                MyMintsViewState.Error(e)
+            }
         }
-        _isRefreshing.value = false
+        _isRefreshing.update { false }
     }
 
     companion object {

@@ -102,6 +102,19 @@ fun MyMintPage(
                         }
                     }
                 }
+                is MyMintsViewState.NoConnection -> {
+                    Column(
+                        Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        EmptyView(
+                            text = "No mints yet. Start minting pictures with Minty Fresh!",
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                        )
+                    }
+                }
                 is MyMintsViewState.Empty -> {
                     Column(
                         Modifier
@@ -109,7 +122,7 @@ fun MyMintPage(
                             .verticalScroll(rememberScrollState())
                     ) {
                         EmptyView(
-                            text = uiState.message,
+                            text = "Connect your wallet to see your mints",
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
                         )
