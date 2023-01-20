@@ -52,6 +52,8 @@ class MyMintsViewModel @Inject constructor(
             }.collect { (isRefreshing, userWalletDetails) ->
                 if (userWalletDetails is Connected) {
                     loadMyMints(userWalletDetails.publicKey, isRefreshing)
+                } else {
+                    _isRefreshing.update { false }
                 }
             }
         }
@@ -87,6 +89,7 @@ class MyMintsViewModel @Inject constructor(
 
     private suspend fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean) {
         if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
+            _isRefreshing.update { false }
             return
         }
 
