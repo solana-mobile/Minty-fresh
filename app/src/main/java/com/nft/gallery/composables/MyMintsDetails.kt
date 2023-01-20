@@ -38,6 +38,7 @@ fun MyMintsDetails(
     val uiState = myMintsViewModel.viewState.collectAsState().value
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 navigationIcon = {

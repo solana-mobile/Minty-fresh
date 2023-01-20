@@ -86,7 +86,8 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
             AppTheme {
                 val navigateUp = { animNavController.navigateUp() }
 
-                val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+                val bottomSheetState =
+                    rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
                 ModalBottomSheetLayout(
                     sheetShape = RoundedCornerShape(
@@ -109,17 +110,11 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         startDestination = NavigationItem.Photos.route,
                     ) {
                         composable(NavigationItem.Camera.route) {
-                            ScaffoldScreen(
-                                currentRoute = NavigationItem.Camera.route,
-                                activityResultSender = this@MainActivity,
-                                navController = animNavController
-                            ) {
-                                Camera(
-                                    navigateToDetails = {
-                                        animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
-                                    }
-                                )
-                            }
+                            Camera(
+                                navigateToDetails = {
+                                    animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                                }
+                            )
                         }
                         composable(NavigationItem.Photos.route) {
                             ScaffoldScreen(
@@ -170,35 +165,29 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                 }
                             }?.toString()
 
-                            ScaffoldScreen(
-                                currentRoute = NavigationItem.MintDetail.route,
-                                activityResultSender = this@MainActivity,
-                                navController = animNavController
-                            ) {
-                                MintDetailsPage(
-                                    imagePath = imagePath ?: clipDataPath
-                                        ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
-                                    navigateUp = {
-                                        animNavController.navigateUp()
-                                    },
-                                    onMintCompleted = {
-                                        animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
-                                            popUpTo(NavigationItem.Photos.route) {
-                                                inclusive = true
-                                            }
-                                        }
-
-                                        scope.launch {
-                                            bottomSheetState.show()
-                                        }
-                                    },
-                                    intentSender = object : ActivityResultSender {
-                                        override fun launch(intent: Intent) {
-                                            intentSender.startActivityForResult(intent) { }
+                            MintDetailsPage(
+                                imagePath = imagePath ?: clipDataPath
+                                ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
+                                navigateUp = {
+                                    animNavController.navigateUp()
+                                },
+                                onMintCompleted = {
+                                    animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
+                                        popUpTo(NavigationItem.Photos.route) {
+                                            inclusive = true
                                         }
                                     }
-                                )
-                            }
+
+                                    scope.launch {
+                                        bottomSheetState.show()
+                                    }
+                                },
+                                intentSender = object : ActivityResultSender {
+                                    override fun launch(intent: Intent) {
+                                        intentSender.startActivityForResult(intent) { }
+                                    }
+                                }
+                            )
                         }
                         composable(
                             route = "${NavigationItem.MyMints.route}?forceRefresh={forceRefresh}",
@@ -226,17 +215,11 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                             route = "${NavigationItem.MyMintsDetails.route}?index={index}",
                             arguments = listOf(navArgument("index") { type = NavType.IntType }),
                         ) { backStackEntry ->
-                            ScaffoldScreen(
-                                currentRoute = NavigationItem.MyMintsDetails.route,
-                                activityResultSender = this@MainActivity,
-                                navController = animNavController
-                            ) {
-                                MyMintsDetails(
-                                    index = backStackEntry.arguments?.getInt("index")
-                                        ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched"),
-                                    navigateUp = navigateUp,
-                                )
-                            }
+                            MyMintsDetails(
+                                index = backStackEntry.arguments?.getInt("index")
+                                    ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched"),
+                                navigateUp = navigateUp,
+                            )
                         }
                     }
                 }
