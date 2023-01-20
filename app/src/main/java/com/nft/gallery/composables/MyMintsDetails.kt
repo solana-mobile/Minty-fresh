@@ -38,16 +38,13 @@ fun MyMintsDetails(
     val uiState = myMintsViewModel.viewState.collectAsState().value
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 navigationIcon = {
                     BackButton(navigateUp)
                 },
-                title = {
-                    Text(
-                        text = "",
-                    )
-                },
+                title = {},
                 colors = TopAppBarDefaults.largeTopAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
                     scrolledContainerColor = MaterialTheme.colorScheme.background,

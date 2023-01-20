@@ -23,7 +23,6 @@ fun MintConfirmLayout(
 ) {
     Column(
         modifier = Modifier
-            .navigationBarsPadding()
             .fillMaxWidth()
             .wrapContentHeight()
             .background(
@@ -32,7 +31,8 @@ fun MintConfirmLayout(
                     topStart = 24.dp,
                     topEnd = 24.dp
                 )
-            ),
+            )
+            .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

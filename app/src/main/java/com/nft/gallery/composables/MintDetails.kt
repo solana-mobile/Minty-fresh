@@ -46,6 +46,7 @@ fun MintDetailsPage(
     intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     if (uiState.mintState is MintState.Complete){
         onMintCompleted()
@@ -54,29 +55,23 @@ fun MintDetailsPage(
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = MaterialTheme.colorScheme.background,
-                elevation = 0.dp
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = {
-                            navigateUp()
-                        }
-                    ) {
-                        Icon(
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = "back"
-                        )
-                    }
+                navigationIcon = {
+                    BackButton(navigateUp)
+                },
+                title = {
                     Text(
                         text = "Add NFT details",
-                        style = MaterialTheme.typography.bodyLarge
                     )
-                }
-            }
+                },
+                colors = TopAppBarDefaults.largeTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                scrollBehavior = scrollBehavior
+            )
         },
         content = { padding ->
             if (uiState.mintState !is MintState.None) {
@@ -85,6 +80,7 @@ fun MintDetailsPage(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
+                        .padding(padding)
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
