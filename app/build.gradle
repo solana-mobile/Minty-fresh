@@ -28,6 +28,7 @@ android {
         buildConfigField "String", "API_BASE_URL", "\"https://api.nft.storage/\""
 
         buildConfigField "String", "SOLANA_RPC_URL", "\"https://api.devnet.solana.com\""
+        buildConfigField "String", "MINTY_FRESH_CREATOR_PDA", "\"6nw9hEe9g8f52vve9uYfHSEyH2BbNqSLofzwZypfJBCv\""
         buildConfigField "com.solana.mobilewalletadapter.clientlib.RpcCluster", "RPC_CLUSTER", "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
     }
 

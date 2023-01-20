@@ -1,12 +1,6 @@
-/*
- * MintyFreshCreatorPda
- * Gallery
- * 
- * Created by Funkatronics on 1/13/2023
- */
-
 package com.nft.gallery.metaplex
 
+import com.nft.gallery.BuildConfig
 import com.solana.core.PublicKey
 
 /*
@@ -15,8 +9,4 @@ import com.solana.core.PublicKey
  * This PDA is added as an unverified creator (0 share) on all minty fresh NFTs so we can
  * efficiently find and filter these NFTs for display in the app
  */
-fun MintyFreshCreatorPda(userPublicKey: PublicKey) =
-    PublicKey.findProgramAddress(
-        listOf("Minty Fresh".toByteArray()),
-        userPublicKey
-    ).address
+val mintyFreshCreatorPda = PublicKey(BuildConfig.MINTY_FRESH_CREATOR_PDA)
