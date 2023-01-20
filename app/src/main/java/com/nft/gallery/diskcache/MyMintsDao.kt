@@ -15,6 +15,6 @@ interface MyMintsDao {
     @Query("SELECT * FROM MyMint WHERE rpc_cluster = :clusterName AND pub_key = :pubKey ORDER BY id")
     fun get(pubKey: String, clusterName: String): Flow<List<MyMint>>
 
-    @Query("DELETE FROM MyMint WHERE pub_key = :pubKey AND id NOT IN (:ids)")
+    @Query("DELETE FROM MyMint WHERE pub_key = :pubKey AND id NOT IN (:latestNftIds)")
     suspend fun deleteStaleData(pubKey: String, latestNftIds: List<String>)
 }

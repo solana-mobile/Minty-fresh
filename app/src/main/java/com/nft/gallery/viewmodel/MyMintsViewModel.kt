@@ -9,13 +9,11 @@ import com.nft.gallery.diskcache.MyMintsRepository
 import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MyMintsUseCase
 import com.nft.gallery.usecase.PersistenceUseCase
-import com.nft.gallery.usecase.UserWalletDetails
 import com.nft.gallery.viewmodel.mapper.MyMintsMapper
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import com.solana.core.PublicKey
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,32 +37,23 @@ class MyMintsViewModel @Inject constructor(
     val isRefreshing = _isRefreshing.asStateFlow()
 
     fun refresh() = viewModelScope.launch {
-        _isRefreshing.update { true }
-        loadMyMints(forceRefresh = true)
-        _isRefreshing.update { false }
-    }
-
-    init {
-        getAll()
-        loadMyMints()
-    }
-
-    fun loadMyMints(forceRefresh: Boolean = false) {
-        viewModelScope.launch {
-            persistenceUseCase.walletDetails
-                .collect {
-                    if (it is Connected) {
-                        loadMyMints(it.publicKey, forceRefresh)
-                    }
-                }
+        if (!_isRefreshing.value) {
+            _isRefreshing.update { true }
+            loadMyMints(forceRefresh = true)
+            _isRefreshing.update { false }
         }
     }
 
+    init {
+        observeAllMints()
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getAll() {
+    private fun observeAllMints() {
         viewModelScope.launch {
             persistenceUseCase.walletDetails.flatMapLatest { walletDetails ->
                 val myMintsFlow = if (walletDetails is Connected) {
+                    loadMyMints(walletDetails.publicKey, false)
                     myMintsRepository.get(walletDetails.publicKey.toString())
                 } else {
                     flow { emit(listOf()) }
@@ -84,6 +73,17 @@ class MyMintsViewModel @Inject constructor(
                         MyMintsViewState.Empty("Connect your wallet to see your mints")
                 }
             }
+        }
+    }
+
+    private fun loadMyMints(forceRefresh: Boolean = false) {
+        viewModelScope.launch {
+            persistenceUseCase.walletDetails
+                .collect {
+                    if (it is Connected) {
+                        loadMyMints(it.publicKey, forceRefresh)
+                    }
+                }
         }
     }
 
