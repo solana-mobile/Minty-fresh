@@ -50,8 +50,8 @@ class MyMintsViewModel @Inject constructor(
             _isRefreshing.flatMapLatest { isRefreshing ->
                 persistenceUseCase.walletDetails.map { isRefreshing to it }
             }.collect { (isRefreshing, userWalletDetails) ->
-                if (userWalletDetails is Connected && isRefreshing) {
-                    loadMyMints(userWalletDetails.publicKey, true)
+                if (userWalletDetails is Connected) {
+                    loadMyMints(userWalletDetails.publicKey, isRefreshing)
                 }
             }
         }
@@ -96,6 +96,8 @@ class MyMintsViewModel @Inject constructor(
                             add(MyMint("", "", "", "", "", ""))
                         }
                     }
+
+            // This update to insert loading placeholders.
             _viewState.update {
                 MyMintsViewState.Loaded(loadingMints)
             }
@@ -125,6 +127,11 @@ class MyMintsViewModel @Inject constructor(
                     if (mint != null) {
                         myMintsRepository.insertAll(listOf(mint))
                     }
+                }
+            } else {
+                // This update is needed because flow wouldn't update above.
+                _viewState.update {
+                    MyMintsViewState.Empty("No mints yet. Start minting pictures with Minty Fresh!")
                 }
             }
         } catch (e: Exception) {
