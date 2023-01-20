@@ -8,16 +8,22 @@
 package com.nft.gallery.usecase
 
 import com.nft.gallery.BuildConfig
-import com.nft.gallery.repository.*
-import com.nft.gallery.viewmodel.iconUri
-import com.nft.gallery.viewmodel.identityName
-import com.nft.gallery.viewmodel.solanaUri
+import com.nft.gallery.appName
+import com.nft.gallery.iconUri
+import com.nft.gallery.identityUri
+import com.nft.gallery.repository.LatestBlockhashRepository
+import com.nft.gallery.repository.MintTransactionRepository
+import com.nft.gallery.repository.SendTransactionRepository
+import com.nft.gallery.repository.StorageUploadRepository
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -89,8 +95,8 @@ class PerformMintUseCase @Inject constructor(
             val primarySignature = walletAdapter.transact(sender) {
 
                 authToken?.let {
-                    reauthorize(solanaUri, iconUri, identityName, authToken)
-                } ?: authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
+                    reauthorize(identityUri, iconUri, appName, authToken)
+                } ?: authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 
