@@ -37,11 +37,7 @@ class MyMintsViewModel @Inject constructor(
     val isRefreshing = _isRefreshing.asStateFlow()
 
     fun refresh() = viewModelScope.launch {
-        if (!_isRefreshing.value) {
-            _isRefreshing.update { true }
-            loadMyMints(forceRefresh = true)
-            _isRefreshing.update { false }
-        }
+        _isRefreshing.update { true }
     }
 
     init {
@@ -51,9 +47,18 @@ class MyMintsViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun observeAllMints() {
         viewModelScope.launch {
+            _isRefreshing.flatMapLatest { isRefreshing ->
+                persistenceUseCase.walletDetails.map { isRefreshing to it }
+            }.collect { (isRefreshing, userWalletDetails) ->
+                if (userWalletDetails is Connected && isRefreshing) {
+                    loadMyMints(userWalletDetails.publicKey, true)
+                }
+            }
+        }
+
+        viewModelScope.launch {
             persistenceUseCase.walletDetails.flatMapLatest { walletDetails ->
                 val myMintsFlow = if (walletDetails is Connected) {
-                    loadMyMints(walletDetails.publicKey, false)
                     myMintsRepository.get(walletDetails.publicKey.toString())
                 } else {
                     flow { emit(listOf()) }
@@ -76,69 +81,57 @@ class MyMintsViewModel @Inject constructor(
         }
     }
 
-    private fun loadMyMints(forceRefresh: Boolean = false) {
-        viewModelScope.launch {
-            persistenceUseCase.walletDetails
-                .collect {
-                    if (it is Connected) {
-                        loadMyMints(it.publicKey, forceRefresh)
-                    }
-                }
-        }
-    }
-
-    private fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean) {
+    private suspend fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean) {
         if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
             return
         }
 
-        viewModelScope.launch {
-            if (forceRefresh) {
-                val loadingMints =
-                    _viewState.value.myMints.filter { it.id.isNotEmpty() }.toMutableList()
-                        .apply {
-                            val loadingSize = if (this.isEmpty()) 10 else 1
-                            // Add a loading placeholder to existing data.
-                            for (i in 0 until loadingSize) {
-                                add(MyMint("", "", "", "", "", ""))
-                            }
-                        }
-                _viewState.update {
-                    MyMintsViewState.Loaded(loadingMints)
-                }
-            } else {
-                if (_viewState.value is MyMintsViewState.Loaded) {
-                    return@launch
-                }
-            }
-
-            wasLoaded = true
-            val mintsUseCase = MyMintsUseCase(publicKey)
-
-            try {
-                val nfts = mintsUseCase.getAllUserMintyFreshNfts()
-                Log.d(TAG, "Found ${nfts.size} NFTs")
-
-                if (nfts.isNotEmpty()) {
-                    val currentMintList = myMintsMapper.map(nfts)
-                    myMintsRepository.deleteStaleData(
-                        currentMintList = currentMintList,
-                        publicKey.toString()
-                    )
-                    // Fetch and update each NFT data.
-                    nfts.forEach { nft ->
-                        val metadata = mintsUseCase.getNftsMetadata(nft)
-                        val mint = myMintsMapper.map(nft, metadata)
-                        if (mint != null) {
-                            myMintsRepository.insertAll(listOf(mint))
+        if (forceRefresh) {
+            val loadingMints =
+                _viewState.value.myMints.filter { it.id.isNotEmpty() }.toMutableList()
+                    .apply {
+                        val loadingSize = if (this.isEmpty()) 10 else 1
+                        // Add a loading placeholder to existing data.
+                        for (i in 0 until loadingSize) {
+                            add(MyMint("", "", "", "", "", ""))
                         }
                     }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, e.toString())
-                _viewState.value = MyMintsViewState.Error(e)
+            _viewState.update {
+                MyMintsViewState.Loaded(loadingMints)
+            }
+        } else {
+            if (_viewState.value is MyMintsViewState.Loaded) {
+                return
             }
         }
+
+        wasLoaded = true
+        val mintsUseCase = MyMintsUseCase(publicKey)
+
+        try {
+            val nfts = mintsUseCase.getAllUserMintyFreshNfts()
+            Log.d(TAG, "Found ${nfts.size} NFTs")
+
+            if (nfts.isNotEmpty()) {
+                val currentMintList = myMintsMapper.map(nfts)
+                myMintsRepository.deleteStaleData(
+                    currentMintList = currentMintList,
+                    publicKey.toString()
+                )
+                // Fetch and update each NFT data.
+                nfts.forEach { nft ->
+                    val metadata = mintsUseCase.getNftsMetadata(nft)
+                    val mint = myMintsMapper.map(nft, metadata)
+                    if (mint != null) {
+                        myMintsRepository.insertAll(listOf(mint))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, e.toString())
+            _viewState.value = MyMintsViewState.Error(e)
+        }
+        _isRefreshing.value = false
     }
 
     companion object {
