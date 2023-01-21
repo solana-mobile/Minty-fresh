@@ -86,6 +86,11 @@ android {
                 "RPC_CLUSTER",
                 "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
             )
+
+            val releaseSigningConfig = signingConfigs["release"]
+            if (releaseSigningConfig.storeFile != null) {
+                signingConfig = releaseSigningConfig
+            }
         }
     }
 
