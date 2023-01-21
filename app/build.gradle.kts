@@ -21,6 +21,7 @@ android {
         versionName = "v0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        resourceConfigurations.addAll(listOf("en"))
 
         val properties = Properties()
         if (project.rootProject.file("local.properties").exists()) {
