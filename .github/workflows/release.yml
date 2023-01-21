@@ -17,6 +17,11 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
+      - name: Deploy APK signing keystore and related secrets (test signing)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.APK_SIGNING_RELEASE_KEYSTORE }}
+          KEYSTORE_PATH: ${{ runner.temp }}/apk_signing_keystore.jks
+        run: echo $KEYSTORE_BASE64 | base64 --decode > $KEYSTORE_PATH
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -28,8 +33,12 @@ jobs:
 
       # Build
       - name: Build with Gradle, run tests and sign the APKs
-        run: ./gradlew buildDebug
-        # PS: if we want a specific signing key (through Github secrets) + build release, we'll need to add env variables
+        env:
+          ORG_GRADLE_PROJECT_apkSigningKeystorePath: ${{ runner.temp }}/apk_signing_keystore.jks
+          ORG_GRADLE_PROJECT_apkSigningKeyAlias: signing
+          ORG_GRADLE_PROJECT_apkSigningKeystorePassword: ${{ secrets.APK_SIGNING_RELEASE_PASSWORD }}
+          ORG_GRADLE_PROJECT_apkSigningKeyPassword: ${{ secrets.APK_SIGNING_RELEASE_PASSWORD }}
+        run: ./gradlew build
 
       # Upload APKs to workflow artifacts
       - uses: actions/upload-artifact@v3

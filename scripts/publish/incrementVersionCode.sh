@@ -1,6 +1,6 @@
 #!/bin/sh
 
-gradleConfigurationFile=app/build.gradle
+gradleConfigurationFile=app/build.gradle.kts
 versionCodeField="versionCode"
 
 # Getting the version code
@@ -13,5 +13,5 @@ newVersionCode=$(( versionCode + 1 ))
 
 # Replacing the previous version
 echo "Will replace previous version $versionCode by new version $newVersionCode in $gradleConfigurationFile"
-sed -i'.bak' "s/\($versionCodeField \)\(.*\)/$versionCodeField $newVersionCode/" $gradleConfigurationFile
+sed -i'.bak' "s/\($versionCodeField \)\(.*\)/$versionCodeField = $newVersionCode/" $gradleConfigurationFile
 rm ${gradleConfigurationFile}.bak # remove backup file
