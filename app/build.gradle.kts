@@ -22,9 +22,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        val fileInputStream = FileInputStream("local.properties")
         val properties = Properties()
-        properties.load(fileInputStream)
+        if (project.rootProject.file("local.properties").exists()) {
+            properties.load(FileInputStream("local.properties"))
+        }
 
         buildConfigField(
             "String",
