@@ -82,7 +82,7 @@ jobs:
       # Setup
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.DAILY_BUILD_VERSION_INCREMENT_TOKEN }} # TODO we need a real token
+          token: ${{ secrets.DAILY_BUILD_VERSION_INCREMENT_TOKEN }}
 
       # Increment version code, update version name, and auto-commit
       - name: Increment the version code
