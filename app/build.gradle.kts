@@ -17,8 +17,8 @@ android {
         applicationId = "com.solana.mintyfresh"
         minSdk = 26
         targetSdk = 33
-        versionCode = 1
-        versionName = "v0.1.0"
+        versionCode = 2
+        versionName = "v0.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations.addAll(listOf("en"))
