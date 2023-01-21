@@ -52,6 +52,16 @@ android {
         buildConfigField("String", "IDENTITY_NAME", "\"Minty Fresh\"")
     }
 
+    signingConfigs {
+        create("release") {
+            val storePath = findProperty("apkSigningKeystorePath") as String?
+            storeFile = storePath?.let { file(it) }
+            storePassword = findProperty("apkSigningKeystorePassword") as String?
+            keyAlias = findProperty("apkSigningKeyAlias") as String?
+            keyPassword = findProperty("apkSigningKeyPassword") as String?
+        }
+    }
+
     buildFeatures {
         compose = true
     }
