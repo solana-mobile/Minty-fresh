@@ -17,10 +17,17 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
-      - name: Deploy APK signing keystore and related secrets (test signing)
+
+      # Get the test Keystore from Github secrets
+      - name: Deploy APK signing test keystore and related secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.APK_SIGNING_TEST_KEYSTORE }}
+          KEYSTORE_PATH: ${{ runner.temp }}/apk_signing_test_keystore.jks
+        run: echo $KEYSTORE_BASE64 | base64 --decode > $KEYSTORE_PATH
+      - name: Deploy APK signing release keystore and related secrets
         env:
           KEYSTORE_BASE64: ${{ secrets.APK_SIGNING_RELEASE_KEYSTORE }}
-          KEYSTORE_PATH: ${{ runner.temp }}/apk_signing_keystore.jks
+          KEYSTORE_PATH: ${{ runner.temp }}/apk_signing_release_keystore.jks
         run: echo $KEYSTORE_BASE64 | base64 --decode > $KEYSTORE_PATH
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -31,20 +38,30 @@ jobs:
         env:
           TAG: ${{ github.event.release.tag_name }}
 
-      # Build
-      - name: Build with Gradle, run tests and sign the APKs
+      # Build debug and staging (with the test Keystore)
+      - name: Build with Gradle, run tests and sign the debug APK (with the test Keystore)
         env:
-          ORG_GRADLE_PROJECT_apkSigningKeystorePath: ${{ runner.temp }}/apk_signing_keystore.jks
+          ORG_GRADLE_PROJECT_apkSigningKeystorePath: ${{ runner.temp }}/apk_signing_test_keystore.jks
+          ORG_GRADLE_PROJECT_apkSigningKeyAlias: signing
+          ORG_GRADLE_PROJECT_apkSigningKeystorePassword: ${{ secrets.APK_SIGNING_TEST_PASSWORD }}
+          ORG_GRADLE_PROJECT_apkSigningKeyPassword: ${{ secrets.APK_SIGNING_TEST_PASSWORD }}
+        run: ./gradlew assembleDebug
+
+      # Build release (with the release Keystore)
+      - name: Build with Gradle, run tests and sign the release APK and AAB (with the release Keystore)
+        env:
+          ORG_GRADLE_PROJECT_apkSigningKeystorePath: ${{ runner.temp }}/apk_signing_release_keystore.jks
           ORG_GRADLE_PROJECT_apkSigningKeyAlias: signing
           ORG_GRADLE_PROJECT_apkSigningKeystorePassword: ${{ secrets.APK_SIGNING_RELEASE_PASSWORD }}
           ORG_GRADLE_PROJECT_apkSigningKeyPassword: ${{ secrets.APK_SIGNING_RELEASE_PASSWORD }}
-        run: ./gradlew build
+        run: ./gradlew assembleRelease bundleRelease
 
       # Upload APKs to workflow artifacts
       - uses: actions/upload-artifact@v3
         with:
-          name: apk
-          path: app/build/outputs/apk/**/*.apk
+          path: |
+            app/build/outputs/apk/**/*.apk
+            app/build/outputs/bundle/**/*.aab
           if-no-files-found: error
           retention-days: 5
 
@@ -61,17 +78,19 @@ jobs:
       # Download artifacts from the build workflow
       - uses: actions/download-artifact@v3
         with:
-          name: apk
-          path: apk
+          path: |
+            apk
+            aab
 
       # Upload to GitHub Release
-      - name: Upload all the APKs to release
+      - name: Upload all the APKs/AABs to release
         run: gh release -R ${GITHUB_REPOSITORY} upload ${TAG} ${FILES}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
             apk/**/*.apk
+            bundle/**/*.aab
 
   increment-versions:
     runs-on: ubuntu-latest
