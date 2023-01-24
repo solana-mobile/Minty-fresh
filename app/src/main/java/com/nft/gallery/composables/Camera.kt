@@ -3,6 +3,7 @@ package com.nft.gallery.composables
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
@@ -181,7 +182,24 @@ private fun takePhoto(
             }
 
             override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                output.savedUri?.let { navigateToDetails(it.toString()) }
+                output.savedUri?.let {
+                    val path = getRealPathFromURI(it)
+                    navigateToDetails(path)
+                }
+            }
+
+            private fun getRealPathFromURI(contentURI: Uri): String {
+                val result: String
+                val cursor = context.contentResolver.query(contentURI, null, null, null, null)
+                if (cursor == null) {
+                    result = contentURI.toString()
+                } else {
+                    cursor.moveToFirst()
+                    val idx: Int = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                    result = cursor.getString(idx)
+                    cursor.close()
+                }
+                return result
             }
         }
     )
