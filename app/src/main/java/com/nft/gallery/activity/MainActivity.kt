@@ -173,9 +173,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                 },
                                 onMintCompleted = {
                                     animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
-                                        popUpTo(NavigationItem.Photos.route) {
-                                            inclusive = true
-                                        }
+                                        popUpTo(NavigationItem.Photos.route)
                                     }
 
                                     scope.launch {
