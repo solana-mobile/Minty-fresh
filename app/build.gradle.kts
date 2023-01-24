@@ -14,7 +14,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.solana.mintyfresh"
+        applicationId = "com.solanamobile.mintyfresh"
         minSdk = 26
         targetSdk = 33
         versionCode = 5
