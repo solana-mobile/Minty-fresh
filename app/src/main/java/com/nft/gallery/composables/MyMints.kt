@@ -116,17 +116,11 @@ fun MyMintPage(
                     }
                 }
                 is MyMintsViewState.NoConnection -> {
-                    Column(
-                        Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        EmptyView(
-                            text = "Connect your wallet to see your mints",
-                            modifier = Modifier
-                                .padding(vertical = 16.dp)
-                        )
-                    }
+                    EmptyView(
+                        text = "Connect your wallet to see your mints",
+                        modifier = Modifier
+                            .padding(vertical = 16.dp)
+                    )
                 }
                 else -> {
                     LazyVerticalGrid(
