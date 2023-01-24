@@ -5,7 +5,7 @@ on:
     types: [ published ]
 
 jobs:
-  build:
+  build-release-flow:
     runs-on: ubuntu-latest
 
     steps:
@@ -59,6 +59,7 @@ jobs:
       # Upload APKs to workflow artifacts
       - uses: actions/upload-artifact@v3
         with:
+          name: apk
           path: |
             app/build/outputs/apk/**/*.apk
             app/build/outputs/bundle/**/*.aab
@@ -68,7 +69,7 @@ jobs:
   upload-to-release:
     runs-on: ubuntu-latest
 
-    needs: build
+    needs: build-release-flow
 
     permissions:
       contents: write # needed for uploading files to releases
@@ -78,9 +79,11 @@ jobs:
       # Download artifacts from the build workflow
       - uses: actions/download-artifact@v3
         with:
-          path: |
-            apk
-            bundle
+          name: apk
+          path: apk
+
+      - name: Display structure of downloaded files
+        run: ls -R
 
       # Upload to GitHub Release
       - name: Upload all the APKs/AABs to release
@@ -89,8 +92,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
-            apk/bundle/artifact/apk/**/*.apk
-            apk/bundle/artifact/bundle/**/*.aab
+            apk/**/**/**/*.apk
+            apk/**/**/**/*.aab
 
   increment-versions:
     runs-on: ubuntu-latest
