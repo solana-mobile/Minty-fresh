@@ -56,7 +56,7 @@ class PerformMintViewModel @Inject constructor(
      * We should perhaps think about updating the ViewState with form input, then it wouldn't
      * have to be passed here. Also we'll want to support dynamic attributes in the future.
      */
-    fun performMint(sender: ActivityResultSender, title: String, desc: String, imgUrl: String) {
+    fun performMint(sender: ActivityResultSender, title: String, desc: String, filePath: String) {
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
                 MobileWalletAdapter().transact(sender) {
@@ -66,7 +66,7 @@ class PerformMintViewModel @Inject constructor(
                 }
             }
 
-            performMintUseCase.performMint(sender, title, desc, imgUrl)
+            performMintUseCase.performMint(sender, title, desc, filePath)
         }
     }
 

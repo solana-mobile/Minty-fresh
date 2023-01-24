@@ -44,7 +44,7 @@ class PerformMintUseCase @Inject constructor(
     val mintState: StateFlow<MintState> = _mintState
 
     suspend fun performMint(sender: ActivityResultSender,
-                            title: String, desc: String, imgUrl: String) =
+                            title: String, desc: String, filePath: String) =
         withContext(Dispatchers.IO) {
 
             val creator = persistenceUseCase.walletDetails.map {
@@ -60,7 +60,7 @@ class PerformMintUseCase @Inject constructor(
             // upload the media file
             _mintState.value = MintState.UploadingMedia
 
-            val nftImageUrl = storageRepository.uploadFile(imgUrl)
+            val nftImageUrl = storageRepository.uploadFile(filePath)
 
             // create and upload the NFT metadata
             _mintState.value = MintState.CreatingMetadata
