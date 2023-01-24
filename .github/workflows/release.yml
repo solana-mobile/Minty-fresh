@@ -92,8 +92,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
-            apk/**/**/**/*.apk
-            apk/**/**/**/*.aab
+            apk/**/**/*.apk
+            apk/**/**/*.aab
 
   increment-versions:
     runs-on: ubuntu-latest
