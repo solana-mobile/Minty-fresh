@@ -149,7 +149,9 @@ fun MyMintPage(
                                         cornerRoundedShapeSize = 8.dp
                                     )
                                     .clickable {
-                                        navigateToDetails(index)
+                                        if (myMint.id.isNotEmpty()) {
+                                            navigateToDetails(index)
+                                        }
                                     },
                                 model = myMint.mediaUrl,
                                 contentDescription = null,
