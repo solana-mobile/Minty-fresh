@@ -67,7 +67,7 @@ class MyMintsViewModel @Inject constructor(
         viewModelScope.launch {
             persistenceUseCase.walletDetails.flatMapLatest { walletDetails ->
                 val myMintsFlow = if (walletDetails is Connected) {
-                    myMintsRepository.get(walletDetails.publicKey.toString())
+                    myMintsRepository.get(pubKey = walletDetails.publicKey.toString())
                 } else {
                     flow { emit(listOf()) }
                 }
@@ -126,10 +126,16 @@ class MyMintsViewModel @Inject constructor(
         if (nfts.isNotEmpty()) {
             // Fetch and update each NFT data.
             nfts.forEach { nft ->
-                val metadata = mintsUseCase.getNftsMetadata(nft)
-                val mint = myMintsMapper.map(nft, metadata)
-                if (mint != null) {
-                    myMintsRepository.insertAll(listOf(mint))
+                val cachedMint = myMintsRepository.get(
+                    id = nft.mint.toString(),
+                    pubKey = publicKey.toString()
+                )
+                if (cachedMint == null) {
+                    val metadata = mintsUseCase.getNftsMetadata(nft)
+                    val mint = myMintsMapper.map(nft, metadata)
+                    if (mint != null) {
+                        myMintsRepository.insertAll(listOf(mint))
+                    }
                 }
             }
         } else {
