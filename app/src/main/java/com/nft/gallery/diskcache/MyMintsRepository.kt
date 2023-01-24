@@ -23,7 +23,7 @@ class MyMintsRepository @Inject constructor(
             clusterName = BuildConfig.RPC_CLUSTER.name
         )
 
-    fun get(id: String, pubKey: String) = myMintsDatabaseProvider.roomDb.myMintsDao().get(
+    suspend fun get(id: String, pubKey: String) = myMintsDatabaseProvider.roomDb.myMintsDao().get(
         id = id,
         pubKey = pubKey,
         clusterName = BuildConfig.RPC_CLUSTER.name
