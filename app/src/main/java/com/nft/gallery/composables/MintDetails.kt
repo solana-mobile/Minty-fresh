@@ -25,6 +25,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -169,6 +170,7 @@ fun MintDetailsPage(
                         maxLines = 1,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
+                            capitalization = KeyboardCapitalization.Sentences
                         ),
                         keyboardActions = KeyboardActions(
                             onNext = { focusRequester.requestFocus() }
@@ -205,6 +207,7 @@ fun MintDetailsPage(
                         maxLines = 3,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Done,
+                            capitalization = KeyboardCapitalization.Sentences
                         ),
                         keyboardActions = KeyboardActions(
                             onNext = { keyboardController?.hide() }
