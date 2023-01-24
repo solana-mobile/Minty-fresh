@@ -124,10 +124,9 @@ fun MyMintPage(
                 }
                 else -> {
                     LazyVerticalGrid(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 16.dp),
+                        modifier = Modifier.fillMaxSize(),
                         columns = GridCells.Adaptive(minSize = 76.dp),
+                        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
