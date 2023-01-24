@@ -97,10 +97,11 @@ class MyMintsViewModel @Inject constructor(
             val loadingMints =
                 _viewState.value.myMints.filter { it.id.isNotEmpty() }.toMutableList()
                     .apply {
-                        val loadingSize = if (this.isEmpty()) 10 else 1
-                        // Add a loading placeholder to existing data.
-                        for (i in 0 until loadingSize) {
-                            add(MyMint("", "", "", "", "", ""))
+                        if (this.isEmpty()) {
+                            // Add a loading placeholder to existing data.
+                            for (i in 0 until 10) {
+                                add(MyMint("", "", "", "", "", ""))
+                            }
                         }
                     }
 
