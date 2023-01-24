@@ -78,19 +78,11 @@ jobs:
       # Download artifacts from the build workflow
       - uses: actions/download-artifact@v3
         with:
-          name: apk
-          path: apk
+          path: |
+            apk
+            bundle
 
       - name: Display structure of downloaded files just apks
-        run: ls -R
-
-      # Download artifacts from the build workflow
-      - uses: actions/download-artifact@v3
-        with:
-          name: aab
-          path: bundle
-
-      - name: Display structure of downloaded files with aabs
         run: ls -R
 
       # Upload to GitHub Release
@@ -100,8 +92,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
-            apk/**/*.apk
-            bundle/**/*.aab
+            **/**/**/*.apk
+            **/**/**/*.aab
 
   increment-versions:
     runs-on: ubuntu-latest
