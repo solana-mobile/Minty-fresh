@@ -82,9 +82,6 @@ jobs:
             apk
             bundle
 
-      - name: Display structure of downloaded files just apks
-        run: ls -R
-
       # Upload to GitHub Release
       - name: Upload all the APKs/AABs to release
         run: gh release -R ${GITHUB_REPOSITORY} upload ${TAG} ${FILES}
@@ -92,8 +89,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
-            **/**/**/*.apk
-            **/**/**/*.aab
+            apk/bundle/artifact/apk/**/*.apk
+            apk/bundle/artifact/bundle/**/*.aab
 
   increment-versions:
     runs-on: ubuntu-latest
