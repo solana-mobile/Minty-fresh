@@ -8,9 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,9 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -113,8 +110,8 @@ fun MintDetailsPage(
                 ) {
                     val title = rememberSaveable { mutableStateOf("") }
                     val description = rememberSaveable { mutableStateOf("") }
-                    val (focusRequester) = FocusRequester.createRefs()
                     val keyboardController = LocalSoftwareKeyboardController.current
+                    val focusManager = LocalFocusManager.current
 
                     GlideImage(
                         model = imagePath,
@@ -148,7 +145,6 @@ fun MintDetailsPage(
                     )
                     OutlinedTextField(
                         modifier = Modifier
-                            .focusRequester(focusRequester)
                             .fillMaxWidth()
                             .padding(
                                 top = 30.dp
@@ -167,13 +163,15 @@ fun MintDetailsPage(
                         placeholder = {
                             Text(text = "Enter a title")
                         },
-                        maxLines = 1,
+                        singleLine = true,
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
                             capitalization = KeyboardCapitalization.Sentences
                         ),
                         keyboardActions = KeyboardActions(
-                            onNext = { focusRequester.requestFocus() }
+                            onNext = {
+                                focusManager.moveFocus(FocusDirection.Down)
+                            }
                         )
                     )
                     Text(
@@ -187,7 +185,6 @@ fun MintDetailsPage(
                     OutlinedTextField(
                         modifier = Modifier
                             .padding(top = 24.dp)
-                            .focusRequester(focusRequester)
                             .fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
                             unfocusedLabelColor = MaterialTheme.colorScheme.outline,
