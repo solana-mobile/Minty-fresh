@@ -13,6 +13,8 @@ import com.nft.gallery.usecase.MintState
 import com.nft.gallery.usecase.PerformMintUseCase
 import com.nft.gallery.usecase.PersistenceUseCase
 import com.solana.core.PublicKey
+import com.nft.gallery.metaplex.jen.shadowdrive.BYTES_PER_GIB
+import com.nft.gallery.usecase.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +31,8 @@ data class PerformMintViewState(
 class PerformMintViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: PersistenceUseCase,
-    private val performMintUseCase: PerformMintUseCase
+    private val performMintUseCase: PerformMintUseCase,
+    private val createStorageAccountUseCase: CreateStorageAccountUseCase
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
@@ -66,7 +69,9 @@ class PerformMintViewModel @Inject constructor(
                 }
             }
 
-            performMintUseCase.performMint(sender, title, desc, filePath)
+//            performMintUseCase.performMint(sender, title, desc, imgUrl)
+
+            createStorageAccountUseCase.createStorageAccount(sender, title, BYTES_PER_GIB.toULong())
         }
     }
 
