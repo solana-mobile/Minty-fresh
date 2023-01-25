@@ -1,13 +1,13 @@
 package com.nft.gallery.repository
 
-import com.metaplex.lib.drivers.network.HttpRequest
-import com.metaplex.lib.drivers.network.JdkHttpDriver
+import android.util.Log
 import com.metaplex.lib.drivers.rpc.JdkRpcDriver
 import com.metaplex.lib.drivers.solana.Commitment
 import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
 import com.metaplex.lib.drivers.solana.TransactionOptions
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.endpoints.ShadowDriveEndpoints
+import com.nft.gallery.endpoints.ShadowRequest
 import com.nft.gallery.metaplex.jen.shadowdrive.*
 import com.solana.core.PublicKey
 import com.solana.core.Sysvar
@@ -16,13 +16,9 @@ import com.solana.programs.SystemProgram
 import com.solana.programs.TokenProgram
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.math.BigInteger
 import java.net.URL
-import java.util.Base64
+import java.util.*
 import javax.inject.Inject
 
 class ShadowDriveAccountRepository @Inject constructor(
@@ -43,18 +39,26 @@ class ShadowDriveAccountRepository @Inject constructor(
     suspend fun createStorageAccount(serializedTransaction: ByteArray) {
         return withContext(Dispatchers.IO) {
 
-            val body = buildJsonObject {
-                put("transaction", Base64.getEncoder().encodeToString(serializedTransaction))
-            }
+            val txString = Base64.getEncoder().encodeToString(serializedTransaction)
+            val request = ShadowRequest(txString)
 
-            JdkHttpDriver().makeHttpRequest(object : HttpRequest {
-                override val body = body.toString()
-                override val method = "POST"
-                override val properties: Map<String, String> = mapOf("Content-Type" to "application/json")
-                override val url = "${BuildConfig.SHADOW_DRIVE_API_BASE_URL}/storage-account"
-            }).apply {
-                println("++++ SHADOW DIVE RESPONSE: this")
-            }
+            val result = endpoints.createStorageAccount(request)
+
+            val bucket = result.shadowBucket
+            Log.v("Shadow drive", "Your bucket: $bucket")
+
+//            val body = buildJsonObject {
+//                put("transaction", Base64.getEncoder().encodeToString(serializedTransaction))
+//            }
+
+//            JdkHttpDriver().makeHttpRequest(object : HttpRequest {
+//                override val body = body.toString()
+//                override val method = "POST"
+//                override val properties: Map<String, String> = mapOf("Content-Type" to "application/json")
+//                override val url = "${BuildConfig.SHADOW_DRIVE_API_BASE_URL}/storage-account"
+//            }).apply {
+//                println("++++ SHADOW DIVE RESPONSE: this")
+//            }
 
 //            endpoints.createStorageAccount(body.toRequestBody("application/json".toMediaType())).also {
 //                println("+++++++ SHADOW DIVE RESPONSE: bucket: ${it.shadowBucket}")

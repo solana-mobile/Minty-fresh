@@ -7,13 +7,17 @@
 
 package com.nft.gallery.endpoints
 
-import okhttp3.RequestBody
 import retrofit2.http.Body
-import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
+
+data class ShadowRequest(
+    val transaction: String
+)
 
 interface ShadowDriveEndpoints {
 
+    @Headers("Content-Type: application/json")
     @POST("storage-account")
-    suspend fun createStorageAccount(@Body json: RequestBody): ShadowDriveResponse
+    suspend fun createStorageAccount(@Body request: ShadowRequest): ShadowDriveResponse
 }
