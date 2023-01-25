@@ -83,7 +83,6 @@ class PerformMintUseCase @Inject constructor(
 
             // begin signing transaction step
             _mintState.value = MintState.Signing(transactionBytes)
-            delay(700)
 
             val primarySignature = walletAdapter.transact(sender) {
 
