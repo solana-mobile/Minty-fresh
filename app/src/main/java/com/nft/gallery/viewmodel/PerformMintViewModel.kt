@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
+import com.nft.gallery.metaplex.jen.shadowdrive.BYTES_PER_GIB
 import com.nft.gallery.usecase.*
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -23,7 +24,8 @@ data class PerformMintViewState(
 class PerformMintViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: PersistenceUseCase,
-    private val performMintUseCase: PerformMintUseCase
+    private val performMintUseCase: PerformMintUseCase,
+    private val createStorageAccountUseCase: CreateStorageAccountUseCase
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
@@ -57,7 +59,9 @@ class PerformMintViewModel @Inject constructor(
      */
     fun performMint(sender: ActivityResultSender, title: String, desc: String, imgUrl: String) {
         viewModelScope.launch {
-            performMintUseCase.performMint(sender, title, desc, imgUrl)
+//            performMintUseCase.performMint(sender, title, desc, imgUrl)
+
+            createStorageAccountUseCase.createStorageAccount(sender, title, BYTES_PER_GIB.toULong())
         }
     }
 
