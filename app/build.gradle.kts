@@ -33,19 +33,22 @@ android {
             "NFTSTORAGE_KEY",
             "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
         )
-        buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
+        buildConfigField("String", "NFTSTORAGE_API_BASE_URL", "\"https://api.nft.storage/\"")
 
-        buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.devnet.solana.com\"")
         buildConfigField(
             "String",
             "MINTY_FRESH_CREATOR_PDA",
             "\"3QFrGD1VHLKqeuCWUt6jgcM5ZESBzhY9dUvZcDbZFisB\""
         )
+
+        buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
         buildConfigField(
             "com.solana.mobilewalletadapter.clientlib.RpcCluster",
             "RPC_CLUSTER",
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
+            "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
         )
+
+        buildConfigField("String", "SHADOW_DRIVE_API_BASE_URL", "\"https://shadow-storage.genesysgo.net\"")
 
         buildConfigField("String", "IDENTITY_URI", "\"https://solanamobile.com\"")
         buildConfigField("String", "IDENTITY_ICO", "\"favicon.ico\"")

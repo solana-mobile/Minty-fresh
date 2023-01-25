@@ -25,7 +25,7 @@ import java.net.URL
 import java.util.Base64
 import javax.inject.Inject
 
-class ShadowDriveAccountRepository@Inject constructor(
+class ShadowDriveAccountRepository @Inject constructor(
     private val endpoints: ShadowDriveEndpoints
 ) {
 

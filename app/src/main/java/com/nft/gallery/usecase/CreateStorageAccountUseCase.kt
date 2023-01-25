@@ -1,11 +1,11 @@
 package com.nft.gallery.usecase
 
+import com.nft.gallery.appName
+import com.nft.gallery.iconUri
+import com.nft.gallery.identityUri
 import com.nft.gallery.BuildConfig
 import com.nft.gallery.repository.LatestBlockhashRepository
 import com.nft.gallery.repository.ShadowDriveAccountRepository
-import com.nft.gallery.viewmodel.iconUri
-import com.nft.gallery.viewmodel.identityName
-import com.nft.gallery.viewmodel.solanaUri
 import com.solana.core.SerializeConfig
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
@@ -71,8 +71,8 @@ class CreateStorageAccountUseCase @Inject constructor(
             val signedTx = walletAdapter.transact(sender) {
 
                 authToken?.let {
-                    reauthorize(solanaUri, iconUri, identityName, authToken)
-                } ?: authorize(solanaUri, iconUri, identityName, BuildConfig.RPC_CLUSTER)
+                    reauthorize(identityUri, iconUri, appName, authToken)
+                } ?: authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 
