@@ -96,7 +96,7 @@ fun Gallery(
                             MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
                                 GlideImage(
                                     model = media.path,
-                                    contentDescription = null,
+                                    contentDescription = "Image",
                                     modifier = Modifier
                                         .width(76.dp)
                                         .aspectRatio(1.0f)

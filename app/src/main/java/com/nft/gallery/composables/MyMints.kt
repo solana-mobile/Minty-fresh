@@ -147,7 +147,7 @@ fun MyMintPage(
                                         }
                                     },
                                 model = myMint.mediaUrl,
-                                contentDescription = null,
+                                contentDescription = "NFT ${myMint.name}",
                                 contentScale = ContentScale.Crop,
                             )
                         }

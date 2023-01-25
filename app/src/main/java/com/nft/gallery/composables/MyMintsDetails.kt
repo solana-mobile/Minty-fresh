@@ -79,7 +79,7 @@ fun MyMintsDetails(
                         .clip(RoundedCornerShape(8.dp))
                         .background(color = MaterialTheme.colorScheme.background),
                     model = uiState.myMints[page].mediaUrl,
-                    contentDescription = "Detail of My Mint",
+                    contentDescription = "NFT ${uiState.myMints[page].name}",
                     contentScale = ContentScale.Fit,
                 ) {
                     it.thumbnail()

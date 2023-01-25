@@ -118,7 +118,7 @@ fun MintDetailsPage(
 
                     GlideImage(
                         model = imagePath,
-                        contentDescription = null,
+                        contentDescription = "Image",
                         modifier = Modifier
                             .padding(top = 16.dp)
                             .width(210.dp)
