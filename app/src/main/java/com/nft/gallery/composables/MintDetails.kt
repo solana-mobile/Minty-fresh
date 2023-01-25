@@ -89,9 +89,10 @@ fun MintDetailsPage(
                         ),
                         text = when (uiState.mintState) {
                             is MintState.UploadingMedia -> "Uploading file..."
-                            is MintState.CreatingMetadata -> "Processing..."
+                            is MintState.CreatingMetadata -> "Uploading metadata..."
+                            is MintState.BuildingTransaction, is MintState.Signing-> "Requesting wallet signature..."
                             is MintState.Minting -> "Minting..."
-                            is MintState.Signing-> "Requesting wallet signature..."
+                            is MintState.AwaitingConfirmation -> "Waiting for confirmations..."
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium

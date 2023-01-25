@@ -12,7 +12,6 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -25,6 +24,7 @@ sealed interface MintState {
     object UploadingMedia : MintState
     object CreatingMetadata : MintState
     object BuildingTransaction : MintState
+    object AwaitingConfirmation : MintState
     class Signing(val transaction: ByteArray) : MintState
     class Minting(val mintAddress: PublicKey) : MintState
     class Complete(val transactionSignature: String) : MintState
@@ -83,7 +83,6 @@ class PerformMintUseCase @Inject constructor(
 
             // begin signing transaction step
             _mintState.value = MintState.Signing(transactionBytes)
-            delay(700)
 
             val primarySignature = walletAdapter.transact(sender) {
 
@@ -114,6 +113,8 @@ class PerformMintUseCase @Inject constructor(
 
             // send the signed transaction to the cluster
             val transactionSignature = sendTransactionRepository.sendTransaction(signed)
+
+            _mintState.value = MintState.AwaitingConfirmation
 
             // Await for transaction confirmation
             sendTransactionRepository.confirmTransaction(transactionSignature)
