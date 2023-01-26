@@ -1,5 +1,6 @@
 package com.nft.gallery.activity
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -41,25 +42,7 @@ import java.io.File
 import javax.annotation.concurrent.GuardedBy
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity(), ActivityResultSender {
-
-    private val startForResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {}
-
-    override fun launch(intent: Intent) {
-        try {
-            startForResult.launch(intent)
-        } catch (exception: Exception) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                Toast.makeText(
-                    this@MainActivity,
-                    "You need to install a Solana Wallet first (Solflare or Phantom)",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
-    }
+class MainActivity : ComponentActivity() {
 
     @OptIn(
         ExperimentalAnimationApi::class,
@@ -119,7 +102,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                         composable(NavigationItem.Photos.route) {
                             ScaffoldScreen(
                                 currentRoute = NavigationItem.Photos.route,
-                                activityResultSender = this@MainActivity,
+                                activityResultSender = activityResultSender,
                                 navController = animNavController
                             ) {
                                 Gallery(
@@ -180,11 +163,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                                         bottomSheetState.show()
                                     }
                                 },
-                                intentSender = object : ActivityResultSender {
-                                    override fun launch(intent: Intent) {
-                                        intentSender.startActivityForResult(intent) { }
-                                    }
-                                }
+                                intentSender = activityResultSender
                             )
                         }
                         composable(
@@ -198,7 +177,7 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
 
                             ScaffoldScreen(
                                 currentRoute = NavigationItem.MyMints.route,
-                                activityResultSender = this@MainActivity,
+                                activityResultSender = activityResultSender,
                                 navController = animNavController
                             ) {
                                 MyMintPage(
@@ -220,6 +199,22 @@ class MainActivity : ComponentActivity(), ActivityResultSender {
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private val activityResultSender = object : ActivityResultSender {
+        override fun launch(intent: Intent) {
+            try {
+                intentSender.startActivityForResult(intent) { }
+            } catch (exception: ActivityNotFoundException) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "You need to install a Solana Wallet first (Solflare or Phantom)",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
