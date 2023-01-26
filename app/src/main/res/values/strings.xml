@@ -2,4 +2,9 @@
     <string name="app_name">Minty Fresh</string>
     <string name="take_pic_content_desc">Take Picture</string>
     <string name="connect">Connect</string>
+    <string name="camera">Camera</string>
+    <string name="microphone">Microphone</string>
+    <string name="storage">Storage</string>
+    <string name="photos_and_media">Photos and Media</string>
+    <string name="grant">Grant</string>
 </resources>
