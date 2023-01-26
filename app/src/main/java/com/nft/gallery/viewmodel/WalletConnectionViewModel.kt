@@ -12,9 +12,11 @@ import com.nft.gallery.usecase.PersistenceUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,6 +26,7 @@ data class WalletViewState(
     val solBalance: Double = 0.0,
     val userAddress: String = "",
     val userLabel: String = "",
+    val noWallet: Boolean = false
 )
 
 @HiltViewModel
@@ -61,13 +64,24 @@ class WalletConnectionViewModel @Inject constructor(
 
     fun connect(sender: ActivityResultSender) {
         viewModelScope.launch {
-            walletAdapter.transact(sender) {
-
-                val authed = authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
-
-                persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
+            val result = walletAdapter.transact(sender) {
+                authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
             }
 
+            when (result) {
+                is TransactionResult.Success -> {
+                    persistenceUseCase.persistConnection(PublicKey(result.payload.publicKey), result.payload.accountLabel ?: "", result.payload.authToken)
+                }
+                is TransactionResult.NoWalletFound -> {
+                    _state.update {
+                        _state.value.copy(
+                            noWallet = true,
+                            canTransact = true
+                        )
+                    }
+                }
+                is TransactionResult.Failure -> { /** not gonna do anything here now **/ }
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.nft.gallery.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
@@ -76,7 +77,8 @@ fun ScaffoldScreen(
                             } else {
                                 walletConnectionViewModel.disconnect()
                             }
-                        }
+                        },
+                        enabled = !viewState.noWallet
                     ) {
                         val pubKey = viewState.userAddress
                         val buttonText = if (pubKey.isEmpty()) {
@@ -116,10 +118,28 @@ fun ScaffoldScreen(
         },
         bottomBar = {
             if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                BottomNavigationBar(
-                    navController = navController,
-                    currentRoute = currentRoute
-                )
+                Column {
+                    AnimatedVisibility(
+                        visible = viewState.noWallet
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.primary)
+                                .padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Hey, be sure to install a Solana wallet before you get started!",
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                    BottomNavigationBar(
+                        navController = navController,
+                        currentRoute = currentRoute
+                    )
+                }
             }
         },
         content = { padding ->
