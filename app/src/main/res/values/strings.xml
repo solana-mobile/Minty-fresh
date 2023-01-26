@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Minty Fresh</string>
+    <string name="take_pic_content_desc">Take Picture</string>
+    <string name="connect">Connect</string>
 </resources>
