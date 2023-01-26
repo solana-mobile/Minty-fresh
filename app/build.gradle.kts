@@ -144,8 +144,6 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-    implementation("com.portto.solana:web3:0.1.3")
-
     implementation("com.google.dagger:hilt-android-gradle-plugin:2.44.2")
     implementation("androidx.room:room-ktx:2.5.0")
     implementation("androidx.room:room-runtime:2.5.0")
