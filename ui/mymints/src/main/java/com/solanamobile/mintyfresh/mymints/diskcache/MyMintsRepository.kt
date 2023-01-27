@@ -1,12 +1,13 @@
 package com.solanamobile.mintyfresh.mymints.diskcache
 
-import com.solanamobile.mintyfresh.core.BuildConfig
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class MyMintsRepository @Inject constructor(
-    private val myMintsDatabaseProvider: MyMintsDatabaseProvider
+    private val myMintsDatabaseProvider: MyMintsDatabaseProvider,
+    private val rpcCluster: RpcCluster
 ) {
 
     suspend fun insertAll(myMints: List<MyMint>) =
@@ -20,12 +21,12 @@ class MyMintsRepository @Inject constructor(
     fun get(pubKey: String) =
         myMintsDatabaseProvider.roomDb.myMintsDao().get(
             pubKey = pubKey,
-            clusterName = BuildConfig.RPC_CLUSTER.name
+            clusterName = rpcCluster.name
         )
 
     suspend fun get(id: String, pubKey: String) = myMintsDatabaseProvider.roomDb.myMintsDao().get(
         id = id,
         pubKey = pubKey,
-        clusterName = BuildConfig.RPC_CLUSTER.name
+        clusterName = rpcCluster.name
     )
 }

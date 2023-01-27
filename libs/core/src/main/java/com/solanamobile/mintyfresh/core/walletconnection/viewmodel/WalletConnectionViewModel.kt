@@ -28,7 +28,8 @@ data class WalletViewState(
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
-    private val persistenceUseCase: PersistenceUseCase
+    private val persistenceUseCase: PersistenceUseCase,
+    private val connectionParams: ConnectionParams
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WalletViewState())
@@ -58,7 +59,7 @@ class WalletConnectionViewModel @Inject constructor(
         }
     }
 
-    fun connect(connectionParams: ConnectionParams, activityResultSender: ActivityResultSender) {
+    fun connect(activityResultSender: ActivityResultSender) {
         viewModelScope.launch {
             val result = walletAdapter.transact(activityResultSender) {
                 authorize(

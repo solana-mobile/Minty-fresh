@@ -22,11 +22,6 @@ android {
             "MINTY_FRESH_CREATOR_PDA",
             "\"3QFrGD1VHLKqeuCWUt6jgcM5ZESBzhY9dUvZcDbZFisB\""
         )
-        buildConfigField(
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-            "RPC_CLUSTER",
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
-        )
     }
 
     buildFeatures {
@@ -45,11 +40,6 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
-            buildConfigField(
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-                "RPC_CLUSTER",
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
-            )
         }
     }
     compileOptions {

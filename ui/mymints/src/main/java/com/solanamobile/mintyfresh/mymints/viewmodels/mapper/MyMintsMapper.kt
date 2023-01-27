@@ -2,14 +2,16 @@ package com.solanamobile.mintyfresh.mymints.viewmodels.mapper
 
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT
-import com.solanamobile.mintyfresh.core.BuildConfig
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solanamobile.mintyfresh.mymints.diskcache.MyMint
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MyMintsMapper @Inject constructor() {
+class MyMintsMapper @Inject constructor(
+    private val rpcCluster: RpcCluster
+) {
 
     fun mapLoading() = MyMintsViewState.Loading(
         MutableList(10) { index -> MyMint(index.toString(), "", "", "", "", "") }
@@ -22,7 +24,7 @@ class MyMintsMapper @Inject constructor() {
             description = "",
             mediaUrl = "",
             pubKey = nft.updateAuthority.toString(),
-            cluster = BuildConfig.RPC_CLUSTER.name
+            cluster = rpcCluster.name
         )
     }
 
@@ -33,7 +35,7 @@ class MyMintsMapper @Inject constructor() {
             description = metadata.description,
             mediaUrl = imageUrl,
             pubKey = nft.updateAuthority.toString(),
-            cluster = BuildConfig.RPC_CLUSTER.name
+            cluster = rpcCluster.name
         )
     }
 }
