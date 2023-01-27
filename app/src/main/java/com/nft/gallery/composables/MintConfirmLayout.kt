@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nft.gallery.R
 
@@ -45,7 +46,7 @@ fun MintConfirmLayout(
             painter = painterResource(
                 id = R.drawable.mint_confirm
             ),
-            contentDescription = "Sparkle image",
+            contentDescription = stringResource(R.string.sparkle_content_desc),
             contentScale = ContentScale.Inside
         )
         Text(
@@ -53,7 +54,7 @@ fun MintConfirmLayout(
                 .padding(
                     top = 19.dp
                 ),
-            text = "You minted an NFT!",
+            text = stringResource(R.string.mint_success),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -62,7 +63,7 @@ fun MintConfirmLayout(
                 .padding(
                     top = 10.dp
                 ),
-            text = "It's been added to your connected wallet",
+            text = stringResource(R.string.added_to_wallet),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
@@ -77,7 +78,7 @@ fun MintConfirmLayout(
             onClick = onDoneClick
         ) {
             Text(
-                text = "Done"
+                text = stringResource(R.string.done)
             )
         }
     }

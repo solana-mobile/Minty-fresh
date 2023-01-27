@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -20,6 +21,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.nft.gallery.R
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 
@@ -79,7 +81,7 @@ fun MyMintsDetails(
                         .clip(RoundedCornerShape(8.dp))
                         .background(color = MaterialTheme.colorScheme.background),
                     model = uiState.myMints[page].mediaUrl,
-                    contentDescription = "NFT ${uiState.myMints[page].name}",
+                    contentDescription = uiState.myMints[page].name,
                     contentScale = ContentScale.Fit,
                 ) {
                     it.thumbnail()
@@ -92,7 +94,7 @@ fun MyMintsDetails(
                 Text(
                     modifier = Modifier.padding(top = 36.dp),
                     style = MaterialTheme.typography.labelMedium,
-                    text = "Description",
+                    text = stringResource(id = R.string.description),
                 )
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
@@ -102,14 +104,14 @@ fun MyMintsDetails(
                 Text(
                     modifier = Modifier.padding(top = 36.dp),
                     style = MaterialTheme.typography.labelMedium,
-                    text = "Metadata",
+                    text = stringResource(R.string.metadata),
                 )
                 Row(
                     modifier = Modifier.padding(top = 8.dp),
                 ) {
                     Text(
                         style = MaterialTheme.typography.bodyMedium,
-                        text = "Mint address",
+                        text = stringResource(R.string.mint_address),
                     )
                     Spacer(Modifier.weight(1f))
                     Text(

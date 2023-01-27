@@ -21,12 +21,14 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.R
 import com.nft.gallery.usecase.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -58,7 +60,7 @@ fun MintDetailsPage(
                 },
                 title = {
                     Text(
-                        text = "Add NFT details",
+                        text = stringResource(R.string.add_details),
                     )
                 },
                 colors = TopAppBarDefaults.largeTopAppBarColors(
@@ -88,11 +90,11 @@ fun MintDetailsPage(
                             top = 28.dp
                         ),
                         text = when (uiState.mintState) {
-                            is MintState.UploadingMedia -> "Uploading file..."
-                            is MintState.CreatingMetadata -> "Uploading metadata..."
-                            is MintState.BuildingTransaction, is MintState.Signing-> "Requesting wallet signature..."
-                            is MintState.Minting -> "Minting..."
-                            is MintState.AwaitingConfirmation -> "Waiting for confirmations..."
+                            is MintState.UploadingMedia -> stringResource(R.string.uploading_file)
+                            is MintState.CreatingMetadata -> stringResource(R.string.uploading_metadata)
+                            is MintState.BuildingTransaction, is MintState.Signing-> stringResource(R.string.requesting_signatuve)
+                            is MintState.Minting -> stringResource(R.string.minting)
+                            is MintState.AwaitingConfirmation -> stringResource(R.string.waiting_confirmations)
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium
@@ -116,7 +118,7 @@ fun MintDetailsPage(
 
                     GlideImage(
                         model = imagePath,
-                        contentDescription = "Image",
+                        contentDescription = stringResource(id = R.string.image_content_desc),
                         modifier = Modifier
                             .padding(top = 16.dp)
                             .width(210.dp)
@@ -130,12 +132,12 @@ fun MintDetailsPage(
                         it.thumbnail()
                     }
                     Text(
-                        text = title.value.ifEmpty { "Your NFT" },
+                        text = title.value.ifEmpty { stringResource(R.string.your_nft) },
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(top = 16.dp)
                     )
                     Text(
-                        text = description.value.ifEmpty { "No description yet." },
+                        text = description.value.ifEmpty { stringResource(R.string.no_description_yet) },
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(
                             top = 10.dp
@@ -159,10 +161,10 @@ fun MintDetailsPage(
                             title.value = it.trimStart().take(32)
                         },
                         label = {
-                            Text(text = "NFT title")
+                            Text(text = stringResource(R.string.nft_title))
                         },
                         placeholder = {
-                            Text(text = "Enter a title")
+                            Text(text = stringResource(R.string.enter_a_title))
                         },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
@@ -179,7 +181,7 @@ fun MintDetailsPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp),
-                        text = "Use up to 32 characters",
+                        text = stringResource(R.string.up_to_32_chars),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -196,10 +198,10 @@ fun MintDetailsPage(
                             description.value = it.trimStart().take(256)
                         },
                         label = {
-                            Text(text = "Description")
+                            Text(text = stringResource(R.string.description))
                         },
                         placeholder = {
-                            Text(text = "Describe your NFT here")
+                            Text(text = stringResource(R.string.describe_nft_here))
                         },
                         minLines = 3,
                         maxLines = 3,
@@ -215,7 +217,7 @@ fun MintDetailsPage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 16.dp, bottom = 24.dp),
-                        text = "Use up to 256 characters",
+                        text = stringResource(R.string.enter_description),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -237,7 +239,7 @@ fun MintDetailsPage(
                             )
                         }
                     ) {
-                        Text(text = if (uiState.isWalletConnected) "Mint" else "Connect and Mint")
+                        Text(text = if (uiState.isWalletConnected) stringResource(R.string.mint) else stringResource(R.string.connect_and_mint))
                     }
                 }
             }

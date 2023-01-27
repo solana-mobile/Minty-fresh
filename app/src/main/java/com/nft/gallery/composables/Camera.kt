@@ -30,10 +30,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.nft.gallery.R
 import com.nft.gallery.theme.NavigationItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -138,7 +140,7 @@ private fun StartCamera(
             Icon(
                 modifier = Modifier.size(24.dp),
                 imageVector = NavigationItem.Camera.icon,
-                contentDescription = "Take Picture"
+                contentDescription = stringResource(id = R.string.take_pic_content_desc)
             )
         }
     }

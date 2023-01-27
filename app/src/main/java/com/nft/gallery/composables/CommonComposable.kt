@@ -15,26 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-
-private val PERMISSION_TO_DESCRIPTION = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-    mapOf(
-        Manifest.permission.CAMERA to "Camera",
-        Manifest.permission.RECORD_AUDIO to "Microphone",
-        Manifest.permission.READ_EXTERNAL_STORAGE to "Storage",
-        Manifest.permission.READ_MEDIA_IMAGES to "Photos and Media"
-    )
-} else {
-    mapOf(
-        Manifest.permission.CAMERA to "Camera",
-        Manifest.permission.RECORD_AUDIO to "Microphone",
-        Manifest.permission.WRITE_EXTERNAL_STORAGE to "Storage",
-        Manifest.permission.READ_EXTERNAL_STORAGE to "Storage",
-    )
-}
+import com.nft.gallery.R
 
 @Composable
 fun EmptyView(
@@ -61,18 +47,35 @@ fun EmptyView(permissionState: MultiplePermissionsState) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val permissionDescMap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mapOf(
+                Manifest.permission.CAMERA to stringResource(R.string.camera),
+                Manifest.permission.RECORD_AUDIO to stringResource(R.string.microphone),
+                Manifest.permission.READ_EXTERNAL_STORAGE to stringResource(R.string.storage),
+                Manifest.permission.READ_MEDIA_IMAGES to stringResource(R.string.photos_and_media)
+            )
+        } else {
+            mapOf(
+                Manifest.permission.CAMERA to stringResource(R.string.camera),
+                Manifest.permission.RECORD_AUDIO to stringResource(R.string.microphone),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE to stringResource(R.string.storage),
+                Manifest.permission.READ_EXTERNAL_STORAGE to stringResource(R.string.storage),
+            )
+        }
+
         val revokedPermissions = permissionState.revokedPermissions.map {
-            PERMISSION_TO_DESCRIPTION.getOrDefault(
+            permissionDescMap.getOrDefault(
                 it.permission,
                 ""
             )
         }
+
         val textToShow = if (permissionState.shouldShowRationale) {
-            "${revokedPermissions.joinToString(separator = ", ")} permission is important for this app. Please grant the permission."
+            stringResource(R.string.permission_important, revokedPermissions.joinToString(separator = ", "))
         } else {
-            "${revokedPermissions.joinToString(separator = ", ")} permission required for this feature to be available. " +
-                    "Please grant the permission"
+            stringResource(R.string.permission_important, revokedPermissions.joinToString(separator = ", "))
         }
+
         Text(textToShow, modifier = Modifier.padding(vertical = 16.dp))
 
         Button(
@@ -82,7 +85,7 @@ fun EmptyView(permissionState: MultiplePermissionsState) {
                 permissionState.launchMultiplePermissionRequest()
             },
             content = {
-                Text("Grant")
+                Text(stringResource(R.string.grant))
             }
         )
     }

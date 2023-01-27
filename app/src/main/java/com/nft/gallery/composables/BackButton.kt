@@ -8,7 +8,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.nft.gallery.R
 
 @Composable
 fun BackButton(
@@ -24,7 +26,7 @@ fun BackButton(
                 .size(24.dp),
             tint = MaterialTheme.colorScheme.onSurface,
             imageVector = Icons.Filled.ArrowBack,
-            contentDescription = "Back"
+            contentDescription = stringResource(R.string.back)
         )
     }
 }
