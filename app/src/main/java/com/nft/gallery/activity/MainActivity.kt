@@ -26,9 +26,11 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nft.gallery.composables.*
-import com.nft.gallery.theme.AppTheme
+import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.gallery.Camera
+import com.solanamobile.mintyfresh.gallery.Gallery
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
