@@ -114,8 +114,8 @@ android {
 
 dependencies {
 
-    implementation(project(":libs:commonComposable"))
-    implementation(project(":libs:gallery"))
+    implementation(project(":ui:commonComposable"))
+    implementation(project(":ui:gallery"))
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
