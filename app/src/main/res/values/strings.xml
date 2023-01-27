@@ -41,4 +41,5 @@
     <string name="connect_to_see_mints">Connect your wallet to see your mints</string>
     <string name="metadata">Metadata</string>
     <string name="mint_address">Mint address</string>
+    <string name="back">Back</string>
 </resources>
