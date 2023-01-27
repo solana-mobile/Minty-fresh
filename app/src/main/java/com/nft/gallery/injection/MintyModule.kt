@@ -1,7 +1,5 @@
 package com.nft.gallery.injection
 
-import android.content.Context
-import android.content.SharedPreferences
 import com.metaplex.lib.drivers.solana.Commitment
 import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
@@ -15,7 +13,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import retrofit2.Retrofit
 
 @Module
@@ -32,11 +29,6 @@ class MintyModule {
             .build()
 
         return retrofit.create(NftStorageEndpoints::class.java)
-    }
-
-    @Provides
-    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return context.getSharedPreferences("MainPrefs", Context.MODE_PRIVATE)
     }
 
     @Provides

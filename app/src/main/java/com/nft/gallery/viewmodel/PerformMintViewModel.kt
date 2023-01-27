@@ -29,7 +29,8 @@ data class PerformMintViewState(
 class PerformMintViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: PersistenceUseCase,
-    private val performMintUseCase: PerformMintUseCase
+    private val performMintUseCase: PerformMintUseCase,
+    private val mobileWalletAdapter: MobileWalletAdapter
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
@@ -59,7 +60,7 @@ class PerformMintViewModel @Inject constructor(
     fun performMint(sender: ActivityResultSender, title: String, desc: String, filePath: String) {
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
-                val result = MobileWalletAdapter().transact(sender) {
+                val result = mobileWalletAdapter.transact(sender) {
                     authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
                 }
 
