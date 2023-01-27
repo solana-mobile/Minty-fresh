@@ -35,7 +35,8 @@ import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.composable.simplecomposables.Gallery
+import com.solanamobile.mintyfresh.gallery.Camera
+import com.solanamobile.mintyfresh.gallery.Gallery
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

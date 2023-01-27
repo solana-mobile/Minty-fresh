@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.composable.simplecomposables
+package com.solanamobile.mintyfresh.gallery
 
 import android.Manifest
 import android.os.Build
@@ -28,6 +28,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.composable.R
+import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
+import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
+import com.solanamobile.mintyfresh.composable.simplecomposables.VideoView
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
 @Composable

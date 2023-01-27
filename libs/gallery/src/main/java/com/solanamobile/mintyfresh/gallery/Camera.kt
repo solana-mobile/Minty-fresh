@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.gallery
 
 import android.Manifest
 import android.content.ContentValues
@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -35,8 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.nft.gallery.R
-import com.nft.gallery.theme.NavigationItem
 import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
 import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
 import kotlinx.coroutines.Dispatchers
@@ -141,7 +141,7 @@ private fun StartCamera(
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = NavigationItem.Camera.icon,
+                imageVector = Icons.Outlined.AddAPhoto,
                 contentDescription = stringResource(id = R.string.take_pic_content_desc)
             )
         }
