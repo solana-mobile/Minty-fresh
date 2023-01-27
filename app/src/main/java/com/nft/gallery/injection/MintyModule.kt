@@ -41,12 +41,6 @@ class MintyFreshViewModelModule {
         return MobileWalletAdapter()
     }
 
-    @Provides
-    fun providesMetaplexConnectionDriver(): Connection =
-        SolanaConnectionDriver(
-            MetaplexHttpDriver(BuildConfig.SOLANA_RPC_URL),
-            TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
-        )
 }
 
 @Module
@@ -64,5 +58,13 @@ class MintyFreshSingletonModule {
             iconUri = iconUri,
             identityName = appName,
             rpcCluster = BuildConfig.RPC_CLUSTER
+        )
+
+    @Provides
+    @Singleton
+    fun providesMetaplexConnectionDriver(): Connection =
+        SolanaConnectionDriver(
+            MetaplexHttpDriver(BuildConfig.SOLANA_RPC_URL),
+            TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
         )
 }

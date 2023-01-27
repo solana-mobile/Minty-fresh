@@ -23,7 +23,8 @@ class MyMintsViewModel @Inject constructor(
     application: Application,
     private val myMintsMapper: MyMintsMapper,
     private val persistenceUseCase: PersistenceUseCase,
-    private val myMintsRepository: MyMintsRepository
+    private val myMintsRepository: MyMintsRepository,
+    private val myMintsUseCaseFactory: MyMintsUseCase.MyMintsUseCaseFactory
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<MyMintsViewState> =
@@ -114,7 +115,7 @@ class MyMintsViewModel @Inject constructor(
         }
 
         wasLoaded = true
-        val mintsUseCase = MyMintsUseCase(publicKey)
+        val mintsUseCase = myMintsUseCaseFactory.create(publicKey)
 
         val nfts = mintsUseCase.getAllUserMintyFreshNfts()
         Log.d(TAG, "Found ${nfts.size} NFTs")
