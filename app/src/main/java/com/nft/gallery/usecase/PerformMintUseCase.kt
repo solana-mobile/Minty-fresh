@@ -11,6 +11,7 @@ import com.nft.gallery.repository.StorageUploadRepository
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solana.mobilewalletadapter.clientlib.successPayload
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,7 @@ sealed interface MintState {
     class Signing(val transaction: ByteArray) : MintState
     class Minting(val mintAddress: PublicKey) : MintState
     class Complete(val transactionSignature: String) : MintState
+    class Error(val message: String): MintState
 }
 
 class PerformMintUseCase @Inject constructor(
@@ -47,13 +49,12 @@ class PerformMintUseCase @Inject constructor(
     suspend fun performMint(sender: ActivityResultSender,
                             title: String, desc: String, filePath: String) =
         withContext(Dispatchers.IO) {
+            val authToken = persistenceUseCase.walletDetails.map {
+                if (it is Connected) it.authToken else null
+            }.stateIn(this).value
 
             val creator = persistenceUseCase.walletDetails.map {
                 if (it is Connected) it.publicKey else null
-            }.stateIn(this).value
-
-            val authToken = persistenceUseCase.walletDetails.map {
-                if (it is Connected) it.authToken else null
             }.stateIn(this).value
 
             check(creator != null)
@@ -86,7 +87,6 @@ class PerformMintUseCase @Inject constructor(
             _mintState.value = MintState.Signing(transactionBytes)
 
             val txResult = walletAdapter.transact(sender) {
-
                 authToken?.let {
                     reauthorize(identityUri, iconUri, appName, authToken)
                 } ?: authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
@@ -96,32 +96,40 @@ class PerformMintUseCase @Inject constructor(
                 return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
             }
 
-            txResult.successPayload?.let { primarySignature ->
-                // rebuild transaction object from signed bytes
-                // there is a deserialization bug in solana.core.Message.from(byteArray) so have to
-                // build up the Message (and Transaction) object manually (for now)
-                // val signed = Transaction.from(signedBytes)
-                val signed = Transaction().apply {
-                    setRecentBlockHash(mintTxn.recentBlockhash)
-                    feePayer = creator
-                    addInstruction(*mintTxn.instructions.toTypedArray())
-                    addSignature(creator, primarySignature)
+            when (txResult) {
+                is TransactionResult.Success -> {
+                    txResult.successPayload?.let { primarySignature ->
+                        // rebuild transaction object from signed bytes
+                        // there is a deserialization bug in solana.core.Message.from(byteArray) so have to
+                        // build up the Message (and Transaction) object manually (for now)
+                        // val signed = Transaction.from(signedBytes)
+                        val signed = Transaction().apply {
+                            setRecentBlockHash(mintTxn.recentBlockhash)
+                            feePayer = creator
+                            addInstruction(*mintTxn.instructions.toTypedArray())
+                            addSignature(creator, primarySignature)
+                        }
+
+                        // now that the primary signer (creator) has signed, the mint account can sign
+                        signed.partialSign(mintAccount)
+
+                        _mintState.value = MintState.Minting(mintAccount.publicKey)
+
+                        // send the signed transaction to the cluster
+                        val transactionSignature = sendTransactionRepository.sendTransaction(signed)
+
+                        _mintState.value = MintState.AwaitingConfirmation
+
+                        // Await for transaction confirmation
+                        sendTransactionRepository.confirmTransaction(transactionSignature)
+
+                        _mintState.value = MintState.Complete(transactionSignature)
+                    }
                 }
-
-                // now that the primary signer (creator) has signed, the mint account can sign
-                signed.partialSign(mintAccount)
-
-                _mintState.value = MintState.Minting(mintAccount.publicKey)
-
-                // send the signed transaction to the cluster
-                val transactionSignature = sendTransactionRepository.sendTransaction(signed)
-
-                _mintState.value = MintState.AwaitingConfirmation
-
-                // Await for transaction confirmation
-                sendTransactionRepository.confirmTransaction(transactionSignature)
-
-                _mintState.value = MintState.Complete(transactionSignature)
+                is TransactionResult.Failure -> {
+                    _mintState.value = MintState.Complete(txResult.message)
+                }
+                else -> { }
             }
         }
 }
