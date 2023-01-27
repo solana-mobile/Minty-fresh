@@ -7,4 +7,6 @@
     <string name="storage">Storage</string>
     <string name="photos_and_media">Photos and Media</string>
     <string name="grant">Grant</string>
+    <string name="permission_important">Please grant the following important permission(s): %1$s</string>
+    <string name="permission_required">Please grant the following required permission(s): %1$s</string>
 </resources>
