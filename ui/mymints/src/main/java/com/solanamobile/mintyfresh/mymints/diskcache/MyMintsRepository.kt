@@ -1,6 +1,6 @@
 package com.solanamobile.mintyfresh.mymints.diskcache
 
-import com.nft.gallery.BuildConfig
+import com.solanamobile.mintyfresh.core.BuildConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 

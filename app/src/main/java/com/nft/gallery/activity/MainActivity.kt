@@ -31,7 +31,6 @@ import com.nft.gallery.theme.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
-import com.solanamobile.mintyfresh.mymints.composables.MintDetailsPage
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
 import com.solanamobile.mintyfresh.mymints.composables.MyMintsDetails
 import dagger.hilt.android.AndroidEntryPoint

@@ -1,7 +1,7 @@
-package com.nft.gallery.metaplex
+package com.solanamobile.mintyfresh.core.pda
 
-import com.nft.gallery.BuildConfig
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.core.BuildConfig
 
 /*
  * The Minty Fresh Creator PDA
