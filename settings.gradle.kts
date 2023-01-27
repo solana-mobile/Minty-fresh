@@ -17,3 +17,4 @@ rootProject.name = "Minty Fresh"
 include(":app")
 include(":ui:commonComposable")
 include(":ui:gallery")
+include(":libs:core")
