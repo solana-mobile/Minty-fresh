@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.nft.gallery.R
 import com.nft.gallery.viewmodel.MediaViewModel
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
@@ -56,11 +58,11 @@ fun Gallery(
         Text(
             style = MaterialTheme.typography.headlineMedium,
             text = AnnotatedString(
-                "Let\u2019s get",
+                stringResource(R.string.lets_get),
                 spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurfaceVariant)
             ).plus(
                 AnnotatedString(
-                    " minty fresh.",
+                    stringResource(R.string.minty_fresh),
                     spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurface)
                 )
             )
@@ -69,7 +71,7 @@ fun Gallery(
             modifier = Modifier.padding(
                 top = 30.dp
             ),
-            text = "Select a photo to mint:",
+            text = stringResource(R.string.select_photo),
             style = MaterialTheme.typography.labelLarge
         )
         PermissionView(
@@ -96,7 +98,7 @@ fun Gallery(
                             MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
                                 GlideImage(
                                     model = media.path,
-                                    contentDescription = "Image",
+                                    contentDescription = stringResource(R.string.image_content_desc),
                                     modifier = Modifier
                                         .width(76.dp)
                                         .aspectRatio(1.0f)
