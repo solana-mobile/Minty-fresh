@@ -22,11 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.nft.gallery.R
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
@@ -65,11 +67,11 @@ fun MyMintPage(
     ) {
         Text(
             text = AnnotatedString(
-                "My",
+                stringResource(R.string.my),
                 spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurfaceVariant)
             ).plus(
                 AnnotatedString(
-                    " mints",
+                    stringResource(R.string.mints),
                     spanStyle = SpanStyle(MaterialTheme.colorScheme.onSurface)
                 )
             ),
@@ -93,8 +95,8 @@ fun MyMintPage(
                     ) {
                         ErrorView(
                             text = uiState.error.message
-                                ?: "An error happened while fetching your Mints",
-                            buttonText = "Retry",
+                                ?: stringResource(R.string.error_fetching_mints),
+                            buttonText = stringResource(R.string.retry),
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
                         ) {
@@ -109,7 +111,7 @@ fun MyMintPage(
                             .verticalScroll(rememberScrollState())
                     ) {
                         EmptyView(
-                            text = "No mints yet. Start minting pictures with Minty Fresh!",
+                            text = stringResource(R.string.no_mints_yet),
                             modifier = Modifier
                                 .padding(vertical = 16.dp)
                         )
@@ -117,7 +119,7 @@ fun MyMintPage(
                 }
                 is MyMintsViewState.NoConnection -> {
                     EmptyView(
-                        text = "Connect your wallet to see your mints",
+                        text = stringResource(R.string.connect_to_see_mints),
                         modifier = Modifier
                             .padding(vertical = 16.dp)
                     )
@@ -147,7 +149,7 @@ fun MyMintPage(
                                         }
                                     },
                                 model = myMint.mediaUrl,
-                                contentDescription = "NFT ${myMint.name}",
+                                contentDescription = myMint.name,
                                 contentScale = ContentScale.Crop,
                             )
                         }
