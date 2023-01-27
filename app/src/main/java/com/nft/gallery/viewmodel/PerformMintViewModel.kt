@@ -7,14 +7,14 @@ import com.nft.gallery.BuildConfig
 import com.nft.gallery.appName
 import com.nft.gallery.iconUri
 import com.nft.gallery.identityUri
-import com.nft.gallery.usecase.Connected
 import com.nft.gallery.usecase.MintState
 import com.nft.gallery.usecase.PerformMintUseCase
-import com.nft.gallery.usecase.PersistenceUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
+import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.nft.gallery.repository
+package com.solanamobile.mintyfresh.core.peristence.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
