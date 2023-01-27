@@ -14,4 +14,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Minty Fresh"
-include (":app")
+include(":app")
+include(":libs:commonComposable")

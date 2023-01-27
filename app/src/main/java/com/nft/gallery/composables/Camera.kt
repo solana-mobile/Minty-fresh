@@ -37,6 +37,8 @@ import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.nft.gallery.R
 import com.nft.gallery.theme.NavigationItem
+import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
+import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

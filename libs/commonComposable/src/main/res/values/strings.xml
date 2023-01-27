@@ -1,0 +1,14 @@
+<resources>
+    <string name="back">Back</string>
+    <string name="camera">Camera</string>
+    <string name="microphone">Microphone</string>
+    <string name="storage">Storage</string>
+    <string name="photos_and_media">Photos and Media</string>
+    <string name="grant">Grant</string>
+    <string name="permission_important">Please grant the following important permission(s): %1$s</string>
+    <string name="permission_required">Please grant the following required permission(s): %1$s</string>
+    <string name="lets_get">"Let\u2019s get"</string>
+    <string name="minty_fresh">"&#32;"minty fresh.</string>
+    <string name="select_photo">Select a photo to mint:</string>
+    <string name="image_content_desc">Image</string>
+</resources>

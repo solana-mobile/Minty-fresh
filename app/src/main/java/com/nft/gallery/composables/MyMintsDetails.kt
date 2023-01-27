@@ -24,6 +24,7 @@ import com.google.accompanist.pager.PagerState
 import com.nft.gallery.R
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
+import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 
 @OptIn(
     ExperimentalPagerApi::class,

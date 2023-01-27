@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.composable.simplecomposables
 
 import android.Manifest
 import android.os.Build
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.nft.gallery.R
+import com.solanamobile.mintyfresh.composable.R
 
 @Composable
 fun EmptyView(

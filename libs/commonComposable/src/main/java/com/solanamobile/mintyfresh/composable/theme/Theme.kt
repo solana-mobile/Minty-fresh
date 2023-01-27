@@ -1,4 +1,4 @@
-package com.nft.gallery.theme
+package com.solanamobile.mintyfresh.composable.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.nft.gallery.R
+import com.solanamobile.mintyfresh.composable.R
 
 private val LightColors = lightColorScheme(
     primary = LightPrimary,

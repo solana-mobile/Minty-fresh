@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.composable.simplecomposables
 
 import android.Manifest
 import android.os.Build
@@ -26,8 +26,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.nft.gallery.R
-import com.nft.gallery.viewmodel.MediaViewModel
+import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
+import com.solanamobile.mintyfresh.composable.R
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalGlideComposeApi::class)
 @Composable
