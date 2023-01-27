@@ -1,4 +1,4 @@
-package com.nft.gallery.diskcache
+package com.solanamobile.mintyfresh.mymints.diskcache
 
 import android.content.Context
 import androidx.room.Room

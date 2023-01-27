@@ -1,4 +1,4 @@
-package com.nft.gallery.ktx
+package com.solanamobile.mintyfresh.mymints.ktx
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable

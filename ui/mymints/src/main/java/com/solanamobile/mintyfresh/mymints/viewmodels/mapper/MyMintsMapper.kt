@@ -1,4 +1,4 @@
-package com.nft.gallery.viewmodel.mapper
+package com.solanamobile.mintyfresh.mymints.viewmodels.mapper
 
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT

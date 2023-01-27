@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Metadata</string>
+    <string name="mint_address">Mint address</string>
+    <string name="description">Description</string>
+    <string name="no_mints_yet">No mints yet. Start minting pictures with Minty Fresh!</string>
+    <string name="connect_to_see_mints">Connect your wallet to see your mints</string>
+    <string name="my">My</string>
+    <string name="mints">"&#32;"mints</string>
+    <string name="error_fetching_mints">An error happened while fetching your Mints</string>
+    <string name="retry">Retry</string>
+</resources>

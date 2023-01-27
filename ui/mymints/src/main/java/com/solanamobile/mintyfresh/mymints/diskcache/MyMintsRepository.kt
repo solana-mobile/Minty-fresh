@@ -1,4 +1,4 @@
-package com.nft.gallery.diskcache
+package com.solanamobile.mintyfresh.mymints.diskcache
 
 import com.nft.gallery.BuildConfig
 import javax.inject.Inject

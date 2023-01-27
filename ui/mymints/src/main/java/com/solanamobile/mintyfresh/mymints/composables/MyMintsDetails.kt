@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.mymints.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,10 +21,10 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
-import com.nft.gallery.R
-import com.nft.gallery.ktx.hiltActivityViewModel
-import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
+import com.solanamobile.mintyfresh.mymints.R
+import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
+import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
 
 @OptIn(
     ExperimentalPagerApi::class,

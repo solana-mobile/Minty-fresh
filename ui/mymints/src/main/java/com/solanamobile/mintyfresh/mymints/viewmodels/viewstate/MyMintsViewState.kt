@@ -1,4 +1,4 @@
-package com.nft.gallery.viewmodel.viewstate
+package com.solanamobile.mintyfresh.mymints.viewmodels.viewstate
 
 import com.nft.gallery.diskcache.MyMint
 
