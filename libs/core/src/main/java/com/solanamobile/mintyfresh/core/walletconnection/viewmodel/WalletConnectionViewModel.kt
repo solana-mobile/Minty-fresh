@@ -1,11 +1,7 @@
-package com.nft.gallery.viewmodel
+package com.solanamobile.mintyfresh.core.walletconnection.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.BuildConfig
-import com.nft.gallery.appName
-import com.nft.gallery.iconUri
-import com.nft.gallery.identityUri
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
@@ -62,15 +58,24 @@ class WalletConnectionViewModel @Inject constructor(
         }
     }
 
-    fun connect(sender: ActivityResultSender) {
+    fun connect(connectionParams: ConnectionParams, activityResultSender: ActivityResultSender) {
         viewModelScope.launch {
-            val result = walletAdapter.transact(sender) {
-                authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
+            val result = walletAdapter.transact(activityResultSender) {
+                authorize(
+                    identityUri = connectionParams.identityUri,
+                    iconUri = connectionParams.iconUri,
+                    identityName = connectionParams.identityName,
+                    rpcCluster = connectionParams.rpcCluster
+                )
             }
 
             when (result) {
                 is TransactionResult.Success -> {
-                    persistenceUseCase.persistConnection(PublicKey(result.payload.publicKey), result.payload.accountLabel ?: "", result.payload.authToken)
+                    persistenceUseCase.persistConnection(
+                        PublicKey(result.payload.publicKey),
+                        result.payload.accountLabel ?: "",
+                        result.payload.authToken
+                    )
                 }
                 is TransactionResult.NoWalletFound -> {
                     _state.update {
@@ -80,7 +85,9 @@ class WalletConnectionViewModel @Inject constructor(
                         )
                     }
                 }
-                is TransactionResult.Failure -> { /** not gonna do anything here now **/ }
+                is TransactionResult.Failure -> {
+                    /** not gonna do anything here now **/
+                }
             }
         }
     }
