@@ -1,4 +1,4 @@
-package com.nft.gallery.repository
+package com.solanamobile.mintyfresh.mymints.repository
 
 import com.metaplex.lib.drivers.indenty.ReadOnlyIdentityDriver
 import com.metaplex.lib.drivers.rpc.JdkRpcDriver
@@ -9,9 +9,9 @@ import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
 import com.metaplex.lib.modules.nfts.NftClient
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.metaplex.lib.modules.token.models.metadata
-import com.nft.gallery.BuildConfig
-import com.nft.gallery.metaplex.mintyFreshCreatorPda
+import com.solanamobile.mintyfresh.core.pda.mintyFreshCreatorPda
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.core.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient

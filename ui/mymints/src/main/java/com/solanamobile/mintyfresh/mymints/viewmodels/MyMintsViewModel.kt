@@ -1,17 +1,17 @@
-package com.nft.gallery.viewmodel
+package com.solanamobile.mintyfresh.mymints.viewmodels
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.diskcache.MyMint
-import com.nft.gallery.diskcache.MyMintsRepository
-import com.nft.gallery.usecase.MyMintsUseCase
-import com.nft.gallery.viewmodel.mapper.MyMintsMapper
-import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
+import com.solanamobile.mintyfresh.mymints.diskcache.MyMint
+import com.solanamobile.mintyfresh.mymints.diskcache.MyMintsRepository
+import com.solanamobile.mintyfresh.mymints.usecase.MyMintsUseCase
+import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.MyMintsMapper
+import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*

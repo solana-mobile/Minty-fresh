@@ -1,9 +1,9 @@
-package com.nft.gallery.usecase
+package com.solanamobile.mintyfresh.mymints.usecase
 
 import com.metaplex.lib.modules.nfts.models.NFT
-import com.nft.gallery.metaplex.mintyFreshCreatorPda
-import com.nft.gallery.repository.NFTRepository
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.core.pda.mintyFreshCreatorPda
+import com.solanamobile.mintyfresh.mymints.repository.NFTRepository
 
 class MyMintsUseCase(private val publicKey: PublicKey) {
 

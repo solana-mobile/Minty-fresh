@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.mymints.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,13 +28,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.nft.gallery.R
-import com.nft.gallery.ktx.hiltActivityViewModel
-import com.nft.gallery.viewmodel.MyMintsViewModel
-import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
 import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
 import com.solanamobile.mintyfresh.composable.simplecomposables.ErrorView
 import com.solanamobile.mintyfresh.composable.simplecomposables.loadingPlaceholder
+import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
+import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
+import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
+import com.solanamobile.mintyfresh.mymints.R
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable

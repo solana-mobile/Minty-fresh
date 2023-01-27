@@ -116,6 +116,8 @@ dependencies {
 
     implementation(project(":ui:commonComposable"))
     implementation(project(":ui:gallery"))
+    implementation(project(":ui:mymints"))
+
     implementation(project(":libs:core"))
 
     implementation("androidx.core:core-ktx:1.9.0")

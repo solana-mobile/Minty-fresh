@@ -1,10 +1,10 @@
-package com.nft.gallery.viewmodel.mapper
+package com.solanamobile.mintyfresh.mymints.viewmodels.mapper
 
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT
-import com.nft.gallery.BuildConfig
-import com.nft.gallery.diskcache.MyMint
-import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
+import com.solanamobile.mintyfresh.core.BuildConfig
+import com.solanamobile.mintyfresh.mymints.diskcache.MyMint
+import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import javax.inject.Inject
 import javax.inject.Singleton
 
