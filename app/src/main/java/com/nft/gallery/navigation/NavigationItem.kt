@@ -1,4 +1,4 @@
-package com.nft.gallery.theme
+package com.nft.gallery.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto

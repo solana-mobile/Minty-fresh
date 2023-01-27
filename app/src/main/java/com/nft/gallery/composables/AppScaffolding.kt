@@ -25,7 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.nft.gallery.*
 import com.nft.gallery.R
-import com.nft.gallery.theme.NavigationItem
+import com.nft.gallery.navigation.NavigationItem
 import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.ConnectionParams
