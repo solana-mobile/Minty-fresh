@@ -1,14 +1,10 @@
 package com.nft.gallery.activity
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,7 +17,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -33,15 +28,12 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nft.gallery.composables.*
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.nft.gallery.theme.NavigationItem
-import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
-import javax.annotation.concurrent.GuardedBy
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -54,6 +46,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val activityResultSender = ActivityResultSender(this)
 
         setContent {
             val animNavController = rememberAnimatedNavController()
@@ -202,54 +196,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private val activityResultSender = object : ActivityResultSender {
-        override fun launch(intent: Intent) {
-            try {
-                intentSender.startActivityForResult(intent) { }
-            } catch (exception: ActivityNotFoundException) {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "You need to install a Solana Wallet first (Solflare or Phantom)",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-    }
-
-    /**
-     * NOTE: This block of code is going to be integrated into MWA itself. It should have
-     * been there from the start.
-     */
-    private val activityResultLauncher: ActivityResultLauncher<Intent> =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            intentSender.onActivityComplete()
-        }
-
-    private val intentSender = object : PerformMintViewModel.StartActivityForResultSender {
-        @GuardedBy("this")
-        private var callback: (() -> Unit)? = null
-
-        override fun startActivityForResult(
-            intent: Intent,
-            onActivityCompleteCallback: () -> Unit
-        ) {
-            synchronized(this) {
-                check(callback == null) { "Received an activity start request while another is pending" }
-                callback = onActivityCompleteCallback
-            }
-            activityResultLauncher.launch(intent)
-        }
-
-        fun onActivityComplete() {
-            synchronized(this) {
-                callback?.let { it() }
-                callback = null
             }
         }
     }

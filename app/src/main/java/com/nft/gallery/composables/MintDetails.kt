@@ -85,7 +85,9 @@ fun MintDetailsPage(
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
-                    CircularProgressIndicator()
+                    if (uiState.mintState !is MintState.Error) {
+                        CircularProgressIndicator()
+                    }
                     Text(
                         modifier = Modifier.padding(
                             top = 28.dp
@@ -96,6 +98,7 @@ fun MintDetailsPage(
                             is MintState.BuildingTransaction, is MintState.Signing-> stringResource(R.string.requesting_signatuve)
                             is MintState.Minting -> stringResource(R.string.minting)
                             is MintState.AwaitingConfirmation -> stringResource(R.string.waiting_confirmations)
+                            is MintState.Error -> "Sorry, there was an error: ${uiState.mintState.message}"
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium

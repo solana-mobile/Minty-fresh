@@ -1,7 +1,6 @@
 package com.nft.gallery.viewmodel
 
 import android.app.Application
-import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
@@ -15,6 +14,7 @@ import com.nft.gallery.usecase.PersistenceUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -59,18 +59,21 @@ class PerformMintViewModel @Inject constructor(
     fun performMint(sender: ActivityResultSender, title: String, desc: String, filePath: String) {
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
-                MobileWalletAdapter().transact(sender) {
-                    val authed = authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
-
-                    persistenceUseCase.persistConnection(PublicKey(authed.publicKey), authed.accountLabel ?: "", authed.authToken)
+                val result = MobileWalletAdapter().transact(sender) {
+                    authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
                 }
+
+                if (result !is TransactionResult.Success) {
+                    _viewState.update {
+                        _viewState.value.copy(mintState = MintState.Error("Could not connect to wallet."))
+                    }
+                    return@launch
+                }
+
+                persistenceUseCase.persistConnection(PublicKey(result.payload.publicKey), result.payload.accountLabel ?: "", result.payload.authToken)
             }
 
             performMintUseCase.performMint(sender, title, desc, filePath)
         }
-    }
-
-    interface StartActivityForResultSender {
-        fun startActivityForResult(intent: Intent, onActivityCompleteCallback: () -> Unit) // throws ActivityNotFoundException
     }
 }
