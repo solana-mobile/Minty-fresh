@@ -1,4 +1,4 @@
-package com.nft.gallery.theme
+package com.solanamobile.mintyfresh.composable.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable

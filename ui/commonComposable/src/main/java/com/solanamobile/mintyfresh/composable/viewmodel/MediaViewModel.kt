@@ -1,4 +1,4 @@
-package com.nft.gallery.viewmodel
+package com.solanamobile.mintyfresh.composable.viewmodel
 
 import android.app.Application
 import android.database.Cursor

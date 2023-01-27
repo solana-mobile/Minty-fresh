@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.composable.simplecomposables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.nft.gallery.viewmodel.Media
+import com.solanamobile.mintyfresh.composable.viewmodel.Media
 
 @Composable
 fun VideoView(media: Media) {

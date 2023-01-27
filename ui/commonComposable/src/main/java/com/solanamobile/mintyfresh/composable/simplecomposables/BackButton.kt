@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.composable.simplecomposables
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.nft.gallery.R
+import com.solanamobile.mintyfresh.composable.R
 
 @Composable
 fun BackButton(

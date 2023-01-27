@@ -32,6 +32,9 @@ import com.nft.gallery.R
 import com.nft.gallery.ktx.hiltActivityViewModel
 import com.nft.gallery.viewmodel.MyMintsViewModel
 import com.nft.gallery.viewmodel.viewstate.MyMintsViewState
+import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
+import com.solanamobile.mintyfresh.composable.simplecomposables.ErrorView
+import com.solanamobile.mintyfresh.composable.simplecomposables.loadingPlaceholder
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable

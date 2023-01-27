@@ -32,6 +32,7 @@ import com.nft.gallery.R
 import com.nft.gallery.usecase.MintState
 import com.nft.gallery.viewmodel.PerformMintViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
