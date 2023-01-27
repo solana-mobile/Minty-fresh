@@ -23,10 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.nft.gallery.*
 import com.nft.gallery.R
-import com.nft.gallery.theme.NavigationItem
-import com.nft.gallery.viewmodel.WalletConnectionViewModel
+import com.nft.gallery.navigation.NavigationItem
+import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.ConnectionParams
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +77,15 @@ fun ScaffoldScreen(
                         ),
                         onClick = {
                             if (viewState.userAddress.isEmpty()) {
-                                walletConnectionViewModel.connect(activityResultSender)
+                                walletConnectionViewModel.connect(
+                                    ConnectionParams(
+                                        identityUri = identityUri,
+                                        iconUri = iconUri,
+                                        identityName = appName,
+                                        rpcCluster = BuildConfig.RPC_CLUSTER
+                                    ),
+                                    activityResultSender = activityResultSender
+                                )
                             } else {
                                 walletConnectionViewModel.disconnect()
                             }
