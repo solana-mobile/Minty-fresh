@@ -117,6 +117,8 @@ dependencies {
     implementation(project(":ui:commonComposable"))
     implementation(project(":ui:gallery"))
     implementation(project(":ui:mymints"))
+    implementation(project(":ui:nftMint"))
+    implementation(project(":ui:walletConnectButton"))
 
     implementation(project(":libs:core"))
 
