@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -38,6 +39,11 @@ dependencies {
     implementation(project(":libs:core"))
 
     implementation("androidx.core:core-ktx:1.9.0")
+
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    kapt("com.google.dagger:hilt-compiler:2.44.2")
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt("com.google.dagger:hilt-android:2.44.2")
 
     testImplementation("junit:junit:4.13.2")
 
