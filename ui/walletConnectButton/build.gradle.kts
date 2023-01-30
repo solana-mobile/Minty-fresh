@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.solanamobile.mintyfresh.persistence"
+    namespace = "com.solanamobile.mintyfresh.walletconnectbutton"
     compileSdk = 33
 
     defaultConfig {
