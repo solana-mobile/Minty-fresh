@@ -46,10 +46,6 @@ android {
             "RPC_CLUSTER",
             "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
         )
-
-        buildConfigField("String", "IDENTITY_URI", "\"https://solanamobile.com\"")
-        buildConfigField("String", "IDENTITY_ICO", "\"favicon.ico\"")
-        buildConfigField("String", "IDENTITY_NAME", "\"Minty Fresh\"")
     }
 
     signingConfigs {

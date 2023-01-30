@@ -26,9 +26,8 @@ import androidx.navigation.NavHostController
 import com.nft.gallery.*
 import com.nft.gallery.R
 import com.nft.gallery.navigation.NavigationItem
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.ConnectionParams
+import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.WalletConnectionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,15 +76,7 @@ fun ScaffoldScreen(
                         ),
                         onClick = {
                             if (viewState.userAddress.isEmpty()) {
-                                walletConnectionViewModel.connect(
-                                    ConnectionParams(
-                                        identityUri = identityUri,
-                                        iconUri = iconUri,
-                                        identityName = appName,
-                                        rpcCluster = BuildConfig.RPC_CLUSTER
-                                    ),
-                                    activityResultSender = activityResultSender
-                                )
+                                walletConnectionViewModel.connect(activityResultSender)
                             } else {
                                 walletConnectionViewModel.disconnect()
                             }

@@ -1,9 +1,6 @@
 package com.nft.gallery.usecase
 
 import com.nft.gallery.BuildConfig
-import com.nft.gallery.appName
-import com.nft.gallery.iconUri
-import com.nft.gallery.identityUri
 import com.nft.gallery.repository.LatestBlockhashRepository
 import com.nft.gallery.repository.MintTransactionRepository
 import com.nft.gallery.repository.SendTransactionRepository
@@ -15,6 +12,7 @@ import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solana.mobilewalletadapter.clientlib.successPayload
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
+import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.mintyFreshIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -88,10 +86,12 @@ class PerformMintUseCase @Inject constructor(
             // begin signing transaction step
             _mintState.value = MintState.Signing(transactionBytes)
 
+            val params = mintyFreshIdentity //BLOCK: Get this from relevant layers
+
             val txResult = walletAdapter.transact(sender) {
                 authToken?.let {
-                    reauthorize(identityUri, iconUri, appName, authToken)
-                } ?: authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
+                    reauthorize(params.identityUri, params.iconUri, params.identityName, authToken)
+                } ?: authorize(params.identityUri, params.iconUri, params.identityName, BuildConfig.RPC_CLUSTER)
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 

@@ -4,9 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.BuildConfig
-import com.nft.gallery.appName
-import com.nft.gallery.iconUri
-import com.nft.gallery.identityUri
 import com.nft.gallery.usecase.MintState
 import com.nft.gallery.usecase.PerformMintUseCase
 import com.solana.core.PublicKey
@@ -15,6 +12,7 @@ import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
+import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.mintyFreshIdentity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -60,8 +58,10 @@ class PerformMintViewModel @Inject constructor(
     fun performMint(sender: ActivityResultSender, title: String, desc: String, filePath: String) {
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
+                val params = mintyFreshIdentity   //BLOCK: Get from somewhere else possibly
+
                 val result = mobileWalletAdapter.transact(sender) {
-                    authorize(identityUri, iconUri, appName, BuildConfig.RPC_CLUSTER)
+                    authorize(params.identityUri, params.iconUri, params.identityName, BuildConfig.RPC_CLUSTER)
                 }
 
                 if (result !is TransactionResult.Success) {
