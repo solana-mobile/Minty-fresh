@@ -1,15 +1,11 @@
 package com.nft.gallery.usecase
 
-import com.nft.gallery.BuildConfig
 import com.nft.gallery.repository.LatestBlockhashRepository
 import com.nft.gallery.repository.MintTransactionRepository
 import com.nft.gallery.repository.SendTransactionRepository
 import com.nft.gallery.repository.StorageUploadRepository
 import com.solana.core.*
-import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.TransactionResult
-import com.solana.mobilewalletadapter.clientlib.successPayload
+import com.solana.mobilewalletadapter.clientlib.*
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
 import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.mintyFreshIdentity
@@ -91,7 +87,7 @@ class PerformMintUseCase @Inject constructor(
             val txResult = walletAdapter.transact(sender) {
                 authToken?.let {
                     reauthorize(params.identityUri, params.iconUri, params.identityName, authToken)
-                } ?: authorize(params.identityUri, params.iconUri, params.identityName, BuildConfig.RPC_CLUSTER)
+                } ?: authorize(params.identityUri, params.iconUri, params.identityName, RpcCluster.Devnet)  //Block cluster from networking layer
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 

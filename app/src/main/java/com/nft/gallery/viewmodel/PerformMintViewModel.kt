@@ -3,12 +3,12 @@ package com.nft.gallery.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.BuildConfig
 import com.nft.gallery.usecase.MintState
 import com.nft.gallery.usecase.PerformMintUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
@@ -61,7 +61,7 @@ class PerformMintViewModel @Inject constructor(
                 val params = mintyFreshIdentity   //BLOCK: Get from somewhere else possibly
 
                 val result = mobileWalletAdapter.transact(sender) {
-                    authorize(params.identityUri, params.iconUri, params.identityName, BuildConfig.RPC_CLUSTER)
+                    authorize(params.identityUri, params.iconUri, params.identityName, RpcCluster.Devnet)   //Cluster from networking layer
                 }
 
                 if (result !is TransactionResult.Success) {
