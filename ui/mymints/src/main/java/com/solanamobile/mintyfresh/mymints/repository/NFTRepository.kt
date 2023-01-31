@@ -1,19 +1,12 @@
 package com.solanamobile.mintyfresh.mymints.repository
 
-import com.metaplex.lib.drivers.indenty.ReadOnlyIdentityDriver
-import com.metaplex.lib.drivers.rpc.JdkRpcDriver
-import com.metaplex.lib.drivers.solana.Commitment
-import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
-import com.metaplex.lib.drivers.solana.TransactionOptions
-import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
-import com.metaplex.lib.modules.nfts.NftClient
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.metaplex.lib.modules.token.models.metadata
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.core.pda.mintyFreshCreatorPda
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import java.net.URL
+import javax.inject.Inject
 
 /**
  * TODO: This class will be part of the networking layer in the final PR. This class - a repository
@@ -21,24 +14,25 @@ import java.net.URL
  * multiple implementations. For the public implementation, it can look more or less like this. For the
  * prod implementation, it can be communicating with our API abstraction.
  */
-class NFTRepository(private val publicKey: PublicKey) {
+class NFTRepository @Inject constructor(
+    private val nftInfraFactory: NftInfraFactory
+) {
 
-    private val connection = SolanaConnectionDriver(
-        JdkRpcDriver(URL("https://api.devnet.solana.com")),  //TODO: This will come from networking layer
-        TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
-    )
+    suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> =
+        getAllNfts(publicKey).filter { allUserNFts ->
+            allUserNFts.creators.firstOrNull { nft -> nft.address == publicKey } != null &&
+            allUserNFts.creators.firstOrNull { nft -> nft.address == mintyFreshCreatorPda } != null
+        }
 
-    private val identityDriver = ReadOnlyIdentityDriver(publicKey, connection)
-    private val storageDriver = OkHttpSharedStorageDriver(OkHttpClient())
-    private val nftClient = NftClient(connection, identityDriver)
+    private suspend fun getAllNfts(publicKey: PublicKey) = withContext(Dispatchers.IO) {
+        val client = nftInfraFactory.createNftClient(publicKey)
 
-    suspend fun getAllNfts() = withContext(Dispatchers.IO) {
-        nftClient.findAllByOwner(publicKey)
+        client.findAllByOwner(publicKey)
             .getOrThrow()
             .filterNotNull()
     }
 
     suspend fun getNftsMetadata(nft: NFT) = withContext(Dispatchers.IO) {
-        return@withContext nft.metadata(storageDriver).getOrThrow()
+        return@withContext nft.metadata(nftInfraFactory.storageDriver).getOrThrow()
     }
 }
