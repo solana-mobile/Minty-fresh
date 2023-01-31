@@ -1,4 +1,4 @@
-package com.nft.gallery.repository
+package com.solanamobile.mintyfresh.mintycore.repository
 
 import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.drivers.solana.sendTransaction

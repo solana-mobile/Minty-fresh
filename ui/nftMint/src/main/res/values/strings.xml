@@ -1,0 +1,37 @@
+<resources>
+    <string name="connect">Connect</string>
+    <string name="app_name">Minty Fresh</string>
+    <string name="take_pic_content_desc">Take Picture</string>
+    <string name="camera">Camera</string>
+    <string name="microphone">Microphone</string>
+    <string name="storage">Storage</string>
+    <string name="photos_and_media">Photos and Media</string>
+    <string name="grant">Grant</string>
+    <string name="permission_important">Please grant the following important permission(s): %1$s</string>
+    <string name="permission_required">Please grant the following required permission(s): %1$s</string>
+    <string name="lets_get">"Let\u2019s get"</string>
+    <string name="minty_fresh">"&#32;"minty fresh.</string>
+    <string name="select_photo">Select a photo to mint:</string>
+    <string name="image_content_desc">Image</string>
+    <string name="sparkle_content_desc">Sparkle image</string>
+    <string name="mint_success">You minted an NFT!</string>
+    <string name="added_to_wallet">It\'s been added to your connected wallet</string>
+    <string name="done">Done</string>
+    <string name="add_details">Add NFT details</string>
+    <string name="uploading_file">Uploading file...</string>
+    <string name="uploading_metadata">Uploading metadata...</string>
+    <string name="requesting_signatuve">Requesting wallet signature...</string>
+    <string name="minting">Minting...</string>
+    <string name="waiting_confirmations">Waiting for confirmations...</string>
+    <string name="your_nft">Your NFT</string>
+    <string name="no_description_yet">No description yet.</string>
+    <string name="nft_title">NFT title</string>
+    <string name="enter_a_title">Enter a title</string>
+    <string name="up_to_32_chars">Use up to 32 characters</string>
+    <string name="description">Description</string>
+    <string name="describe_nft_here">Describe your NFT here</string>
+    <string name="mint">Mint</string>
+    <string name="connect_and_mint">Connect and Mint</string>
+    <string name="enter_description">Enter your description here</string>
+    <string name="back">Back</string>
+</resources>

@@ -1,12 +1,12 @@
-package com.nft.gallery.usecase
+package com.solanamobile.mintyfresh.mintycore.usecase
 
 import android.net.Uri
-import com.nft.gallery.repository.LatestBlockhashRepository
-import com.nft.gallery.repository.MintTransactionRepository
-import com.nft.gallery.repository.SendTransactionRepository
-import com.nft.gallery.repository.StorageUploadRepository
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.*
+import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
+import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
+import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
+import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import kotlinx.coroutines.Dispatchers

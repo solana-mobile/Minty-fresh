@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.*
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,25 +19,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations.addAll(listOf("en"))
-
-        val properties = Properties()
-        if (project.rootProject.file("local.properties").exists()) {
-            properties.load(FileInputStream("local.properties"))
-        }
-
-        buildConfigField(
-            "String",
-            "NFTSTORAGE_KEY",
-            "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
-        )
-        buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-
-        buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.devnet.solana.com\"")
-        buildConfigField(
-            "String",
-            "MINTY_FRESH_CREATOR_PDA",
-            "\"3QFrGD1VHLKqeuCWUt6jgcM5ZESBzhY9dUvZcDbZFisB\""
-        )
     }
 
     signingConfigs {
@@ -71,8 +49,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
-            buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
 
             val releaseSigningConfig = signingConfigs["release"]
             if (releaseSigningConfig.storeFile != null) {
@@ -105,9 +81,6 @@ dependencies {
     implementation(project(":ui:mymints"))
     implementation(project(":ui:nftMint"))
     implementation(project(":ui:walletConnectButton"))
-
-    implementation(project(":libs:core"))
-    implementation(project(":libs:persistence"))   //TODO: This will be removed upon full modularization
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
