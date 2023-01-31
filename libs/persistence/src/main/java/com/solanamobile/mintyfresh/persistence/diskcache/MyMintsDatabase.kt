@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.mymints.diskcache
+package com.solanamobile.mintyfresh.persistence.diskcache
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

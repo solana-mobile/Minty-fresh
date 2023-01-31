@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.core.peristence.usecase
+package com.solanamobile.mintyfresh.persistence.usecase
 
 import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.persistence.repository.PrefsDataStoreRepository
@@ -15,7 +15,11 @@ data class Connected(
     val authToken: String
 ): UserWalletDetails()
 
-class PersistenceUseCase @Inject constructor(
+/**
+ * Saves & clears an MWA connection to an on-device wallet, with convenience value providing
+ * connection status
+ */
+class WalletConnectionUseCase @Inject constructor(
     private val dataStoreRepository: PrefsDataStoreRepository,
 ) {
 

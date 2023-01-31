@@ -22,6 +22,7 @@ import com.nft.gallery.*
 import com.nft.gallery.R
 import com.nft.gallery.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

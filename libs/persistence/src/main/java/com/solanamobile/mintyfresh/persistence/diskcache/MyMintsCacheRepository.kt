@@ -1,11 +1,10 @@
-package com.solanamobile.mintyfresh.mymints.diskcache
+package com.solanamobile.mintyfresh.persistence.diskcache
 
-import com.solanamobile.mintyfresh.core.BuildConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MyMintsRepository @Inject constructor(
+class MyMintsCacheRepository @Inject constructor(
     private val myMintsDatabaseProvider: MyMintsDatabaseProvider
 ) {
 
@@ -17,15 +16,15 @@ class MyMintsRepository @Inject constructor(
         myMintsDatabaseProvider.roomDb.myMintsDao().deleteStaleData(pubKey, newIds)
     }
 
-    fun get(pubKey: String) =
+    fun get(pubKey: String, rpcClusterName: String) =
         myMintsDatabaseProvider.roomDb.myMintsDao().get(
             pubKey = pubKey,
-            clusterName = BuildConfig.RPC_CLUSTER.name
+            clusterName = rpcClusterName
         )
 
-    suspend fun get(id: String, pubKey: String) = myMintsDatabaseProvider.roomDb.myMintsDao().get(
+    suspend fun get(id: String, pubKey: String, rpcClusterName: String) = myMintsDatabaseProvider.roomDb.myMintsDao().get(
         id = id,
         pubKey = pubKey,
-        clusterName = BuildConfig.RPC_CLUSTER.name
+        clusterName = rpcClusterName
     )
 }

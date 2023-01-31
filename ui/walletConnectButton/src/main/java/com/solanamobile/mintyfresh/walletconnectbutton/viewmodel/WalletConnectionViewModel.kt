@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.core.walletconnection.viewmodel
+package com.solanamobile.mintyfresh.walletconnectbutton.viewmodel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -8,9 +8,9 @@ import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
-import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
-import com.solanamobile.mintyfresh.core.peristence.usecase.NotConnected
-import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
+import com.solanamobile.mintyfresh.persistence.usecase.Connected
+import com.solanamobile.mintyfresh.persistence.usecase.NotConnected
+import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +30,7 @@ data class WalletViewState(
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
-    private val persistenceUseCase: PersistenceUseCase
+    private val walletConnectionUseCase: WalletConnectionUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WalletViewState())
@@ -40,7 +40,7 @@ class WalletConnectionViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            persistenceUseCase.walletDetails
+            walletConnectionUseCase.walletDetails
                 .collect { walletDetails ->
                     val detailState = when (walletDetails) {
                         is Connected -> {
@@ -78,7 +78,7 @@ class WalletConnectionViewModel @Inject constructor(
 
             when (result) {
                 is TransactionResult.Success -> {
-                    persistenceUseCase.persistConnection(
+                    walletConnectionUseCase.persistConnection(
                         PublicKey(result.payload.publicKey),
                         result.payload.accountLabel ?: "",
                         result.payload.authToken
@@ -101,7 +101,7 @@ class WalletConnectionViewModel @Inject constructor(
 
     fun disconnect() {
         viewModelScope.launch {
-            persistenceUseCase.clearConnection()
+            walletConnectionUseCase.clearConnection()
         }
     }
 }
