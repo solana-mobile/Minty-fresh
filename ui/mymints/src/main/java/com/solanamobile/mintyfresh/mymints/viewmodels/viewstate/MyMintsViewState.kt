@@ -1,14 +1,19 @@
 package com.solanamobile.mintyfresh.mymints.viewmodels.viewstate
 
-import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
+data class MintedMedia(
+    val id: String = "",
+    val mediaUrl: String = "",
+    val name: String = "",
+    val description: String = ""
+)
 
 sealed class MyMintsViewState(
-    val myMints: List<MyMint> = listOf(),
+    val myMints: List<MintedMedia> = listOf(),
 ) {
 
-    class Loading(myMints: List<MyMint>) : MyMintsViewState(myMints)
+    class Loading(myMints: List<MintedMedia>) : MyMintsViewState(myMints)
 
-    class Loaded(myMints: List<MyMint>) : MyMintsViewState(myMints)
+    class Loaded(myMints: List<MintedMedia>) : MyMintsViewState(myMints)
 
     class Empty : MyMintsViewState()
 

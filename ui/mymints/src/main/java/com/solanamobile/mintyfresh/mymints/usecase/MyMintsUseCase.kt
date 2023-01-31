@@ -2,18 +2,54 @@ package com.solanamobile.mintyfresh.mymints.usecase
 
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.core.pda.mintyFreshCreatorPda
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solanamobile.mintyfresh.mymints.repository.NFTRepository
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMintsCacheRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class MyMintsUseCase(private val publicKey: PublicKey) {
+class MyMintsUseCase @Inject constructor(
+    private val nftRepository: NFTRepository,
+    private val myMintsCacheRepository: MyMintsCacheRepository,
+    private val metaplexToCacheMapper: MetaplexToCacheMapper
+) {
 
-    private val nftRepository = NFTRepository(publicKey)
+    fun getCachedMints(publicKey: PublicKey): Flow<List<MyMint>> {
+        return myMintsCacheRepository.get(
+            pubKey = publicKey.toString(),
+            rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
+        )
+    }
 
-    suspend fun getAllUserMintyFreshNfts(): List<NFT> =
-        nftRepository.getAllNfts().filter { allUserNFts ->
-            allUserNFts.creators.firstOrNull { nft -> nft.address == publicKey } != null &&
-            allUserNFts.creators.firstOrNull { nft -> nft.address == mintyFreshCreatorPda } != null
+    suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> {
+        val nfts = nftRepository.getAllUserMintyFreshNfts(publicKey)
+
+        val currentMintList = metaplexToCacheMapper.map(nfts, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module
+        myMintsCacheRepository.deleteStaleData(
+            currentMintList = currentMintList,
+            publicKey.toString()
+        )
+
+        if (nfts.isNotEmpty()) {
+            // Fetch and update each NFT data.
+            nfts.forEach { nft ->
+                val cachedMint = myMintsCacheRepository.get(
+                    id = nft.mint.toString(),
+                    pubKey = publicKey.toString(),
+                    rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
+                )
+                if (cachedMint == null) {
+                    val metadata = nftRepository.getNftsMetadata(nft)
+                    val mint = metaplexToCacheMapper.map(nft, metadata, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module
+
+                    if (mint != null) {
+                        myMintsCacheRepository.insertAll(listOf(mint))
+                    }
+                }
+            }
         }
 
-    suspend fun getNftsMetadata(nft: NFT) = nftRepository.getNftsMetadata(nft)
+        return nfts
+    }
 }

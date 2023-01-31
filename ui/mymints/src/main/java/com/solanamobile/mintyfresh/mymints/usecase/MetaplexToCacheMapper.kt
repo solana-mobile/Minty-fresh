@@ -1,18 +1,13 @@
-package com.solanamobile.mintyfresh.mymints.viewmodels.mapper
+package com.solanamobile.mintyfresh.mymints.usecase
 
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT
-import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MyMintsMapper @Inject constructor() {
-
-    fun mapLoading() = MyMintsViewState.Loading(
-        MutableList(10) { index -> MyMint(index.toString(), "", "", "", "", "") }
-    )
+class MetaplexToCacheMapper @Inject constructor() {
 
     fun map(nfts: List<NFT>, rpcClusterName: String) = nfts.map { nft ->
         MyMint(
