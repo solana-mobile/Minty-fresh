@@ -1,0 +1,34 @@
+git:
+  filters:
+    - filter_type: file
+      source_file: app/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'app/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
+      source_file: ui/commonComposable/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'ui/commonComposable/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
+      source_file: ui/gallery/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'ui/gallery/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
+      source_file: ui/mymints/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'ui/mymints/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
+      source_file: ui/nftMint/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'ui/nftMint/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
+      source_file: ui/walletConnectButton/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'ui/walletConnectButton/src/main/res/values-<lang>/strings.xml'
+  settings:
+    pr_branch_name: l10n_transifex_<br_unique_id>
