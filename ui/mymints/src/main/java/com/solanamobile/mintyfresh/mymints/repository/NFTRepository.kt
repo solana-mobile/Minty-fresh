@@ -24,7 +24,7 @@ import java.net.URL
 class NFTRepository(private val publicKey: PublicKey) {
 
     private val connection = SolanaConnectionDriver(
-        JdkRpcDriver(URL("https://api.devnet.solana.com")),  //TODO: Figure out how to get correct value in public impl of networking layer
+        JdkRpcDriver(URL("https://api.devnet.solana.com")),  //TODO: This will come from networking layer
         TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
     )
 

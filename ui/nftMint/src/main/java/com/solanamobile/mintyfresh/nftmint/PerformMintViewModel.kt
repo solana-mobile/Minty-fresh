@@ -1,16 +1,16 @@
-package com.nft.gallery.viewmodel
+package com.solanamobile.mintyfresh.nftmint
 
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.nft.gallery.usecase.MintState
-import com.nft.gallery.usecase.PerformMintUseCase
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solanamobile.mintyfresh.mintycore.usecase.MintState
+import com.solanamobile.mintyfresh.mintycore.usecase.PerformMintUseCase
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +31,9 @@ class PerformMintViewModel @Inject constructor(
     private val mobileWalletAdapter: MobileWalletAdapter
 ) : AndroidViewModel(application) {
 
-    private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(PerformMintViewState())
+    private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(
+        PerformMintViewState()
+    )
 
     val viewState: StateFlow<PerformMintViewState> = _viewState.asStateFlow()
 

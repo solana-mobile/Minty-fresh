@@ -1,4 +1,4 @@
-package com.nft.gallery.endpoints
+package com.solanamobile.mintyfresh.mintycore.endpoints
 
 import okhttp3.RequestBody
 import retrofit2.http.Body

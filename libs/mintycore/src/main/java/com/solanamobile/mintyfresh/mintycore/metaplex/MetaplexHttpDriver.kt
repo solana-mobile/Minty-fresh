@@ -1,4 +1,4 @@
-package com.nft.gallery.metaplex
+package com.solanamobile.mintyfresh.mintycore.metaplex
 
 import com.metaplex.lib.drivers.network.HttpPostRequest
 import com.metaplex.lib.drivers.network.JdkHttpDriver

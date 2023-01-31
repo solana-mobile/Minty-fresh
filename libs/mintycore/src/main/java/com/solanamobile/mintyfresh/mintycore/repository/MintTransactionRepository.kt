@@ -1,11 +1,11 @@
-package com.nft.gallery.repository
+package com.solanamobile.mintyfresh.mintycore.repository
 
-import com.metaplex.lib.drivers.solana.*
+import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.experimental.jen.tokenmetadata.Creator
 import com.metaplex.lib.modules.nfts.builders.CreateNftTransactionBuilder
 import com.metaplex.lib.modules.nfts.models.Metadata
-import com.solanamobile.mintyfresh.core.pda.mintyFreshCreatorPda
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.core.pda.mintyFreshCreatorPda
 import javax.inject.Inject
 
 class MintTransactionRepository @Inject constructor(private val connectionDriver: Connection)  {

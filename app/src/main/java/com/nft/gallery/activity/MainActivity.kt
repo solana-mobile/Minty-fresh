@@ -36,6 +36,8 @@ import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
 import com.solanamobile.mintyfresh.mymints.composables.MyMintsDetails
+import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
+import com.solanamobile.mintyfresh.nftmint.MintDetailsPage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File

@@ -1,4 +1,4 @@
-package com.nft.gallery.metaplex
+package com.solanamobile.mintyfresh.mintycore.metaplex
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -9,7 +9,7 @@ data class JsonMetadata(
     val description: String,
     val image: String,
     val attributes: List<Attribute>? = null,
-    val properties:Properties? = null
+    val properties: Properties? = null
 ) {
     @Serializable
     data class Attribute(

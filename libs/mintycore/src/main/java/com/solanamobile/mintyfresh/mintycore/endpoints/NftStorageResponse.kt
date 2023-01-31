@@ -1,4 +1,4 @@
-package com.nft.gallery.endpoints
+package com.solanamobile.mintyfresh.mintycore.endpoints
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json

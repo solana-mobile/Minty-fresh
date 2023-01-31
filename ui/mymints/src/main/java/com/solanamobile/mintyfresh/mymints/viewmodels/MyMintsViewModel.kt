@@ -123,7 +123,7 @@ class MyMintsViewModel @Inject constructor(
         val nfts = mintsUseCase.getAllUserMintyFreshNfts()
         Log.d(TAG, "Found ${nfts.size} NFTs")
 
-        val currentMintList = myMintsMapper.map(nfts)
+        val currentMintList = myMintsMapper.map(nfts, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module
         myMintsCacheRepository.deleteStaleData(
             currentMintList = currentMintList,
             publicKey.toString()
@@ -138,7 +138,7 @@ class MyMintsViewModel @Inject constructor(
                 )
                 if (cachedMint == null) {
                     val metadata = mintsUseCase.getNftsMetadata(nft)
-                    val mint = myMintsMapper.map(nft, metadata)
+                    val mint = myMintsMapper.map(nft, metadata, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module
                     if (mint != null) {
                         myMintsCacheRepository.insertAll(listOf(mint))
                     }

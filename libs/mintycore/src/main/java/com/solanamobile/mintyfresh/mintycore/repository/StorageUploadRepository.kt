@@ -1,8 +1,8 @@
-package com.nft.gallery.repository
+package com.solanamobile.mintyfresh.mintycore.repository
 
-import com.nft.gallery.BuildConfig
-import com.nft.gallery.endpoints.NftStorageEndpoints
-import com.nft.gallery.metaplex.JsonMetadata
+import com.solanamobile.mintyfresh.mintycore.BuildConfig
+import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
+import com.solanamobile.mintyfresh.mintycore.metaplex.JsonMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
