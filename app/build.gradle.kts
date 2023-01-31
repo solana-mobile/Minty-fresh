@@ -107,6 +107,7 @@ dependencies {
     implementation(project(":ui:walletConnectButton"))
 
     implementation(project(":libs:core"))
+    implementation(project(":libs:persistence"))   //TODO: This will be removed upon full modularization
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")

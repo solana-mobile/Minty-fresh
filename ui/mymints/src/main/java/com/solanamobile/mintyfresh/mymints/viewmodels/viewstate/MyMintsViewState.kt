@@ -1,6 +1,6 @@
 package com.solanamobile.mintyfresh.mymints.viewmodels.viewstate
 
-import com.solanamobile.mintyfresh.mymints.diskcache.MyMint
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 
 sealed class MyMintsViewState(
     val myMints: List<MyMint> = listOf(),

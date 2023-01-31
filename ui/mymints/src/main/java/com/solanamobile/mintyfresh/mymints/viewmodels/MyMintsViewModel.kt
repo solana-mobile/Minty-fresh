@@ -5,13 +5,14 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
-import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
-import com.solanamobile.mintyfresh.mymints.diskcache.MyMint
-import com.solanamobile.mintyfresh.mymints.diskcache.MyMintsRepository
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solanamobile.mintyfresh.mymints.usecase.MyMintsUseCase
 import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.MyMintsMapper
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMintsCacheRepository
+import com.solanamobile.mintyfresh.persistence.usecase.Connected
+import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -22,8 +23,8 @@ import javax.inject.Inject
 class MyMintsViewModel @Inject constructor(
     application: Application,
     private val myMintsMapper: MyMintsMapper,
-    private val persistenceUseCase: PersistenceUseCase,
-    private val myMintsRepository: MyMintsRepository
+    private val persistenceUseCase: WalletConnectionUseCase,
+    private val myMintsCacheRepository: MyMintsCacheRepository
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<MyMintsViewState> =
@@ -67,7 +68,10 @@ class MyMintsViewModel @Inject constructor(
         viewModelScope.launch {
             persistenceUseCase.walletDetails.flatMapLatest { walletDetails ->
                 val myMintsFlow = if (walletDetails is Connected) {
-                    myMintsRepository.get(pubKey = walletDetails.publicKey.toString())
+                    myMintsCacheRepository.get(
+                        pubKey = walletDetails.publicKey.toString(),
+                        rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
+                    )
                 } else {
                     flow { emit(listOf()) }
                 }
@@ -120,22 +124,23 @@ class MyMintsViewModel @Inject constructor(
         Log.d(TAG, "Found ${nfts.size} NFTs")
 
         val currentMintList = myMintsMapper.map(nfts)
-        myMintsRepository.deleteStaleData(
+        myMintsCacheRepository.deleteStaleData(
             currentMintList = currentMintList,
             publicKey.toString()
         )
         if (nfts.isNotEmpty()) {
             // Fetch and update each NFT data.
             nfts.forEach { nft ->
-                val cachedMint = myMintsRepository.get(
+                val cachedMint = myMintsCacheRepository.get(
                     id = nft.mint.toString(),
-                    pubKey = publicKey.toString()
+                    pubKey = publicKey.toString(),
+                    rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
                 )
                 if (cachedMint == null) {
                     val metadata = mintsUseCase.getNftsMetadata(nft)
                     val mint = myMintsMapper.map(nft, metadata)
                     if (mint != null) {
-                        myMintsRepository.insertAll(listOf(mint))
+                        myMintsCacheRepository.insertAll(listOf(mint))
                     }
                 }
             }

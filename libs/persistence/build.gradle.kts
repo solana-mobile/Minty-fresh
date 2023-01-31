@@ -24,6 +24,13 @@ android {
         }
     }
 
+    kapt {
+        correctErrorTypes = true
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -51,6 +58,10 @@ dependencies {
     implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
     implementation("androidx.compose.material3:material3:1.1.0-alpha04")
     implementation("androidx.navigation:navigation-compose:2.5.3")
+
+    implementation("androidx.room:room-ktx:2.5.0")
+    implementation("androidx.room:room-runtime:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
 
     testImplementation("junit:junit:4.13.2")
 

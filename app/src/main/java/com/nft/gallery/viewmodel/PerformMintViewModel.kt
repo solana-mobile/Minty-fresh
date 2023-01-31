@@ -11,8 +11,8 @@ import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
-import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
-import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
+import com.solanamobile.mintyfresh.persistence.usecase.Connected
+import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ data class PerformMintViewState(
 @HiltViewModel
 class PerformMintViewModel @Inject constructor(
     application: Application,
-    private val persistenceUseCase: PersistenceUseCase,
+    private val persistenceUseCase: WalletConnectionUseCase,
     private val performMintUseCase: PerformMintUseCase,
     private val mobileWalletAdapter: MobileWalletAdapter
 ) : AndroidViewModel(application) {

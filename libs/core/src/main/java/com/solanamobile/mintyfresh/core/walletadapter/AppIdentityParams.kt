@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.core.walletconnection.viewmodel
+package com.solanamobile.mintyfresh.core.walletadapter
 
 import android.net.Uri
 

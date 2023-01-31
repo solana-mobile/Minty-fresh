@@ -1,4 +1,4 @@
-package com.nft.gallery.composables
+package com.solanamobile.mintyfresh.walletconnectbutton.composables
 
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -17,9 +17,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.nft.gallery.R
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.WalletConnectionViewModel
+import com.solanamobile.mintyfresh.walletconnectbutton.R
+import com.solanamobile.mintyfresh.walletconnectbutton.viewmodel.WalletConnectionViewModel
 
 @Composable
 fun ConnectWalletButton(
@@ -50,8 +50,8 @@ fun ConnectWalletButton(
     ) {
         val pubKey = viewState.userAddress
         val buttonText = when {
-            pubKey.isEmpty() -> stringResource(R.string.connect)
             viewState.noWallet -> "Please install a wallet"
+            pubKey.isEmpty() -> stringResource(R.string.connect)
             viewState.userAddress.isNotEmpty() -> pubKey.take(4).plus("...").plus(pubKey.takeLast(4))
             else -> ""
         }

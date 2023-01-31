@@ -7,8 +7,8 @@ import com.nft.gallery.repository.SendTransactionRepository
 import com.nft.gallery.repository.StorageUploadRepository
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.*
-import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
-import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
+import com.solanamobile.mintyfresh.persistence.usecase.Connected
+import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +32,7 @@ sealed interface MintState {
 class PerformMintUseCase @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
     private val storageRepository: StorageUploadRepository,
-    private val persistenceUseCase: PersistenceUseCase,
+    private val persistenceUseCase: WalletConnectionUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
     private val blockhashRepository: LatestBlockhashRepository,
     private val sendTransactionRepository: SendTransactionRepository
