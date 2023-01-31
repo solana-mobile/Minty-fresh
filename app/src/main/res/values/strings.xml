@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Minty Fresh</string>
-    <string name="id_url">https://solanamobile.com</string>
-    <string name="id_favico">favicon.ico</string>
     <string name="take_pic_content_desc">Take Picture</string>
     <string name="connect">Connect</string>
     <string name="camera">Camera</string>
