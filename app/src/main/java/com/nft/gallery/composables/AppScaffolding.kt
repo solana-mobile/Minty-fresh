@@ -1,34 +1,27 @@
 package com.nft.gallery.composables
 
-import androidx.compose.animation.AnimatedVisibility
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MultipleStop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.nft.gallery.*
 import com.nft.gallery.R
 import com.nft.gallery.navigation.NavigationItem
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.WalletConnectionViewModel
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.ConnectionParams
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,11 +29,8 @@ fun ScaffoldScreen(
     currentRoute: String,
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
-    walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),
     content: @Composable () -> Unit
 ) {
-    val viewState = walletConnectionViewModel.viewState.collectAsState().value
-
     Scaffold(
         floatingActionButton = {
             if (currentRoute == NavigationItem.Photos.route) {
@@ -69,89 +59,21 @@ fun ScaffoldScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Button(
-                        shape = RoundedCornerShape(corner = CornerSize(24.dp)),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                        contentPadding = PaddingValues(
-                            start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp
-                        ),
-                        onClick = {
-                            if (viewState.userAddress.isEmpty()) {
-                                walletConnectionViewModel.connect(
-                                    ConnectionParams(
-                                        identityUri = identityUri,
-                                        iconUri = iconUri,
-                                        identityName = appName,
-                                        rpcCluster = BuildConfig.RPC_CLUSTER
-                                    ),
-                                    activityResultSender = activityResultSender
-                                )
-                            } else {
-                                walletConnectionViewModel.disconnect()
-                            }
-                        },
-                        enabled = !viewState.noWallet
-                    ) {
-                        val pubKey = viewState.userAddress
-                        val buttonText = if (pubKey.isEmpty()) {
-                            stringResource(R.string.connect)
-                        } else {
-                            pubKey.take(4).plus("...").plus(pubKey.takeLast(4))
-                        }
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (pubKey.isNotEmpty()) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(CircleShape)
-                                        .background(MaterialTheme.colorScheme.onBackground),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Icon(
-                                        modifier = Modifier.size(16.dp),
-                                        imageVector = Icons.Filled.MultipleStop,
-                                        tint = MaterialTheme.colorScheme.background,
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                            Text(
-                                modifier = Modifier.padding(start = 8.dp),
-                                text = buttonText,
-                                maxLines = 1,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
+                    ConnectWalletButton(
+                        identityUri = Uri.parse(stringResource(R.string.id_url)),
+                        iconUri = Uri.parse(stringResource(R.string.id_favico)),
+                        identityName = stringResource(R.string.app_name),
+                        activityResultSender = activityResultSender
+                    )
                 }
             }
         },
         bottomBar = {
             if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                Column {
-                    AnimatedVisibility(
-                        visible = viewState.noWallet
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Hey, be sure to install a Solana wallet before you get started!",
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-                    }
-                    BottomNavigationBar(
-                        navController = navController,
-                        currentRoute = currentRoute
-                    )
-                }
+                BottomNavigationBar(
+                    navController = navController,
+                    currentRoute = currentRoute
+                )
             }
         },
         content = { padding ->

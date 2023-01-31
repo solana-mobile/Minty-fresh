@@ -1,10 +1,12 @@
 package com.solanamobile.mintyfresh.core.walletconnection.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.NotConnected
@@ -58,14 +60,19 @@ class WalletConnectionViewModel @Inject constructor(
         }
     }
 
-    fun connect(connectionParams: ConnectionParams, activityResultSender: ActivityResultSender) {
+    fun connect(
+        identityUri: Uri,
+        iconUri: Uri,
+        identityName: String,
+        activityResultSender: ActivityResultSender
+    ) {
         viewModelScope.launch {
             val result = walletAdapter.transact(activityResultSender) {
                 authorize(
-                    identityUri = connectionParams.identityUri,
-                    iconUri = connectionParams.iconUri,
-                    identityName = connectionParams.identityName,
-                    rpcCluster = connectionParams.rpcCluster
+                    identityUri = identityUri,
+                    iconUri = iconUri,
+                    identityName = identityName,
+                    rpcCluster = RpcCluster.Devnet  //TODO: This should come from networking layer
                 )
             }
 

@@ -41,15 +41,6 @@ android {
             "MINTY_FRESH_CREATOR_PDA",
             "\"3QFrGD1VHLKqeuCWUt6jgcM5ZESBzhY9dUvZcDbZFisB\""
         )
-        buildConfigField(
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-            "RPC_CLUSTER",
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
-        )
-
-        buildConfigField("String", "IDENTITY_URI", "\"https://solanamobile.com\"")
-        buildConfigField("String", "IDENTITY_ICO", "\"favicon.ico\"")
-        buildConfigField("String", "IDENTITY_NAME", "\"Minty Fresh\"")
     }
 
     signingConfigs {
@@ -75,17 +66,13 @@ android {
             isMinifyEnabled = true
             isDebuggable = false
             isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
 
             buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
-            buildConfigField(
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-                "RPC_CLUSTER",
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
-            )
 
             val releaseSigningConfig = signingConfigs["release"]
             if (releaseSigningConfig.storeFile != null) {
@@ -113,10 +100,11 @@ android {
 }
 
 dependencies {
-
     implementation(project(":ui:commonComposable"))
     implementation(project(":ui:gallery"))
     implementation(project(":ui:mymints"))
+    implementation(project(":ui:nftMint"))
+    implementation(project(":ui:walletConnectButton"))
 
     implementation(project(":libs:core"))
 
