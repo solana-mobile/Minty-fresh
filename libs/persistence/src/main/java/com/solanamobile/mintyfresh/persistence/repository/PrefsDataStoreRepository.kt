@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.core.peristence.repository
+package com.solanamobile.mintyfresh.persistence.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore

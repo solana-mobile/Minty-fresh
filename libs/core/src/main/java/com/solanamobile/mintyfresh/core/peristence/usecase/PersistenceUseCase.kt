@@ -1,7 +1,7 @@
 package com.solanamobile.mintyfresh.core.peristence.usecase
 
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.core.peristence.repository.PrefsDataStoreRepository
+import com.solanamobile.mintyfresh.persistence.repository.PrefsDataStoreRepository
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
