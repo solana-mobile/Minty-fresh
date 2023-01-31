@@ -1,6 +1,7 @@
 package com.nft.gallery.activity
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,6 +16,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
@@ -25,10 +27,11 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.nft.gallery.R
 import com.nft.gallery.composables.*
-import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.nft.gallery.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
@@ -161,6 +164,9 @@ class MainActivity : ComponentActivity() {
                                         bottomSheetState.show()
                                     }
                                 },
+                                identityUri = Uri.parse(stringResource(R.string.id_url)),
+                                iconUri = Uri.parse(stringResource(R.string.id_favico)),
+                                identityName = stringResource(R.string.app_name),
                                 intentSender = activityResultSender
                             )
                         }

@@ -1,5 +1,6 @@
 package com.nft.gallery.composables
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -40,6 +41,9 @@ import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 )
 @Composable
 fun MintDetailsPage(
+    identityUri: Uri,
+    iconUri: Uri,
+    identityName: String,
     imagePath: String,
     navigateUp: () -> Boolean = { true },
     onMintCompleted: () -> Unit = { },
@@ -236,6 +240,9 @@ fun MintDetailsPage(
                         enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                         onClick = {
                             performMintViewModel.performMint(
+                                identityUri,
+                                iconUri,
+                                identityName,
                                 intentSender,
                                 title.value,
                                 description.value,

@@ -1,5 +1,6 @@
 package com.solanamobile.mintyfresh.core.walletconnection.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
@@ -59,16 +60,19 @@ class WalletConnectionViewModel @Inject constructor(
         }
     }
 
-    fun connect(activityResultSender: ActivityResultSender) {
-        val params = mintyFreshIdentity //BREAK: This may move to a different place other than core
-
+    fun connect(
+        identityUri: Uri,
+        iconUri: Uri,
+        identityName: String,
+        activityResultSender: ActivityResultSender
+    ) {
         viewModelScope.launch {
             val result = walletAdapter.transact(activityResultSender) {
                 authorize(
-                    identityUri = params.identityUri,
-                    iconUri = params.iconUri,
-                    identityName = params.identityName,
-                    rpcCluster = RpcCluster.Devnet  //BLOCK: This should come from networking layer
+                    identityUri = identityUri,
+                    iconUri = iconUri,
+                    identityName = identityName,
+                    rpcCluster = RpcCluster.Devnet  //TODO: This should come from networking layer
                 )
             }
 

@@ -1,5 +1,6 @@
 package com.nft.gallery.composables
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
@@ -59,6 +60,9 @@ fun ScaffoldScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     ConnectWalletButton(
+                        identityUri = Uri.parse(stringResource(R.string.id_url)),
+                        iconUri = Uri.parse(stringResource(R.string.id_favico)),
+                        identityName = stringResource(R.string.app_name),
                         activityResultSender = activityResultSender
                     )
                 }

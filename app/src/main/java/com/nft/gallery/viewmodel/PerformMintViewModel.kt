@@ -1,6 +1,7 @@
 package com.nft.gallery.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.nft.gallery.usecase.MintState
@@ -12,7 +13,6 @@ import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.mintyFreshIdentity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -55,13 +55,19 @@ class PerformMintViewModel @Inject constructor(
      * We should perhaps think about updating the ViewState with form input, then it wouldn't
      * have to be passed here. Also we'll want to support dynamic attributes in the future.
      */
-    fun performMint(sender: ActivityResultSender, title: String, desc: String, filePath: String) {
+    fun performMint(
+        identityUri: Uri,
+        iconUri: Uri,
+        identityName: String,
+        sender: ActivityResultSender,
+        title: String,
+        desc: String,
+        filePath: String
+    ) {
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
-                val params = mintyFreshIdentity   //BLOCK: Get from somewhere else possibly
-
                 val result = mobileWalletAdapter.transact(sender) {
-                    authorize(params.identityUri, params.iconUri, params.identityName, RpcCluster.Devnet)   //Cluster from networking layer
+                    authorize(identityUri, iconUri, identityName, RpcCluster.Devnet)   //Cluster from networking layer
                 }
 
                 if (result !is TransactionResult.Success) {
@@ -74,7 +80,7 @@ class PerformMintViewModel @Inject constructor(
                 persistenceUseCase.persistConnection(PublicKey(result.payload.publicKey), result.payload.accountLabel ?: "", result.payload.authToken)
             }
 
-            performMintUseCase.performMint(sender, title, desc, filePath)
+            performMintUseCase.performMint(identityUri, iconUri, identityName, sender, title, desc, filePath)
         }
     }
 }

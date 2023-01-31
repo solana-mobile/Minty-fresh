@@ -1,5 +1,6 @@
 package com.nft.gallery.usecase
 
+import android.net.Uri
 import com.nft.gallery.repository.LatestBlockhashRepository
 import com.nft.gallery.repository.MintTransactionRepository
 import com.nft.gallery.repository.SendTransactionRepository
@@ -8,7 +9,6 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.*
 import com.solanamobile.mintyfresh.core.peristence.usecase.Connected
 import com.solanamobile.mintyfresh.core.peristence.usecase.PersistenceUseCase
-import com.solanamobile.mintyfresh.core.walletconnection.viewmodel.mintyFreshIdentity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,9 +42,14 @@ class PerformMintUseCase @Inject constructor(
 
     val mintState: StateFlow<MintState> = _mintState
 
-    suspend fun performMint(sender: ActivityResultSender,
-                            title: String, desc: String, filePath: String) =
-        withContext(Dispatchers.IO) {
+    suspend fun performMint(identityUri: Uri,
+                            iconUri: Uri,
+                            identityName: String,
+                            sender: ActivityResultSender,
+                            title: String,
+                            desc: String,
+                            filePath: String
+    ) = withContext(Dispatchers.IO) {
             val authToken = persistenceUseCase.walletDetails.map {
                 if (it is Connected) it.authToken else null
             }.stateIn(this).value
@@ -82,12 +87,10 @@ class PerformMintUseCase @Inject constructor(
             // begin signing transaction step
             _mintState.value = MintState.Signing(transactionBytes)
 
-            val params = mintyFreshIdentity //BLOCK: Get this from relevant layers
-
             val txResult = walletAdapter.transact(sender) {
                 authToken?.let {
-                    reauthorize(params.identityUri, params.iconUri, params.identityName, authToken)
-                } ?: authorize(params.identityUri, params.iconUri, params.identityName, RpcCluster.Devnet)  //Block cluster from networking layer
+                    reauthorize(identityUri, iconUri, identityName, authToken)
+                } ?: authorize(identityUri, iconUri, identityName, RpcCluster.Devnet)  //TODO: cluster from networking layer
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 
