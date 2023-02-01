@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nft.gallery"
+    namespace = "com.solanamobile.mintyfresh"
     compileSdk = 33
 
     defaultConfig {
@@ -66,13 +66,6 @@ android {
         jvmTarget = "1.8"
     }
 
-    kapt {
-        correctErrorTypes = true
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
-    }
-
 }
 
 dependencies {
@@ -114,9 +107,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
     implementation("com.google.dagger:hilt-android-gradle-plugin:2.44.2")
-    implementation("androidx.room:room-ktx:2.5.0")
-    implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
 
     kapt("com.google.dagger:hilt-compiler:2.44.2")
     implementation("com.google.dagger:dagger:2.44.2")

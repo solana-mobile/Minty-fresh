@@ -1,4 +1,4 @@
-package com.nft.gallery.injection
+package com.solanamobile.mintyfresh.injection
 
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import dagger.Module

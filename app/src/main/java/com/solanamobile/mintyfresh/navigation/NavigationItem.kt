@@ -1,4 +1,4 @@
-package com.nft.gallery.navigation
+package com.solanamobile.mintyfresh.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto

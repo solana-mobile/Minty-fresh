@@ -35,13 +35,6 @@ android {
         }
     }
 
-    kapt {
-        correctErrorTypes = true
-        arguments {
-            arg("room.schemaLocation", "$projectDir/schemas")
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -74,9 +67,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("androidx.room:room-ktx:2.5.0")
-    implementation("androidx.room:room-runtime:2.5.0")
-    kapt("androidx.room:room-compiler:2.5.0")
 
     kapt("com.google.dagger:hilt-compiler:2.44.2")
     implementation("com.google.dagger:hilt-android:2.44.2")
