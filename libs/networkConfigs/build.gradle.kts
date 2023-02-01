@@ -38,7 +38,6 @@ android {
 dependencies {
     implementation(project(":libs:networkInterface"))
     implementation(project(":libs:networkInterfaceImpl"))
-    implementation(project(":libs:persistence"))
 
     implementation("com.google.dagger:hilt-android-gradle-plugin:2.44.2")
     kapt("com.google.dagger:hilt-compiler:2.44.2")

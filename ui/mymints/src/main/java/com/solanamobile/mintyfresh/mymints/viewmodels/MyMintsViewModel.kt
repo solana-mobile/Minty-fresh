@@ -21,7 +21,7 @@ import javax.inject.Inject
 class MyMintsViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: WalletConnectionUseCase,
-    private val myMintsUseCase: IMyMintsUseCase<MyMint>,
+    private val myMintsUseCase: IMyMintsUseCase,
     private val viewStateMapper: CacheToViewStateMapper,
 ) : AndroidViewModel(application) {
 

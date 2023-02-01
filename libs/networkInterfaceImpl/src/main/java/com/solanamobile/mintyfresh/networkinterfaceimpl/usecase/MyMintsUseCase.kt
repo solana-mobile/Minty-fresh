@@ -14,7 +14,7 @@ class MyMintsUseCase @Inject constructor(
     private val nftRepository: NFTRepository,
     private val myMintsCacheRepository: MyMintsCacheRepository,
     private val metaplexToCacheMapper: MetaplexToCacheMapper
-) : IMyMintsUseCase<MyMint> {
+) : IMyMintsUseCase {
 
     override fun getCachedMints(publicKey: PublicKey): Flow<List<MyMint>> {
         return myMintsCacheRepository.get(
