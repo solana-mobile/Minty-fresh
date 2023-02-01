@@ -7,6 +7,7 @@ import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepositor
 import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
 import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
 import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,8 @@ class PerformMintUseCase @Inject constructor(
     private val persistenceUseCase: WalletConnectionUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
     private val blockhashRepository: LatestBlockhashRepository,
-    private val sendTransactionRepository: SendTransactionRepository
+    private val sendTransactionRepository: SendTransactionRepository,
+    private val rpcConfig: IRpcConfig
 ) {
 
     private val _mintState = MutableStateFlow<MintState>(MintState.None)
@@ -90,7 +92,7 @@ class PerformMintUseCase @Inject constructor(
             val txResult = walletAdapter.transact(sender) {
                 authToken?.let {
                     reauthorize(identityUri, iconUri, identityName, authToken)
-                } ?: authorize(identityUri, iconUri, identityName, RpcCluster.Devnet)  //TODO: cluster from networking layer
+                } ?: authorize(identityUri, iconUri, identityName, rpcConfig.getRpcCluster())
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 
