@@ -9,7 +9,9 @@ import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMintsCacheRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MyMintsUseCase @Inject constructor(
     private val nftRepository: NFTRepository,
     private val myMintsCacheRepository: MyMintsCacheRepository,

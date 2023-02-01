@@ -7,6 +7,7 @@ import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPda
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * TODO: This class will be part of the networking layer in the final PR. This class - a repository
@@ -14,6 +15,7 @@ import javax.inject.Inject
  * multiple implementations. For the public implementation, it can look more or less like this. For the
  * prod implementation, it can be communicating with our API abstraction.
  */
+@Singleton
 class NFTRepository @Inject constructor(
     private val nftInfraFactory: NftInfraFactory
 ) {

@@ -8,24 +8,28 @@ import com.metaplex.lib.drivers.solana.TransactionOptions
 import com.metaplex.lib.drivers.storage.OkHttpSharedStorageDriver
 import com.metaplex.lib.modules.nfts.NftClient
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import okhttp3.OkHttpClient
 import java.net.URL
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class NftInfraFactory @Inject constructor() {
+@Singleton
+class NftInfraFactory @Inject constructor(
+    private val rpcConfig: IRpcConfig
+) {
 
     val storageDriver = OkHttpSharedStorageDriver(OkHttpClient())
 
-    fun createNftClient(pubkey: PublicKey): NftClient {
+    fun createNftClient(publicKey: PublicKey): NftClient {
         val connection = SolanaConnectionDriver(
-            JdkRpcDriver(URL("https://api.devnet.solana.com")),  //TODO: This will come from networking layer
+            JdkRpcDriver(URL(rpcConfig.solanaRpcUrl)),
             TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
         )
 
-        val identityDriver = ReadOnlyIdentityDriver(pubkey, connection)
-        val nftClient = NftClient(connection, identityDriver)
+        val identityDriver = ReadOnlyIdentityDriver(publicKey, connection)
 
-        return nftClient
+        return NftClient(connection, identityDriver)
     }
 
 }
