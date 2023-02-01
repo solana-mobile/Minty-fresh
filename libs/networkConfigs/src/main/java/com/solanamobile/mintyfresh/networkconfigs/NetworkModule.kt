@@ -1,0 +1,17 @@
+package com.solanamobile.mintyfresh.networkconfigs
+
+import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
+import com.solanamobile.mintyfresh.networkinterfaceimpl.usecase.MyMintsUseCase
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+
+@Module
+@InstallIn(ViewModelComponent::class)
+abstract class NetworkModule {
+
+    @Binds
+    abstract fun bindsMyMintUseCase(myMintsUseCase: MyMintsUseCase): IMyMintsUseCase<MyMint>
+}
