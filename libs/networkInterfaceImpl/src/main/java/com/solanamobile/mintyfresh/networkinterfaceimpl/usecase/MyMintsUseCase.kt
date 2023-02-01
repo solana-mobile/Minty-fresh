@@ -2,7 +2,7 @@ package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.solana.core.PublicKey
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
 import com.solanamobile.mintyfresh.networkinterfaceimpl.repository.NFTRepository
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
@@ -13,20 +13,22 @@ import javax.inject.Inject
 class MyMintsUseCase @Inject constructor(
     private val nftRepository: NFTRepository,
     private val myMintsCacheRepository: MyMintsCacheRepository,
-    private val metaplexToCacheMapper: MetaplexToCacheMapper
+    private val metaplexToCacheMapper: MetaplexToCacheMapper,
+    private val rpcConfig: IRpcConfig
 ) : IMyMintsUseCase {
 
     override fun getCachedMints(publicKey: PublicKey): Flow<List<MyMint>> {
         return myMintsCacheRepository.get(
             pubKey = publicKey.toString(),
-            rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
+            rpcClusterName = rpcConfig.rpcCluster.name
         )
     }
 
     override suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> {
         val nfts = nftRepository.getAllUserMintyFreshNfts(publicKey)
+        val clusterName = rpcConfig.rpcCluster.name
 
-        val currentMintList = metaplexToCacheMapper.map(nfts, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module
+        val currentMintList = metaplexToCacheMapper.map(nfts, clusterName)
         myMintsCacheRepository.deleteStaleData(
             currentMintList = currentMintList,
             publicKey.toString()
@@ -38,11 +40,11 @@ class MyMintsUseCase @Inject constructor(
                 val cachedMint = myMintsCacheRepository.get(
                     id = nft.mint.toString(),
                     pubKey = publicKey.toString(),
-                    rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
+                    rpcClusterName = clusterName
                 )
                 if (cachedMint == null) {
                     val metadata = nftRepository.getNftsMetadata(nft)
-                    val mint = metaplexToCacheMapper.map(nft, metadata, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module
+                    val mint = metaplexToCacheMapper.map(nft, metadata, clusterName)
 
                     if (mint != null) {
                         myMintsCacheRepository.insertAll(listOf(mint))
