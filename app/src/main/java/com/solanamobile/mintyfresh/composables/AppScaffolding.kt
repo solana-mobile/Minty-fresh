@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.nft.gallery.R
+import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton

@@ -27,7 +27,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.nft.gallery.R
+import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
