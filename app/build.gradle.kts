@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.nft.gallery"
+    namespace = "com.solanamobile.mintyfresh"
     compileSdk = 33
 
     defaultConfig {

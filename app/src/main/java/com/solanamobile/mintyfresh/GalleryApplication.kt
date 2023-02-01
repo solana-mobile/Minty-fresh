@@ -1,4 +1,4 @@
-package com.nft.gallery
+package com.solanamobile.mintyfresh
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

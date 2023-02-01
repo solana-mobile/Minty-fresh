@@ -1,4 +1,4 @@
-package com.nft.gallery.activity
+package com.solanamobile.mintyfresh.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -28,10 +28,10 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nft.gallery.R
-import com.nft.gallery.composables.*
-import com.nft.gallery.navigation.NavigationItem
+import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
+import com.solanamobile.mintyfresh.composables.ScaffoldScreen
 import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
