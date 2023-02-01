@@ -48,7 +48,6 @@ dependencies {
     implementation(project(":ui:commonComposable"))
     implementation(project(":libs:mintycore"))
     implementation(project(":libs:persistence"))
-    implementation(project(":libs:core"))
     implementation(project(":libs:networkInterface"))
 
     implementation("androidx.core:core-ktx:1.9.0")
