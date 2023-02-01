@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.mymints.usecase
+package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 
 import com.metaplex.lib.modules.nfts.models.JsonMetadata
 import com.metaplex.lib.modules.nfts.models.NFT

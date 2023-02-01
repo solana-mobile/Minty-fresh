@@ -1,9 +1,9 @@
-package com.solanamobile.mintyfresh.mymints.usecase
+package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
-import com.solanamobile.mintyfresh.mymints.repository.NFTRepository
+import com.solanamobile.mintyfresh.networkinterfaceimpl.repository.NFTRepository
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMintsCacheRepository
 import kotlinx.coroutines.flow.Flow

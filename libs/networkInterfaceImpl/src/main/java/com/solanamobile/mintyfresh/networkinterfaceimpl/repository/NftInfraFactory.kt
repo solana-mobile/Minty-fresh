@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.mymints.repository
+package com.solanamobile.mintyfresh.networkinterfaceimpl.repository
 
 import com.metaplex.lib.drivers.indenty.ReadOnlyIdentityDriver
 import com.metaplex.lib.drivers.rpc.JdkRpcDriver

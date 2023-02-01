@@ -1,7 +1,7 @@
-package com.solanamobile.mintyfresh.core.pda
+package com.solanamobile.mintyfresh.networkinterfaceimpl.pda
 
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.core.BuildConfig
+import com.solanamobile.mintyfresh.networkinterfaceimpl.BuildConfig
 
 /*
  * The Minty Fresh Creator PDA

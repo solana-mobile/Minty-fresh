@@ -15,12 +15,6 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-
-        buildConfigField(
-            "String",
-            "MINTY_FRESH_CREATOR_PDA",
-            "\"3QFrGD1VHLKqeuCWUt6jgcM5ZESBzhY9dUvZcDbZFisB\""
-        )
     }
 
     buildTypes {

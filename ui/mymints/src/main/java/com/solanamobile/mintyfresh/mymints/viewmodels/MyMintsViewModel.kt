@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.mymints.usecase.MyMintsUseCase
+import com.solanamobile.mintyfresh.networkinterfaceimpl.usecase.MyMintsUseCase
 import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.CacheToViewStateMapper
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MintedMedia
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
