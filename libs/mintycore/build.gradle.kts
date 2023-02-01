@@ -32,8 +32,6 @@ android {
             "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
         )
         buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-
-        buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.devnet.solana.com\"")
     }
 
     buildTypes {
@@ -47,8 +45,6 @@ android {
                 "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
             )
             buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-
-            buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
         }
     }
 

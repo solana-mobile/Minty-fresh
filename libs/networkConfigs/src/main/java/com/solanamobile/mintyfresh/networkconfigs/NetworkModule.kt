@@ -1,6 +1,8 @@
 package com.solanamobile.mintyfresh.networkconfigs
 
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
+import com.solanamobile.mintyfresh.networkinterfaceimpl.rpcconfig.RpcConfig
 import com.solanamobile.mintyfresh.networkinterfaceimpl.usecase.MyMintsUseCase
 import dagger.Binds
 import dagger.Module
@@ -13,4 +15,7 @@ abstract class NetworkModule {
 
     @Binds
     abstract fun bindsMyMintUseCase(myMintsUseCase: MyMintsUseCase): IMyMintsUseCase
+
+    @Binds
+    abstract fun bindsRpcConfig(rpcConfig: RpcConfig): IRpcConfig
 }

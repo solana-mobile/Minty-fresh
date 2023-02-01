@@ -44,6 +44,7 @@ android {
 
 dependencies {
     implementation(project(":libs:persistence"))
+    implementation(project(":libs:networkInterface"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")

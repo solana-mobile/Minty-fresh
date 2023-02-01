@@ -8,6 +8,7 @@ import com.solanamobile.mintyfresh.mintycore.BuildConfig
 import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
 import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageResponseConverter
 import com.solanamobile.mintyfresh.mintycore.metaplex.MetaplexHttpDriver
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,9 +32,9 @@ class MintyCoreModule {
     }
 
     @Provides
-    fun providesMetaplexConnectionDriver(): Connection =
+    fun providesMetaplexConnectionDriver(rpcConfig: IRpcConfig): Connection =
         SolanaConnectionDriver(
-            MetaplexHttpDriver(BuildConfig.SOLANA_RPC_URL),
+            MetaplexHttpDriver(rpcConfig.solanaRpcUrl),
             TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
         )
 }

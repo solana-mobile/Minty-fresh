@@ -14,6 +14,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.devnet.solana.com\"")
+        buildConfigField(
+            "com.solana.mobilewalletadapter.clientlib.RpcCluster",
+            "RPC_CLUSTER",
+            "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
+        )
     }
 
     buildTypes {
@@ -22,6 +28,12 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
+            )
+            buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
+            buildConfigField(
+                "com.solana.mobilewalletadapter.clientlib.RpcCluster",
+                "RPC_CLUSTER",
+                "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
             )
         }
     }

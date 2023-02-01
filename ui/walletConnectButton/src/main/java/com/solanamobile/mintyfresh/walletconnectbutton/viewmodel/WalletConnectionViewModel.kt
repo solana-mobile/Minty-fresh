@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.NotConnected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
@@ -30,7 +30,8 @@ data class WalletViewState(
 @HiltViewModel
 class WalletConnectionViewModel @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
-    private val walletConnectionUseCase: WalletConnectionUseCase
+    private val walletConnectionUseCase: WalletConnectionUseCase,
+    private val rpcConfig: IRpcConfig
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(WalletViewState())
@@ -72,7 +73,7 @@ class WalletConnectionViewModel @Inject constructor(
                     identityUri = identityUri,
                     iconUri = iconUri,
                     identityName = identityName,
-                    rpcCluster = RpcCluster.Devnet  //TODO: This should come from networking layer
+                    rpcCluster = rpcConfig.rpcCluster
                 )
             }
 
