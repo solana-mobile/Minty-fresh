@@ -62,7 +62,32 @@ When opening the project in Android Studio, be sure to select the `build.gradle.
 
 ## Implementation Overview
 
+Minty Fresh is a multi-module Android application, which means that the source code is broken up into logical code packages that variously depend on each other. 
+
+Roughly speaking, the modules are separated out based on "layers" of app logic, e.g.; UI modules, business logic, networking/data storage modules and the like.
+
+The following is a module dependency diagram, showing the modules that exist in the app and how they depend on each other:
+
 <div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/93bd592d-00d5-4738-9cd2-9caf000a2996" id="EqmtgQm1EaJW"></iframe></div>
+
+Each module in the application has its own readme file, which is linked here:
+
+### App & Screen Modules
+
+- [Root Application module](tree/main/app)
+- [Photo selection "gallery"](tree/tree/main/ui/gallery)
+- ["My Mints" Screens](tree/main/ui/mymints)
+- [NFT minting screen](tree/main/ui/nftMint)
+- [Wallet Connect Button](tree/main/ui/walletConnectButton)
+- [Shared composables](tree/main/ui/commonComposable)
+
+### Logic Modules
+
+- [NFT minting logic](tree/main/libs/mintycore)
+- [Persistence/local storage](tree/main/libs/persistence)
+- [Networking interfaces](tree/main/libs/networkInterface)
+- [Networking implementation](tree/main/libs/networkInterfaceImpl)
+- [Network interface bindings](tree/main/libs/networkConfigs)
 
 ## License
 
