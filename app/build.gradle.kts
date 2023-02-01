@@ -74,6 +74,7 @@ dependencies {
     implementation(project(":ui:mymints"))
     implementation(project(":ui:nftMint"))
     implementation(project(":ui:walletConnectButton"))
+    implementation(project(":libs:networkConfigs"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
