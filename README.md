@@ -62,6 +62,8 @@ When opening the project in Android Studio, be sure to select the `build.gradle.
 
 ## Implementation Overview
 
+<div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/93bd592d-00d5-4738-9cd2-9caf000a2996" id="EqmtgQm1EaJW"></iframe></div>
+
 ## License
 
 [Apache 2.0](https://github.com/solana-mobile/Minty-fresh/blob/main/LICENSE.md)
