@@ -68,7 +68,7 @@ Roughly speaking, the modules are separated out based on "layers" of app logic, 
 
 The following is a module dependency diagram, showing the modules that exist in the app and how they depend on each other:
 
-<div style="width: 640px; height: 480px; margin: 10px; position: relative;"><iframe allowfullscreen frameborder="0" style="width:640px; height:480px" src="https://lucid.app/documents/embedded/93bd592d-00d5-4738-9cd2-9caf000a2996" id="EqmtgQm1EaJW"></iframe></div>
+<!-- Will need to generate an exported image of the document as it cannot be embedded here -->
 
 Each module in the application has its own readme file, which is linked here:
 
