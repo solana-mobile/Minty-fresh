@@ -1,6 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -34,6 +36,15 @@ android {
 }
 
 dependencies {
+    implementation(project(":libs:networkInterface"))
+    implementation(project(":libs:networkInterfaceImpl"))
+
+    implementation("com.google.dagger:hilt-android-gradle-plugin:2.44.2")
+    kapt("com.google.dagger:hilt-compiler:2.44.2")
+    implementation("com.google.dagger:dagger:2.44.2")
+    kapt("com.google.dagger:dagger-compiler:2.44.2")
+    implementation("com.google.dagger:hilt-android:2.44.2")
+    kapt("com.google.dagger:hilt-android:2.44.2")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")

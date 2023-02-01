@@ -3,6 +3,7 @@ package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.RpcCluster
+import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
 import com.solanamobile.mintyfresh.networkinterfaceimpl.repository.NFTRepository
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMintsCacheRepository
@@ -13,16 +14,16 @@ class MyMintsUseCase @Inject constructor(
     private val nftRepository: NFTRepository,
     private val myMintsCacheRepository: MyMintsCacheRepository,
     private val metaplexToCacheMapper: MetaplexToCacheMapper
-) {
+) : IMyMintsUseCase {
 
-    fun getCachedMints(publicKey: PublicKey): Flow<List<MyMint>> {
+    override fun getCachedMints(publicKey: PublicKey): Flow<List<MyMint>> {
         return myMintsCacheRepository.get(
             pubKey = publicKey.toString(),
             rpcClusterName = RpcCluster.Devnet.name //TODO: This value will come from networking layer
         )
     }
 
-    suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> {
+    override suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> {
         val nfts = nftRepository.getAllUserMintyFreshNfts(publicKey)
 
         val currentMintList = metaplexToCacheMapper.map(nfts, RpcCluster.Devnet.name)   //TODO: Cluster will come from networking module

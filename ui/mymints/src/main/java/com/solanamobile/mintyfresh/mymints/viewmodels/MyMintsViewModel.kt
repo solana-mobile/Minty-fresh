@@ -4,10 +4,11 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.networkinterfaceimpl.usecase.MyMintsUseCase
 import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.CacheToViewStateMapper
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MintedMedia
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
+import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
+import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,7 @@ import javax.inject.Inject
 class MyMintsViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: WalletConnectionUseCase,
-    private val myMintsUseCase: MyMintsUseCase,
+    private val myMintsUseCase: IMyMintsUseCase,
     private val viewStateMapper: CacheToViewStateMapper,
 ) : AndroidViewModel(application) {
 
