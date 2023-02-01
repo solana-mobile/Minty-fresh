@@ -92,7 +92,7 @@ class PerformMintUseCase @Inject constructor(
             val txResult = walletAdapter.transact(sender) {
                 authToken?.let {
                     reauthorize(identityUri, iconUri, identityName, authToken)
-                } ?: authorize(identityUri, iconUri, identityName, rpcConfig.getRpcCluster())
+                } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
 
                 val signingResult = signTransactions(arrayOf(transactionBytes))
 

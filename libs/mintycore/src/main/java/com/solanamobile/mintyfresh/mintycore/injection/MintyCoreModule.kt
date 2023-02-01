@@ -34,7 +34,7 @@ class MintyCoreModule {
     @Provides
     fun providesMetaplexConnectionDriver(rpcConfig: IRpcConfig): Connection =
         SolanaConnectionDriver(
-            MetaplexHttpDriver(rpcConfig.getSolanaRpcUrl()),
+            MetaplexHttpDriver(rpcConfig.solanaRpcUrl),
             TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
         )
 }

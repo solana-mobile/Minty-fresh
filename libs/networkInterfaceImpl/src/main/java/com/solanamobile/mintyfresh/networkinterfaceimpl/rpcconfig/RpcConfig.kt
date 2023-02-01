@@ -6,7 +6,7 @@ import com.solanamobile.mintyfresh.networkinterfaceimpl.BuildConfig
 import javax.inject.Inject
 
 class RpcConfig @Inject constructor() : IRpcConfig {
-    override fun getSolanaRpcUrl(): String = BuildConfig.SOLANA_RPC_URL
+    override val solanaRpcUrl: String = BuildConfig.SOLANA_RPC_URL
 
-    override fun getRpcCluster(): RpcCluster = BuildConfig.RPC_CLUSTER
+    override val rpcCluster: RpcCluster = BuildConfig.RPC_CLUSTER
 }

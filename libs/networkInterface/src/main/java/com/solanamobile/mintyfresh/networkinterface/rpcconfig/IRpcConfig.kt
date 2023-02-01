@@ -3,7 +3,7 @@ import com.solana.mobilewalletadapter.clientlib.RpcCluster
 
 interface IRpcConfig {
 
-    fun getSolanaRpcUrl(): String
+    val solanaRpcUrl: String
 
-    fun getRpcCluster(): RpcCluster
+    val rpcCluster: RpcCluster
 }

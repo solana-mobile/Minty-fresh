@@ -7,10 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solanamobile.mintyfresh.mintycore.usecase.MintState
 import com.solanamobile.mintyfresh.mintycore.usecase.PerformMintUseCase
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +28,8 @@ class PerformMintViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: WalletConnectionUseCase,
     private val performMintUseCase: PerformMintUseCase,
-    private val mobileWalletAdapter: MobileWalletAdapter
+    private val mobileWalletAdapter: MobileWalletAdapter,
+    private val rpcConfig: IRpcConfig
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(
@@ -69,7 +70,7 @@ class PerformMintViewModel @Inject constructor(
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
                 val result = mobileWalletAdapter.transact(sender) {
-                    authorize(identityUri, iconUri, identityName, RpcCluster.Devnet)   //Cluster from networking layer
+                    authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
                 }
 
                 if (result !is TransactionResult.Success) {
