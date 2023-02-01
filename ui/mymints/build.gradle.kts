@@ -56,6 +56,7 @@ dependencies {
     implementation(project(":libs:mintycore"))
     implementation(project(":libs:persistence"))
     implementation(project(":libs:core"))
+    implementation(project(":libs:networkInterfaceImpl"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
