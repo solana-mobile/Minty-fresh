@@ -24,11 +24,6 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.APK_SIGNING_TEST_KEYSTORE }}
           KEYSTORE_PATH: ${{ runner.temp }}/apk_signing_test_keystore.jks
         run: echo $KEYSTORE_BASE64 | base64 --decode > $KEYSTORE_PATH
-      - name: Deploy APK signing release keystore and related secrets
-        env:
-          KEYSTORE_BASE64: ${{ secrets.APK_SIGNING_RELEASE_KEYSTORE }}
-          KEYSTORE_PATH: ${{ runner.temp }}/apk_signing_release_keystore.jks
-        run: echo $KEYSTORE_BASE64 | base64 --decode > $KEYSTORE_PATH
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -47,22 +42,12 @@ jobs:
           ORG_GRADLE_PROJECT_apkSigningKeyPassword: ${{ secrets.APK_SIGNING_TEST_PASSWORD }}
         run: ./gradlew assembleDebug
 
-      # Build release (with the release Keystore)
-      - name: Build with Gradle, run tests and sign the release APK and AAB (with the release Keystore)
-        env:
-          ORG_GRADLE_PROJECT_apkSigningKeystorePath: ${{ runner.temp }}/apk_signing_release_keystore.jks
-          ORG_GRADLE_PROJECT_apkSigningKeyAlias: signing
-          ORG_GRADLE_PROJECT_apkSigningKeystorePassword: ${{ secrets.APK_SIGNING_RELEASE_PASSWORD }}
-          ORG_GRADLE_PROJECT_apkSigningKeyPassword: ${{ secrets.APK_SIGNING_RELEASE_PASSWORD }}
-        run: ./gradlew assembleRelease bundleRelease
-
       # Upload APKs to workflow artifacts
       - uses: actions/upload-artifact@v3
         with:
           name: apk
           path: |
             app/build/outputs/apk/**/*.apk
-            app/build/outputs/bundle/**/*.aab
           if-no-files-found: error
           retention-days: 5
 
@@ -86,14 +71,13 @@ jobs:
         run: ls -R
 
       # Upload to GitHub Release
-      - name: Upload all the APKs/AABs to release
+      - name: Upload all the APKs to release
         run: gh release -R ${GITHUB_REPOSITORY} upload ${TAG} ${FILES}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
             apk/**/**/*.apk
-            apk/**/**/*.aab
 
   increment-versions:
     runs-on: ubuntu-latest
