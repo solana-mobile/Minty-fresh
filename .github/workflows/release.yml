@@ -67,9 +67,6 @@ jobs:
           name: apk
           path: apk
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
       # Upload to GitHub Release
       - name: Upload all the APKs to release
         run: gh release -R ${GITHUB_REPOSITORY} upload ${TAG} ${FILES}
@@ -77,7 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ github.event.release.tag_name }}
           FILES: |
-            apk/**/**/*.apk
+            apk/**/*.apk
 
   increment-versions:
     runs-on: ubuntu-latest
