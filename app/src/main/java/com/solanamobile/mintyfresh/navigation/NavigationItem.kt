@@ -5,11 +5,12 @@ import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.solanamobile.mintyfresh.R
 
-sealed class NavigationItem(var route: String, var icon: ImageVector, var title: String) {
-    object Camera : NavigationItem("camera", Icons.Outlined.AddAPhoto, "Camera")
-    object Photos : NavigationItem("photos", Icons.Outlined.Image, "Photos")
-    object MintDetail : NavigationItem("mint", Icons.Outlined.AutoAwesome, "Mint")
-    object MyMints : NavigationItem("mymints", Icons.Outlined.AutoAwesome, "My Mints")
-    object MyMintsDetails : NavigationItem("mymintsdetails", Icons.Outlined.AutoAwesome, "My Mints Details")
+sealed class NavigationItem(var route: String, var icon: ImageVector, var title: Int) {
+    object Camera : NavigationItem("camera", Icons.Outlined.AddAPhoto, R.string.camera)
+    object Photos : NavigationItem("photos", Icons.Outlined.Image, R.string.photos)
+    object MintDetail : NavigationItem("mint", Icons.Outlined.AutoAwesome, R.string.mint)
+    object MyMints : NavigationItem("mymints", Icons.Outlined.AutoAwesome, R.string.my_mints)
+    object MyMintsDetails : NavigationItem("mymintsdetails", Icons.Outlined.AutoAwesome, R.string.my_mints_details)
 }
