@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="id_url">https://solanamobile.com</string>
-    <string name="id_favico">favicon.ico</string>
+    <string name="id_url" translatable="false">https://solanamobile.com</string>
+    <string name="id_favico" translatable="false">favicon.ico</string>
+    <string name="app_name" translatable="false">Minty Fresh</string>
 </resources>

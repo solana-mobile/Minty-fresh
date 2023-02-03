@@ -141,10 +141,10 @@ private fun BottomNavigationBar(
                                             .padding(top = 5.dp, bottom = 3.dp)
                                             .size(24.dp),
                                         imageVector = item.icon,
-                                        contentDescription = item.title
+                                        contentDescription = stringResource(item.title)
                                     )
                                     Text(
-                                        text = item.title,
+                                        text = stringResource(item.title),
                                         style = MaterialTheme.typography.labelMedium,
                                         modifier = Modifier.padding(bottom = 10.dp)
                                     )
