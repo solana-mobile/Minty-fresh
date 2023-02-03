@@ -76,7 +76,7 @@ class PerformMintUseCase @Inject constructor(
             _mintState.value = MintState.BuildingTransaction
 
             val mintAccount = HotAccount()
-            val mintTxn = mintTransactionRepository.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, creator)
+            val mintTxn = mintTransactionRepository.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, PublicKey(creator))
 
             mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
 
@@ -108,9 +108,9 @@ class PerformMintUseCase @Inject constructor(
                         // val signed = Transaction.from(signedBytes)
                         val signed = Transaction().apply {
                             setRecentBlockHash(mintTxn.recentBlockhash)
-                            feePayer = creator
+                            feePayer = PublicKey(creator)
                             addInstruction(*mintTxn.instructions.toTypedArray())
-                            addSignature(creator, primarySignature)
+                            addSignature(PublicKey(creator), primarySignature)
                         }
 
                         // now that the primary signer (creator) has signed, the mint account can sign
