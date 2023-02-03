@@ -22,10 +22,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -48,7 +45,7 @@ import java.util.*
 private var imageCapture: ImageCapture? = null
 private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Camera(
     navigateToDetails: (String) -> Unit = { },
@@ -63,20 +60,29 @@ fun Camera(
             }
         }
 
-    PermissionView(
-        permissionsRequired,
-        content = {
-            StartCamera(navigateToDetails)
-        },
-        emptyView = {
+    Scaffold(
+        content = { padding ->
             Box(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
+                modifier = Modifier.padding(padding)
             ) {
-                EmptyView(it)
+                PermissionView(
+                    permissionsRequired,
+                    content = {
+                        StartCamera(navigateToDetails)
+                    },
+                    emptyView = {
+                        Box(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize(),
+                        ) {
+                            EmptyView(it)
+                        }
+                    }
+                )
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     )
 }
 
