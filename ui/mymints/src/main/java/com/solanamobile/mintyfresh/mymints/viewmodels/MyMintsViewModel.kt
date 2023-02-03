@@ -51,7 +51,7 @@ class MyMintsViewModel @Inject constructor(
             }.collect { (isRefreshing, userWalletDetails) ->
                 if (userWalletDetails is Connected) {
                     try {
-                        loadMyMints(userWalletDetails.publicKey.toBase58(), isRefreshing)
+                        loadMyMints(userWalletDetails.publicKey, isRefreshing)
                     } catch (e: Exception) {
                         _viewState.update { MyMintsViewState.Error(e) }
                     }
@@ -65,7 +65,7 @@ class MyMintsViewModel @Inject constructor(
         viewModelScope.launch {
             persistenceUseCase.walletDetails.flatMapLatest { walletDetails ->
                 val myMintsFlow = if (walletDetails is Connected) {
-                    myMintsUseCase.getCachedMints(walletDetails.publicKey.toBase58())
+                    myMintsUseCase.getCachedMints(walletDetails.publicKey)
                 } else {
                     flow { emit(listOf()) }
                 }

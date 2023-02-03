@@ -73,9 +73,6 @@ dependencies {
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
 
-    // SolanaKT
-    implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
-
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

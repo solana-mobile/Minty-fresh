@@ -122,8 +122,4 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
-
-    // SolanaKT & Metaplex
-    implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
-    implementation("com.github.metaplex-foundation:metaplex-android:1.3.0b3")
 }

@@ -3,7 +3,6 @@ package com.solanamobile.mintyfresh.walletconnectbutton.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
@@ -49,7 +48,7 @@ class WalletConnectionViewModel @Inject constructor(
                                 isLoading = false,
                                 canTransact = true,
                                 solBalance = 0.0,
-                                userAddress = walletDetails.publicKey.toBase58(),
+                                userAddress = walletDetails.publicKey,
                                 userLabel = walletDetails.accountLabel
                             )
                         }
@@ -80,7 +79,7 @@ class WalletConnectionViewModel @Inject constructor(
             when (result) {
                 is TransactionResult.Success -> {
                     walletConnectionUseCase.persistConnection(
-                        PublicKey(result.payload.publicKey),
+                        result.payload.publicKey,
                         result.payload.accountLabel ?: "",
                         result.payload.authToken
                     )

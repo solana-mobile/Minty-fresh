@@ -4,7 +4,6 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.solana.core.PublicKey
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
@@ -80,10 +79,22 @@ class PerformMintViewModel @Inject constructor(
                     return@launch
                 }
 
-                persistenceUseCase.persistConnection(PublicKey(result.payload.publicKey), result.payload.accountLabel ?: "", result.payload.authToken)
+                persistenceUseCase.persistConnection(
+                    result.payload.publicKey,
+                    result.payload.accountLabel ?: "",
+                    result.payload.authToken
+                )
             }
 
-            performMintUseCase.performMint(identityUri, iconUri, identityName, sender, title, desc, filePath)
+            performMintUseCase.performMint(
+                identityUri,
+                iconUri,
+                identityName,
+                sender,
+                title,
+                desc,
+                filePath
+            )
         }
     }
 }
