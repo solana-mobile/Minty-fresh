@@ -20,11 +20,13 @@ class NFTRepository @Inject constructor(
     private val nftInfraFactory: NftInfraFactory
 ) {
 
-    suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> =
-        getAllNfts(publicKey).filter { allUserNFts ->
-            allUserNFts.creators.firstOrNull { nft -> nft.address == publicKey } != null &&
-            allUserNFts.creators.firstOrNull { nft -> nft.address == mintyFreshCreatorPda } != null
+    suspend fun getAllUserMintyFreshNfts(publicKey: String): List<NFT> {
+        val pubKey = PublicKey(publicKey)
+        return getAllNfts(pubKey).filter { allUserNFts ->
+            allUserNFts.creators.firstOrNull { nft -> nft.address == pubKey } != null &&
+                    allUserNFts.creators.firstOrNull { nft -> nft.address.toBase58() == mintyFreshCreatorPda } != null
         }
+    }
 
     private suspend fun getAllNfts(publicKey: PublicKey) = withContext(Dispatchers.IO) {
         val client = nftInfraFactory.createNftClient(publicKey)
