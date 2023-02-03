@@ -71,7 +71,7 @@ fun EmptyView(permissionState: MultiplePermissionsState) {
         }
 
         val textToShow = if (permissionState.shouldShowRationale) {
-            stringResource(R.string.permission_important, revokedPermissions.joinToString(separator = ", "))
+            stringResource(R.string.permission_required, revokedPermissions.joinToString(separator = ", "))
         } else {
             stringResource(R.string.permission_important, revokedPermissions.joinToString(separator = ", "))
         }
