@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lets_get">"Let\u2019s get"</string>
-    <string name="minty_fresh">"&#32;"minty fresh.</string>
+    <string name="lets_get">Let\u2019s get</string>
+    <string name="minty_fresh">\u0020minty fresh.</string>
     <string name="select_photo">Select a photo to mint:</string>
     <string name="image_content_desc">Image</string>
     <string name="take_pic_content_desc">Take Picture</string>

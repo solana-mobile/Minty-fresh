@@ -6,7 +6,7 @@
     <string name="no_mints_yet">No mints yet. Start minting pictures with Minty Fresh!</string>
     <string name="connect_to_see_mints">Connect your wallet to see your mints</string>
     <string name="my">My</string>
-    <string name="mints">"&#32;"mints</string>
+    <string name="mints">"\u0020mints</string>
     <string name="error_fetching_mints">An error happened while fetching your Mints</string>
     <string name="retry">Retry</string>
 </resources>
