@@ -53,6 +53,6 @@ class MyMintsUseCase @Inject constructor(
             }
         }
 
-        return metaplexToCacheMapper.map(nfts, clusterName)
+        return currentMintList
     }
 }
