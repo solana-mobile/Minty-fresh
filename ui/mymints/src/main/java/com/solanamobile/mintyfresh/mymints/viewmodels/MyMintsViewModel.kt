@@ -5,10 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.CacheToViewStateMapper
-import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MintedMedia
+import com.solanamobile.mintyfresh.networkinterface.data.MintedMedia
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
-import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
