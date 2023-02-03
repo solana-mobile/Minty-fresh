@@ -27,7 +27,7 @@ class MintTransactionRepository @Inject constructor(private val connectionDriver
         sellerFeeBasisPoints = 0,
         creators = listOf(
             Creator(creator, true, 100.toUByte()),
-            Creator(mintyFreshCreatorPda, false, 0.toUByte())
+            Creator(PublicKey(mintyFreshCreatorPda), false, 0.toUByte())
         ),
     )
 }

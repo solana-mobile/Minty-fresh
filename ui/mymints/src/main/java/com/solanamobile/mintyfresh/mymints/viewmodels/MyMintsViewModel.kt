@@ -3,7 +3,6 @@ package com.solanamobile.mintyfresh.mymints.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.CacheToViewStateMapper
 import com.solanamobile.mintyfresh.networkinterface.data.MintedMedia
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
@@ -52,7 +51,7 @@ class MyMintsViewModel @Inject constructor(
             }.collect { (isRefreshing, userWalletDetails) ->
                 if (userWalletDetails is Connected) {
                     try {
-                        loadMyMints(userWalletDetails.publicKey, isRefreshing)
+                        loadMyMints(userWalletDetails.publicKey.toBase58(), isRefreshing)
                     } catch (e: Exception) {
                         _viewState.update { MyMintsViewState.Error(e) }
                     }
@@ -66,7 +65,7 @@ class MyMintsViewModel @Inject constructor(
         viewModelScope.launch {
             persistenceUseCase.walletDetails.flatMapLatest { walletDetails ->
                 val myMintsFlow = if (walletDetails is Connected) {
-                    myMintsUseCase.getCachedMints(walletDetails.publicKey)
+                    myMintsUseCase.getCachedMints(walletDetails.publicKey.toBase58())
                 } else {
                     flow { emit(listOf()) }
                 }
@@ -87,8 +86,8 @@ class MyMintsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadMyMints(publicKey: PublicKey, forceRefresh: Boolean) {
-        if (publicKey.toString().isEmpty() || (!forceRefresh && wasLoaded)) {
+    private suspend fun loadMyMints(publicKey: String, forceRefresh: Boolean) {
+        if (publicKey.isEmpty() || (!forceRefresh && wasLoaded)) {
             _isRefreshing.update { false }
             return
         }
@@ -113,13 +112,9 @@ class MyMintsViewModel @Inject constructor(
 
         wasLoaded = true
 
-        val nfts = myMintsUseCase.getAllUserMintyFreshNfts(publicKey)
-        if (nfts.isEmpty()) {
+        val myMints = myMintsUseCase.getAllUserMintyFreshNfts(publicKey)
+        if (myMints.isEmpty()) {
             _viewState.update { MyMintsViewState.Empty() }
         }
-    }
-
-    companion object {
-        private const val TAG = "MyMintsViewModel"
     }
 }

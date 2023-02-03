@@ -1,7 +1,5 @@
 package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 
-import com.metaplex.lib.modules.nfts.models.NFT
-import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
 import com.solanamobile.mintyfresh.networkinterfaceimpl.repository.NFTRepository
@@ -19,21 +17,21 @@ class MyMintsUseCase @Inject constructor(
     private val rpcConfig: IRpcConfig
 ) : IMyMintsUseCase {
 
-    override fun getCachedMints(publicKey: PublicKey): Flow<List<MyMint>> {
+    override fun getCachedMints(publicKey: String): Flow<List<MyMint>> {
         return myMintsCacheRepository.get(
-            pubKey = publicKey.toString(),
+            pubKey = publicKey,
             rpcClusterName = rpcConfig.rpcCluster.name
         )
     }
 
-    override suspend fun getAllUserMintyFreshNfts(publicKey: PublicKey): List<NFT> {
+    override suspend fun getAllUserMintyFreshNfts(publicKey: String): List<MyMint> {
         val nfts = nftRepository.getAllUserMintyFreshNfts(publicKey)
         val clusterName = rpcConfig.rpcCluster.name
 
         val currentMintList = metaplexToCacheMapper.map(nfts, clusterName)
         myMintsCacheRepository.deleteStaleData(
             currentMintList = currentMintList,
-            publicKey.toString()
+            publicKey
         )
 
         if (nfts.isNotEmpty()) {
@@ -41,7 +39,7 @@ class MyMintsUseCase @Inject constructor(
             nfts.forEach { nft ->
                 val cachedMint = myMintsCacheRepository.get(
                     id = nft.mint.toString(),
-                    pubKey = publicKey.toString(),
+                    pubKey = publicKey,
                     rpcClusterName = clusterName
                 )
                 if (cachedMint == null) {
@@ -55,6 +53,6 @@ class MyMintsUseCase @Inject constructor(
             }
         }
 
-        return nfts
+        return currentMintList
     }
 }
