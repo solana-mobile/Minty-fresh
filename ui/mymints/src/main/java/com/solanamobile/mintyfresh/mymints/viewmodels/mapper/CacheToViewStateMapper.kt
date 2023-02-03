@@ -1,6 +1,6 @@
 package com.solanamobile.mintyfresh.mymints.viewmodels.mapper
 
-import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MintedMedia
+import com.solanamobile.mintyfresh.networkinterface.data.MintedMedia
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
 import javax.inject.Inject
 

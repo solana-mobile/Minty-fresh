@@ -1,11 +1,6 @@
 package com.solanamobile.mintyfresh.mymints.viewmodels.viewstate
 
-data class MintedMedia(
-    val id: String = "",
-    val mediaUrl: String = "",
-    val name: String = "",
-    val description: String = ""
-)
+import com.solanamobile.mintyfresh.networkinterface.data.MintedMedia
 
 sealed class MyMintsViewState(
     val myMints: List<MintedMedia> = listOf(),
