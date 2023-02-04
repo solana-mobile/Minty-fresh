@@ -5,4 +5,8 @@
     <string name="select_photo">Select a photo to mint:</string>
     <string name="image_content_desc">Image</string>
     <string name="take_pic_content_desc">Take Picture</string>
+    <string name="gallery_permission_body">It\u2019d be better if you could see your photos here, right?\n&#128071;</string>
+    <string name="gallery_permission_button">Allow photos access</string>
+    <string name="camera_permission_body">Mint directly from your camera without leaving the app\n&#128071;</string>
+    <string name="camera_permission_button">Allow camera access</string>
 </resources>
