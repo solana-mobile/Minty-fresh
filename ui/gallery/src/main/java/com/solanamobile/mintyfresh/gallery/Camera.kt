@@ -76,7 +76,11 @@ fun Camera(
                                 .padding(16.dp)
                                 .fillMaxSize(),
                         ) {
-                            EmptyView(it)
+                            EmptyView(
+                                it, stringResource(id = R.string.camera_permission_body), stringResource(
+                                    id = R.string.camera_permission_button
+                                )
+                            )
                         }
                     }
                 )

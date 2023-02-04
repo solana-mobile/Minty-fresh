@@ -42,43 +42,18 @@ fun EmptyView(
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun EmptyView(permissionState: MultiplePermissionsState) {
+fun EmptyView(
+    permissionState: MultiplePermissionsState,
+    bodyText: String,
+    buttonText: String
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val permissionDescMap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            mapOf(
-                Manifest.permission.CAMERA to stringResource(R.string.camera),
-                Manifest.permission.RECORD_AUDIO to stringResource(R.string.microphone),
-                Manifest.permission.READ_EXTERNAL_STORAGE to stringResource(R.string.storage),
-                Manifest.permission.READ_MEDIA_IMAGES to stringResource(R.string.photos_and_media)
-            )
-        } else {
-            mapOf(
-                Manifest.permission.CAMERA to stringResource(R.string.camera),
-                Manifest.permission.RECORD_AUDIO to stringResource(R.string.microphone),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE to stringResource(R.string.storage),
-                Manifest.permission.READ_EXTERNAL_STORAGE to stringResource(R.string.storage),
-            )
-        }
-
-        val revokedPermissions = permissionState.revokedPermissions.map {
-            permissionDescMap.getOrDefault(
-                it.permission,
-                ""
-            )
-        }
-
-        val textToShow = if (permissionState.shouldShowRationale) {
-            stringResource(R.string.permission_required, revokedPermissions.joinToString(separator = ", "))
-        } else {
-            stringResource(R.string.permission_important, revokedPermissions.joinToString(separator = ", "))
-        }
-
         Text(
-            textToShow,
+            bodyText,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(vertical = 16.dp)
         )
@@ -90,7 +65,7 @@ fun EmptyView(permissionState: MultiplePermissionsState) {
                 permissionState.launchMultiplePermissionRequest()
             },
             content = {
-                Text(stringResource(R.string.grant))
+                Text(buttonText)
             }
         )
     }
