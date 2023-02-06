@@ -31,7 +31,11 @@ android {
             "NFTSTORAGE_KEY",
             "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
         )
-        buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
+        buildConfigField("String", "NFTSTORAGE_API_BASE_URL", "\"https://api.nft.storage/\"")
+
+        buildConfigField("String", "SHADOW_DRIVE_API_BASE_URL", "\"https://shadow-storage.genesysgo.net\"")
+
+        buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
     }
 
     buildTypes {
@@ -45,6 +49,8 @@ android {
                 "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
             )
             buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
+
+            buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
         }
     }
 
@@ -73,13 +79,15 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
 
-    // SolanaKT & Metaplex
-    implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
-    implementation("com.github.metaplex-foundation:metaplex-android:1.3.0b3")
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
 
     testImplementation("junit:junit:4.13.2")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
+    implementation("com.github.metaplex-foundation:metaplex-android:1.3.4") {
+        exclude("com.github.metaplex-foundation.kborsh", "kborsh-android")
+    }
 }

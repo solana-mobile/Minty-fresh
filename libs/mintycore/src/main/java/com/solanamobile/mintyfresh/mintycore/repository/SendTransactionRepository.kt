@@ -1,23 +1,23 @@
 package com.solanamobile.mintyfresh.mintycore.repository
 
-import com.metaplex.lib.drivers.solana.Connection
-import com.metaplex.lib.drivers.solana.sendTransaction
+import com.metaplex.lib.drivers.solana.*
 import com.solana.core.Transaction
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
-class SendTransactionRepository @Inject constructor(private val connectionDriver: Connection)  {
+class SendTransactionRepository @Inject constructor(private val connection: Connection)  {
+
     suspend fun sendTransaction(transaction: Transaction) =
-        connectionDriver.sendTransaction(transaction).getOrThrow()
+        connection.sendTransaction(transaction).getOrThrow()
 
     suspend fun confirmTransaction(transactionSignature: String): Boolean =
-        withTimeout(connectionDriver.transactionOptions.timeout.toMillis()) {
+        withTimeout(connection.transactionOptions.timeout.toMillis()) {
 
-            val commitment = connectionDriver.transactionOptions.commitment.toString()
+            val commitment = connection.transactionOptions.commitment.toString()
 
             suspend fun confirmationStatus() =
-                connectionDriver.getSignatureStatuses(listOf(transactionSignature), null)
+                connection.getSignatureStatuses(listOf(transactionSignature), null)
                     .getOrNull()?.first()?.also { it.err?.let { error ->
                         throw Error("Transaction Confirmation Failed: $error")
                     } }

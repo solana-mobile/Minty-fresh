@@ -4,6 +4,6 @@ import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.drivers.solana.getRecentBlockhash
 import javax.inject.Inject
 
-class LatestBlockhashRepository @Inject constructor(private val connectionDriver: Connection) {
-    suspend fun getLatestBlockHash() = connectionDriver.getRecentBlockhash().getOrThrow()
+class LatestBlockhashRepository @Inject constructor(private val connection: Connection) {
+    suspend fun getLatestBlockHash() = connection.getRecentBlockhash().getOrThrow()
 }

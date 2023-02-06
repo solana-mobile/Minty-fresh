@@ -5,8 +5,7 @@ import com.metaplex.lib.drivers.solana.Connection
 import com.metaplex.lib.drivers.solana.SolanaConnectionDriver
 import com.metaplex.lib.drivers.solana.TransactionOptions
 import com.solanamobile.mintyfresh.mintycore.BuildConfig
-import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
-import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageResponseConverter
+import com.solanamobile.mintyfresh.mintycore.endpoints.*
 import com.solanamobile.mintyfresh.mintycore.metaplex.MetaplexHttpDriver
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import dagger.Module
@@ -24,11 +23,21 @@ class MintyCoreModule {
     @Provides
     fun providesNftStorageApi(): NftStorageEndpoints {
         val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL)
+            .baseUrl(BuildConfig.NFTSTORAGE_API_BASE_URL)
             .addConverterFactory(NftStorageResponseConverter)
             .build()
 
         return retrofit.create(NftStorageEndpoints::class.java)
+    }
+
+    @Provides
+    fun providesShadowDriveApi(): ShadowDriveEndpoints {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BuildConfig.SHADOW_DRIVE_API_BASE_URL)
+            .addConverterFactory(SerializableResponseConverter(ShadowDriveResponseSerializer))
+            .build()
+
+        return retrofit.create(ShadowDriveEndpoints::class.java)
     }
 
     @Provides

@@ -8,7 +8,7 @@ import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPda
 import javax.inject.Inject
 
-class MintTransactionRepository @Inject constructor(private val connectionDriver: Connection)  {
+class MintTransactionRepository @Inject constructor(private val connection: Connection)  {
 
     // not currently used, but shows how you could build the minting transaction
     suspend fun buildMintTransaction(title: String, metadataUrl: String, mint: PublicKey, payer: PublicKey) =
@@ -16,7 +16,7 @@ class MintTransactionRepository @Inject constructor(private val connectionDriver
             newMint = mint,
             metadata = createNftMetadata(title, metadataUrl, payer),
             payer = payer,
-            connection = connectionDriver
+            connection = connection
         ).build().getOrThrow().apply {
             feePayer = payer
         }
