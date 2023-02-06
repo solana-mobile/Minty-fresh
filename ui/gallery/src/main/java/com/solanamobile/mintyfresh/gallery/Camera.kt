@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,15 +71,20 @@ fun Camera(
                         StartCamera(navigateToDetails)
                     },
                     emptyView = {
+                        LaunchedEffect(key1 = Unit) {
+                            if (!it.allPermissionsGranted) {
+                                it.launchMultiplePermissionRequest()
+                            }
+                        }
                         Box(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .fillMaxSize(),
                         ) {
                             EmptyView(
-                                it, stringResource(id = R.string.camera_permission_body), stringResource(
-                                    id = R.string.camera_permission_button
-                                )
+                                it,
+                                stringResource(id = R.string.camera_permission_body),
+                                stringResource(id = R.string.camera_permission_button)
                             )
                         }
                     }
