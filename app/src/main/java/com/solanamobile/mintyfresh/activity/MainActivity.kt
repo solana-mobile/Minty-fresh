@@ -114,6 +114,7 @@ class MainActivity : ComponentActivity() {
                                 navController = animNavController
                             ) {
                                 Gallery(
+                                    mediaViewModel = mediaViewModel,
                                     navigateToDetails = {
                                         animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
                                     }

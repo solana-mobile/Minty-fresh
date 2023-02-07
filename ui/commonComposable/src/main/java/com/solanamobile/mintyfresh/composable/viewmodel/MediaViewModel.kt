@@ -30,10 +30,6 @@ data class Media(
 class MediaViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
     private val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun deliverSelfNotifications(): Boolean {
-            return true
-        }
-
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
             loadAllMediaFiles()
