@@ -95,13 +95,6 @@ class MainActivity : ComponentActivity() {
                         navController = animNavController,
                         startDestination = NavigationItem.Photos.route,
                     ) {
-                        composable(NavigationItem.Camera.route) {
-                            Camera(
-                                navigateToDetails = {
-                                    animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
-                                }
-                            )
-                        }
                         composable(NavigationItem.Photos.route) {
                             ScaffoldScreen(
                                 activityResultSender = activityResultSender,
@@ -113,6 +106,35 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             }
+                        }
+                        composable(
+                            route = "${NavigationItem.MyMints.route}?forceRefresh={forceRefresh}",
+                            arguments = listOf(navArgument("forceRefresh") {
+                                type = NavType.BoolType
+                                defaultValue = false
+                            }),
+                        ) { backStackEntry ->
+                            val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
+
+                            ScaffoldScreen(
+                                activityResultSender = activityResultSender,
+                                navController = animNavController
+                            ) {
+                                MyMintPage(
+                                    forceRefresh = forceRefresh
+                                        ?: throw IllegalStateException("Argument required")
+                                ) {
+                                    animNavController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
+                                }
+                            }
+                        }
+
+                        composable(NavigationItem.Camera.route) {
+                            Camera(
+                                navigateToDetails = {
+                                    animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                                }
+                            )
                         }
                         composable(
                             route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
@@ -170,27 +192,6 @@ class MainActivity : ComponentActivity() {
                                 identityName = stringResource(R.string.app_name),
                                 intentSender = activityResultSender
                             )
-                        }
-                        composable(
-                            route = "${NavigationItem.MyMints.route}?forceRefresh={forceRefresh}",
-                            arguments = listOf(navArgument("forceRefresh") {
-                                type = NavType.BoolType
-                                defaultValue = false
-                            }),
-                        ) { backStackEntry ->
-                            val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
-
-                            ScaffoldScreen(
-                                activityResultSender = activityResultSender,
-                                navController = animNavController
-                            ) {
-                                MyMintPage(
-                                    forceRefresh = forceRefresh
-                                        ?: throw IllegalStateException("Argument required")
-                                ) {
-                                    animNavController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
-                                }
-                            }
                         }
                         composable(
                             route = "${NavigationItem.MyMintsDetails.route}?index={index}",
