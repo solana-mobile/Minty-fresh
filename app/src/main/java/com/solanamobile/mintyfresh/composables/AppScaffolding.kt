@@ -11,29 +11,35 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Surface
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.navigation.NavigationItem
-import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaffoldScreen(
-    currentRoute: String,
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     content: @Composable () -> Unit
 ) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val isPhotosScreen =
+        navBackStackEntry?.destination?.hierarchy?.any { it.route == NavigationItem.Photos.route } == true
+
     Scaffold(
         floatingActionButton = {
-            if (currentRoute == NavigationItem.Photos.route) {
+            if (isPhotosScreen) {
                 FloatingActionButton(
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     backgroundColor = MaterialTheme.colorScheme.onBackground,
@@ -51,30 +57,23 @@ fun ScaffoldScreen(
             }
         },
         topBar = {
-            if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .statusBarsPadding()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    ConnectWalletButton(
-                        identityUri = Uri.parse(stringResource(R.string.id_url)),
-                        iconUri = Uri.parse(stringResource(R.string.id_favico)),
-                        identityName = stringResource(R.string.app_name),
-                        activityResultSender = activityResultSender
-                    )
-                }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                ConnectWalletButton(
+                    identityUri = Uri.parse(stringResource(R.string.id_url)),
+                    iconUri = Uri.parse(stringResource(R.string.id_favico)),
+                    identityName = stringResource(R.string.app_name),
+                    activityResultSender = activityResultSender
+                )
             }
         },
         bottomBar = {
-            if (currentRoute == NavigationItem.Photos.route || currentRoute == NavigationItem.MyMints.route) {
-                BottomNavigationBar(
-                    navController = navController,
-                    currentRoute = currentRoute
-                )
-            }
+            BottomNavigationBar(navController = navController)
         },
         content = { padding ->
             Box(
@@ -88,10 +87,10 @@ fun ScaffoldScreen(
 }
 
 @Composable
-private fun BottomNavigationBar(
-    navController: NavHostController,
-    currentRoute: String
-) {
+private fun BottomNavigationBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     val items = listOf(
         NavigationItem.Photos,
         NavigationItem.MyMints,
@@ -116,6 +115,10 @@ private fun BottomNavigationBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 content = {
                     items.forEach { item ->
+
+                        val selected = currentDestination?.hierarchy?.any {
+                            it.route?.split("?")?.firstOrNull() == item.route
+                        } == true
                         BottomNavigationItem(
                             icon = {
                                 Column(
@@ -123,7 +126,7 @@ private fun BottomNavigationBar(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(10.dp))
                                         .then(
-                                            if (currentRoute == item.route) {
+                                            if (selected) {
                                                 Modifier.background(
                                                     color = MaterialTheme.colorScheme.surfaceVariant
                                                 )
@@ -150,7 +153,7 @@ private fun BottomNavigationBar(
                                     )
                                 }
                             },
-                            selected = currentRoute == item.route,
+                            selected = selected,
                             onClick = {
                                 navController.navigate(item.route) {
                                     // Pop up to the start destination of the graph to
