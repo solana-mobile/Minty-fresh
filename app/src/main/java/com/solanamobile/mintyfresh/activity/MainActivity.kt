@@ -4,8 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,15 +29,16 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.solanamobile.mintyfresh.R
-import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
+import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.composables.ScaffoldScreen
 import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
 import com.solanamobile.mintyfresh.mymints.composables.MyMintsDetails
+import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.MintDetailsPage
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,12 +48,15 @@ import java.io.File
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val mediaViewModel: MediaViewModel by viewModels()
+
     @OptIn(
         ExperimentalAnimationApi::class,
         ExperimentalMaterialApi::class
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        registerContentObserver()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -208,5 +214,22 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        unregisterContentObserver()
+        super.onDestroy()
+    }
+
+    private fun registerContentObserver() {
+        applicationContext.contentResolver.registerContentObserver(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            true,
+            mediaViewModel.contentObserver
+        )
+    }
+
+    private fun unregisterContentObserver() {
+        applicationContext.contentResolver.unregisterContentObserver(mediaViewModel.contentObserver)
     }
 }

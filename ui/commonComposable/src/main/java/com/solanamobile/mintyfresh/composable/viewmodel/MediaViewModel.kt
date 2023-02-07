@@ -1,8 +1,11 @@
 package com.solanamobile.mintyfresh.composable.viewmodel
 
 import android.app.Application
+import android.database.ContentObserver
 import android.database.Cursor
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,10 +30,21 @@ data class Media(
 @HiltViewModel
 class MediaViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    private var mediaLiveData: MutableStateFlow<List<Media>> = MutableStateFlow(listOf())
+    val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+        override fun deliverSelfNotifications(): Boolean {
+            return true
+        }
+
+        override fun onChange(selfChange: Boolean) {
+            super.onChange(selfChange)
+            loadAllMediaFiles()
+        }
+    }
+
+    private var _mediaStateFlow: MutableStateFlow<List<Media>> = MutableStateFlow(listOf())
 
     fun getMediaList(): StateFlow<List<Media>> {
-        return mediaLiveData.asStateFlow()
+        return _mediaStateFlow.asStateFlow()
     }
 
     /**
@@ -86,7 +101,9 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
 
     fun loadAllMediaFiles() {
         viewModelScope.launch(Dispatchers.IO) {
-            mediaLiveData.value = loadMediaFromSDCard()
+            _mediaStateFlow.update {
+                loadMediaFromSDCard()
+            }
         }
     }
 }
