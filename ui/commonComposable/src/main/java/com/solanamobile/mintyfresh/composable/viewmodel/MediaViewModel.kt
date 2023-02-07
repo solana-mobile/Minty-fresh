@@ -33,50 +33,40 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
     }
 
     /**
-     * Load all media (Images and Videos) from contentResolver.
+     * Load all Images from contentResolver.
      *
      * Required Storage Permission
      */
     private fun loadMediaFromSDCard(): ArrayList<Media> {
-        val uri: Uri = MediaStore.Files.getContentUri("external")
+        val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val cursor: Cursor?
         val mediaFiles = ArrayList<Media>()
         val context = getApplication<Application>().applicationContext
 
         val projection =
             arrayOf(
-                MediaStore.Files.FileColumns.DATA,
-                MediaStore.Files.FileColumns.DATE_ADDED,
-                MediaStore.Files.FileColumns.MEDIA_TYPE,
-                MediaStore.Files.FileColumns.MIME_TYPE,
-                MediaStore.Files.FileColumns.TITLE
+                MediaStore.Images.Media.DATA,
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.MIME_TYPE,
+                MediaStore.Images.Media.TITLE
             )
-
-        // Return only video and image metadata.
-        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
-                + " OR "
-                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
 
         cursor = context.contentResolver.query(
             uri,
             projection,
-            selection,
             null,
-            MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+            null,
+            MediaStore.Images.Media.DATE_ADDED + " DESC"
         )
 
-        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-        val columnIndexDateAdded = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED)
-        val columnIndexMediaType = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
-        val columnIndexMimeType = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
-        val columnIndexTitle = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.TITLE)
+        val columnIndexData = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        val columnIndexDateAdded = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+        val columnIndexMimeType = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+        val columnIndexTitle = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE)
 
         while (cursor.moveToNext()) {
             val absolutePathOfImage = cursor.getString(columnIndexData)
             val dateAdded = cursor.getString(columnIndexDateAdded)
-            val mediaType = cursor.getInt(columnIndexMediaType)
             val mimeType = cursor.getString(columnIndexMimeType)
             val title = cursor.getString(columnIndexTitle)
 
@@ -84,7 +74,7 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
                 Media(
                     path = absolutePathOfImage,
                     dateAdded = dateAdded,
-                    mediaType = mediaType,
+                    mediaType = MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE,
                     mimeType = mimeType,
                     title = title
                 )
@@ -96,7 +86,7 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
 
     fun loadAllMediaFiles() {
         viewModelScope.launch(Dispatchers.IO) {
-            mediaLiveData.value = loadMediaFromSDCard().filter { it.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE }
+            mediaLiveData.value = loadMediaFromSDCard()
         }
     }
 }

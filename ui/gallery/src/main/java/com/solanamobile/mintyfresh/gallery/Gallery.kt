@@ -68,13 +68,6 @@ fun Gallery(
                 )
             )
         )
-        Text(
-            modifier = Modifier.padding(
-                top = 30.dp
-            ),
-            text = stringResource(R.string.select_photo),
-            style = MaterialTheme.typography.labelLarge
-        )
         PermissionView(
             permissionsRequired,
             content = {
@@ -87,34 +80,43 @@ fun Gallery(
                     }
                 )
 
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxHeight(),
-                    columns = GridCells.Adaptive(minSize = 76.dp),
-                    contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    itemsIndexed(items = uiState) { _, media ->
-                        when (media.mediaType) {
-                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
-                                GlideImage(
-                                    model = media.path,
-                                    contentDescription = stringResource(R.string.image_content_desc),
-                                    modifier = Modifier
-                                        .width(76.dp)
-                                        .aspectRatio(1.0f)
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .background(color = MaterialTheme.colorScheme.surface)
-                                        .clickable {
-                                            navigateToDetails(media.path)
-                                        },
-                                    contentScale = ContentScale.Crop
-                                ) {
-                                    it.thumbnail()
+                Column {
+                    Text(
+                        modifier = Modifier.padding(
+                            top = 30.dp
+                        ),
+                        text = stringResource(R.string.select_photo),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                    LazyVerticalGrid(
+                        modifier = Modifier.fillMaxHeight(),
+                        columns = GridCells.Adaptive(minSize = 76.dp),
+                        contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        itemsIndexed(items = uiState) { _, media ->
+                            when (media.mediaType) {
+                                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
+                                    GlideImage(
+                                        model = media.path,
+                                        contentDescription = stringResource(R.string.image_content_desc),
+                                        modifier = Modifier
+                                            .width(76.dp)
+                                            .aspectRatio(1.0f)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(color = MaterialTheme.colorScheme.surface)
+                                            .clickable {
+                                                navigateToDetails(media.path)
+                                            },
+                                        contentScale = ContentScale.Crop
+                                    ) {
+                                        it.thumbnail()
+                                    }
                                 }
-                            }
-                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
-                                VideoView(media)
+                                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
+                                    VideoView(media)
+                                }
                             }
                         }
                     }
