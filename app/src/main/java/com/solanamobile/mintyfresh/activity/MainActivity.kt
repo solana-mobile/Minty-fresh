@@ -104,7 +104,6 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(NavigationItem.Photos.route) {
                             ScaffoldScreen(
-                                currentRoute = NavigationItem.Photos.route,
                                 activityResultSender = activityResultSender,
                                 navController = animNavController
                             ) {
@@ -182,7 +181,6 @@ class MainActivity : ComponentActivity() {
                             val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
 
                             ScaffoldScreen(
-                                currentRoute = NavigationItem.MyMints.route,
                                 activityResultSender = activityResultSender,
                                 navController = animNavController
                             ) {
