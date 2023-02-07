@@ -3,7 +3,6 @@ package com.solanamobile.mintyfresh.composable.viewmodel
 import android.app.Application
 import android.database.ContentObserver
 import android.database.Cursor
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.provider.MediaStore
@@ -30,7 +29,7 @@ data class Media(
 @HiltViewModel
 class MediaViewModel @Inject constructor(application: Application) : AndroidViewModel(application) {
 
-    val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+    private val contentObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun deliverSelfNotifications(): Boolean {
             return true
         }
@@ -41,10 +40,22 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
         }
     }
 
-    private var _mediaStateFlow: MutableStateFlow<List<Media>> = MutableStateFlow(listOf())
+    private var mediaStateFlow: MutableStateFlow<List<Media>> = MutableStateFlow(listOf())
 
     fun getMediaList(): StateFlow<List<Media>> {
-        return _mediaStateFlow.asStateFlow()
+        return mediaStateFlow.asStateFlow()
+    }
+
+    fun registerContentObserver() {
+        getApplication<Application>().contentResolver.registerContentObserver(
+            URI,
+            true,
+            contentObserver
+        )
+    }
+
+    fun unregisterContentObserver() {
+        getApplication<Application>().contentResolver.unregisterContentObserver(contentObserver)
     }
 
     /**
@@ -53,7 +64,6 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
      * Required Storage Permission
      */
     private fun loadMediaFromSDCard(): ArrayList<Media> {
-        val uri: Uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val cursor: Cursor?
         val mediaFiles = ArrayList<Media>()
         val context = getApplication<Application>().applicationContext
@@ -67,7 +77,7 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
             )
 
         cursor = context.contentResolver.query(
-            uri,
+            URI,
             projection,
             null,
             null,
@@ -101,9 +111,13 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
 
     fun loadAllMediaFiles() {
         viewModelScope.launch(Dispatchers.IO) {
-            _mediaStateFlow.update {
+            mediaStateFlow.update {
                 loadMediaFromSDCard()
             }
         }
+    }
+
+    companion object {
+        private val URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
     }
 }

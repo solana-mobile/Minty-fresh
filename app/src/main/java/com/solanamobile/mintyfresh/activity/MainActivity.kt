@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -56,7 +55,7 @@ class MainActivity : ComponentActivity() {
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        registerContentObserver()
+        mediaViewModel.registerContentObserver()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -217,19 +216,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        unregisterContentObserver()
+        mediaViewModel.unregisterContentObserver()
         super.onDestroy()
-    }
-
-    private fun registerContentObserver() {
-        applicationContext.contentResolver.registerContentObserver(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            true,
-            mediaViewModel.contentObserver
-        )
-    }
-
-    private fun unregisterContentObserver() {
-        applicationContext.contentResolver.unregisterContentObserver(mediaViewModel.contentObserver)
     }
 }
