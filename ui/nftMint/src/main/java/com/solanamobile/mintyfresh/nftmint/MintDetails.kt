@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.*
@@ -168,13 +169,14 @@ fun MintDetailsPage(
                         modifier = Modifier.padding(
                             top = 28.dp
                         ),
+                        textAlign = TextAlign.Center,
                         text = when (uiState.mintState) {
                             is MintState.UploadingMedia -> stringResource(R.string.uploading_file)
                             is MintState.CreatingMetadata -> stringResource(R.string.uploading_metadata)
                             is MintState.BuildingTransaction, is MintState.Signing-> stringResource(R.string.requesting_signatuve)
                             is MintState.Minting -> stringResource(R.string.minting)
                             is MintState.AwaitingConfirmation -> stringResource(R.string.waiting_confirmations)
-                            is MintState.Error -> "Sorry, there was an error: ${uiState.mintState.message}"
+                            is MintState.Error -> stringResource(id = R.string.generic_error_message, uiState.mintState.message)
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium
