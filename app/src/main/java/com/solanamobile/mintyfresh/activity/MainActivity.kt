@@ -10,6 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AutoAwesome
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,15 +25,13 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
+import com.solanamobile.mintyfresh.composable.simplecomposables.NavigationItem
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.solanamobile.mintyfresh.gallery.cameraScreen
 import com.solanamobile.mintyfresh.gallery.galleryRoute
 import com.solanamobile.mintyfresh.gallery.galleryScreen
 import com.solanamobile.mintyfresh.gallery.navigateToCamera
-import com.solanamobile.mintyfresh.mymints.composables.myMintsDetailsScreen
-import com.solanamobile.mintyfresh.mymints.composables.myMintsScreen
-import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMints
-import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMintsDetails
+import com.solanamobile.mintyfresh.mymints.composables.*
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
@@ -95,6 +96,10 @@ class MainActivity : ComponentActivity() {
                             navigateToCamera = animNavController::navigateToCamera,
                             navController = animNavController,
                             activityResultSender = activityResultSender,
+                            navigationItems = listOf(
+                                NavigationItem(galleryRoute, Icons.Outlined.Image, R.string.photos),
+                                NavigationItem(myMintsRoute, Icons.Outlined.AutoAwesome, R.string.my_mints)
+                            ),
                             identityUri = Uri.parse(application.getString((R.string.id_url))),
                             iconUri = Uri.parse(application.getString(R.string.id_favico)),
                             appName = application.getString(R.string.app_name),
@@ -103,6 +108,10 @@ class MainActivity : ComponentActivity() {
                             navigateToDetails = animNavController::navigateToMyMintsDetails,
                             navController = animNavController,
                             activityResultSender = activityResultSender,
+                            navigationItems = listOf(
+                                NavigationItem(galleryRoute, Icons.Outlined.Image, R.string.photos),
+                                NavigationItem(myMintsRoute, Icons.Outlined.AutoAwesome, R.string.my_mints)
+                            ),
                             identityUri = Uri.parse(application.getString((R.string.id_url))),
                             iconUri = Uri.parse(application.getString(R.string.id_favico)),
                             appName = application.getString(R.string.app_name),

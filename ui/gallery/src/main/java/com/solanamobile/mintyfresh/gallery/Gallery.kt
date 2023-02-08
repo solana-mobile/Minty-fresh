@@ -36,10 +36,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.composable.simplecomposables.BottomNavigationBar
-import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
-import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
-import com.solanamobile.mintyfresh.composable.simplecomposables.VideoView
+import com.solanamobile.mintyfresh.composable.simplecomposables.*
 import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
@@ -51,6 +48,7 @@ fun NavGraphBuilder.galleryScreen(
     navigateToCamera: () -> Unit = { },
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
+    navigationItems: List<NavigationItem>,
     identityUri: Uri,
     iconUri: Uri,
     appName: String
@@ -90,6 +88,7 @@ fun NavGraphBuilder.galleryScreen(
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
+                    navigationItems = navigationItems
                 )
             },
             content = { padding ->

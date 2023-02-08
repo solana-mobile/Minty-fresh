@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,22 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.compose.material.icons.outlined.AutoAwesome
-import androidx.compose.material.icons.outlined.Image
 
-data class NavigationItem(val route: String, val icon: ImageVector, val title: String)
-
-val list = listOf(
-    NavigationItem("photos", Icons.Outlined.Image, "Photos"),
-    NavigationItem("mymints", Icons.Outlined.AutoAwesome, "My Mints")
-)
+data class NavigationItem(val route: String, val icon: ImageVector, val title: Int)
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController, items: List<NavigationItem> = list) {
+fun BottomNavigationBar(navController: NavHostController, navigationItems: List<NavigationItem>) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
@@ -51,7 +44,7 @@ fun BottomNavigationBar(navController: NavHostController, items: List<Navigation
                     .selectableGroup(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 content = {
-                    items.forEach { item ->
+                    navigationItems.forEach { item ->
 
                         val selected = currentDestination?.hierarchy?.any {
                             it.route?.split("?")?.firstOrNull() == item.route
@@ -81,10 +74,10 @@ fun BottomNavigationBar(navController: NavHostController, items: List<Navigation
                                             .padding(top = 5.dp, bottom = 3.dp)
                                             .size(24.dp),
                                         imageVector = item.icon,
-                                        contentDescription = item.title
+                                        contentDescription = stringResource(id = item.title)
                                     )
                                     Text(
-                                        text = item.title,
+                                        text = stringResource(id = item.title),
                                         style = MaterialTheme.typography.labelMedium,
                                         modifier = Modifier.padding(bottom = 10.dp)
                                     )

@@ -35,18 +35,17 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.navigation.animation.composable
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.composable.simplecomposables.BottomNavigationBar
-import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
-import com.solanamobile.mintyfresh.composable.simplecomposables.ErrorView
-import com.solanamobile.mintyfresh.composable.simplecomposables.loadingPlaceholder
+import com.solanamobile.mintyfresh.composable.simplecomposables.*
 import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
+const val myMintsRoute = "myMints"
+
 fun NavController.navigateToMyMints(forceRefresh: Boolean = false, navOptions: NavOptions? = null) {
-    this.navigate("myMints?forceRefresh=$forceRefresh", navOptions)
+    this.navigate("$myMintsRoute?forceRefresh=$forceRefresh", navOptions)
 }
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
@@ -54,18 +53,19 @@ fun NavGraphBuilder.myMintsScreen(
     navigateToDetails: (Int) -> Unit,
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
+    navigationItems: List<NavigationItem>,
     identityUri: Uri,
     iconUri: Uri,
     appName: String
 ) {
     composable(
-        route = "myMints?forceRefresh={forceRefresh}",
+        route = "$myMintsRoute?forceRefresh={forceRefresh}",
         arguments = listOf(navArgument("forceRefresh") {
             type = NavType.BoolType
             defaultValue = false
         }),
     ) { backStackEntry ->
-        val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh") ?: throw IllegalStateException("myMints requires an \"forceRefresh\" argument to be launched")
+        val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh") ?: throw IllegalStateException("$myMintsRoute requires an \"forceRefresh\" argument to be launched")
 
         Scaffold(
             topBar = {
@@ -87,6 +87,7 @@ fun NavGraphBuilder.myMintsScreen(
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
+                    navigationItems = navigationItems
                 )
             },
             content = { padding ->
