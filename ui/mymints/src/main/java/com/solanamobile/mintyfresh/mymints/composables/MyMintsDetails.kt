@@ -1,5 +1,6 @@
 package com.solanamobile.mintyfresh.mymints.composables
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -25,6 +27,29 @@ import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
+import com.google.accompanist.navigation.animation.composable
+
+private const val MyMintsDetailsRoute = "MyMintsDetails"
+
+fun NavController.navigateToMyMintsDetails(index: Int, navOptions: NavOptions? = null) {
+    this.navigate("$MyMintsDetailsRoute?index=$index", navOptions)
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.myMintsDetailsScreen(
+    navigateUp: () -> Boolean = { true },
+) {
+    composable(
+        route = "$MyMintsDetailsRoute?index={index}",
+        arguments = listOf(navArgument("index") { type = NavType.IntType }),
+    ) { backStackEntry ->
+        MyMintsDetails(
+            index = backStackEntry.arguments?.getInt("index")
+                ?: throw IllegalStateException("$MyMintsDetailsRoute requires an \"index\" argument to be launched"),
+            navigateUp = navigateUp,
+        )
+    }
+}
 
 @OptIn(
     ExperimentalPagerApi::class,
@@ -90,7 +115,7 @@ fun MyMintsDetails(
                 Text(
                     modifier = Modifier.padding(top = 24.dp),
                     style = MaterialTheme.typography.titleLarge,
-                    text = uiState.myMints[page].name ?: "",
+                    text = uiState.myMints[page].name,
                 )
                 Text(
                     modifier = Modifier.padding(top = 36.dp),
@@ -100,7 +125,7 @@ fun MyMintsDetails(
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
                     style = MaterialTheme.typography.bodyMedium,
-                    text = uiState.myMints[page].description ?: "",
+                    text = uiState.myMints[page].description,
                 )
                 Text(
                     modifier = Modifier.padding(top = 36.dp),

@@ -27,15 +27,16 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.solanamobile.mintyfresh.R
-import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.solanamobile.mintyfresh.composables.ScaffoldScreen
 import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
-import com.solanamobile.mintyfresh.mymints.composables.MyMintsDetails
+import com.solanamobile.mintyfresh.mymints.composables.myMintsDetailsScreen
+import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMintsDetails
+import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.MintDetailsPage
 import dagger.hilt.android.AndroidEntryPoint
@@ -124,7 +125,7 @@ class MainActivity : ComponentActivity() {
                                     forceRefresh = forceRefresh
                                         ?: throw IllegalStateException("Argument required")
                                 ) {
-                                    animNavController.navigate("${NavigationItem.MyMintsDetails.route}?index=$it")
+                                    animNavController.navigateToMyMintsDetails(index = it)
                                 }
                             }
                         }
@@ -193,16 +194,7 @@ class MainActivity : ComponentActivity() {
                                 intentSender = activityResultSender
                             )
                         }
-                        composable(
-                            route = "${NavigationItem.MyMintsDetails.route}?index={index}",
-                            arguments = listOf(navArgument("index") { type = NavType.IntType }),
-                        ) { backStackEntry ->
-                            MyMintsDetails(
-                                index = backStackEntry.arguments?.getInt("index")
-                                    ?: throw IllegalStateException("${NavigationItem.MyMintsDetails.route} requires an \"index\" argument to be launched"),
-                                navigateUp = navigateUp,
-                            )
-                        }
+                        myMintsDetailsScreen(navigateUp = { onNavigateUp() })
                     }
                 }
             }
