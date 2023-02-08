@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
+import com.solanamobile.mintyfresh.gallery.navigateToCamera
 import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
@@ -44,7 +45,7 @@ fun ScaffoldScreen(
                     shape = RoundedCornerShape(corner = CornerSize(16.dp)),
                     backgroundColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
-                        navController.navigate(NavigationItem.Camera.route)
+                        navController.navigateToCamera()
                     }
                 ) {
                     Icon(
