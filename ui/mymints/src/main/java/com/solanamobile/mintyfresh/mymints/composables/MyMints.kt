@@ -36,10 +36,10 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.navigation.animation.composable
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.composable.simplecomposables.*
+import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
-import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
 const val myMintsRoute = "myMints"
@@ -65,7 +65,8 @@ fun NavGraphBuilder.myMintsScreen(
             defaultValue = false
         }),
     ) { backStackEntry ->
-        val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh") ?: throw IllegalStateException("$myMintsRoute requires an \"forceRefresh\" argument to be launched")
+        val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
+            ?: throw IllegalStateException("$myMintsRoute requires an \"forceRefresh\" argument to be launched")
 
         Scaffold(
             topBar = {

@@ -32,6 +32,10 @@ import com.solanamobile.mintyfresh.gallery.galleryRoute
 import com.solanamobile.mintyfresh.gallery.galleryScreen
 import com.solanamobile.mintyfresh.gallery.navigateToCamera
 import com.solanamobile.mintyfresh.mymints.composables.*
+import com.solanamobile.mintyfresh.navigation.creatingGraph
+import com.solanamobile.mintyfresh.navigation.creatingGraphRoutePattern
+import com.solanamobile.mintyfresh.navigation.viewingGraph
+import com.solanamobile.mintyfresh.navigation.viewingGraphRoutePattern
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
@@ -89,62 +93,73 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AnimatedNavHost(
                         navController = animNavController,
-                        startDestination = galleryRoute,
+                        startDestination = creatingGraphRoutePattern,
                     ) {
-                        galleryScreen(
-                            navigateToDetails = animNavController::navigateToMintDetailsScreen,
-                            navigateToCamera = animNavController::navigateToCamera,
-                            navController = animNavController,
-                            activityResultSender = activityResultSender,
-                            navigationItems = listOf(
-                                NavigationItem(galleryRoute, Icons.Outlined.Image, R.string.photos),
-                                NavigationItem(myMintsRoute, Icons.Outlined.AutoAwesome, R.string.my_mints)
-                            ),
-                            identityUri = Uri.parse(application.getString((R.string.id_url))),
-                            iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                            appName = application.getString(R.string.app_name),
-                        )
-                        myMintsScreen(
-                            navigateToDetails = animNavController::navigateToMyMintsDetails,
-                            navController = animNavController,
-                            activityResultSender = activityResultSender,
-                            navigationItems = listOf(
-                                NavigationItem(galleryRoute, Icons.Outlined.Image, R.string.photos),
-                                NavigationItem(myMintsRoute, Icons.Outlined.AutoAwesome, R.string.my_mints)
-                            ),
-                            identityUri = Uri.parse(application.getString((R.string.id_url))),
-                            iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                            appName = application.getString(R.string.app_name),
-                        )
-
-                        cameraScreen(navigateToDetails = {
-                            animNavController.navigateToMintDetailsScreen(imagePath = it)
-                        })
-
-                        mintDetailsScreen(
-                            navigateUp = navigateUp,
-                            onMintCompleted = {
-                                animNavController.navigateToMyMints(
-                                    forceRefresh = true,
-                                    navOptions = NavOptions.Builder().setPopUpTo(
-                                        animNavController.graph.startDestinationId,
-                                        false
-                                    ).build()
+                        creatingGraph(
+                            startDestination = galleryRoute,
+                            nestedGraphs = {
+                                galleryScreen(
+                                    navigateToDetails = animNavController::navigateToMintDetailsScreen,
+                                    navigateToCamera = animNavController::navigateToCamera,
+                                    navController = animNavController,
+                                    activityResultSender = activityResultSender,
+                                    navigationItems = listOf(
+                                        NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
+                                        NavigationItem(viewingGraphRoutePattern, Icons.Outlined.AutoAwesome, R.string.my_mints)
+                                    ),
+                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
+                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                                    appName = application.getString(R.string.app_name),
                                 )
 
-                                scope.launch {
-                                    bottomSheetState.show()
-                                }
-                            },
-                            activityResultSender = activityResultSender,
-                            contentResolver = contentResolver,
-                            cacheDir = cacheDir,
-                            identityUri = Uri.parse(application.getString((R.string.id_url))),
-                            iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                            appName = application.getString(R.string.app_name),
+                                cameraScreen(navigateToDetails = {
+                                    animNavController.navigateToMintDetailsScreen(imagePath = it)
+                                })
+
+                                mintDetailsScreen(
+                                    navigateUp = navigateUp,
+                                    onMintCompleted = {
+                                        animNavController.navigateToMyMints(
+                                            forceRefresh = true,
+                                            navOptions = NavOptions.Builder().setPopUpTo(
+                                                animNavController.graph.startDestinationId,
+                                                false
+                                            ).build()
+                                        )
+
+                                        scope.launch {
+                                            bottomSheetState.show()
+                                        }
+                                    },
+                                    activityResultSender = activityResultSender,
+                                    contentResolver = contentResolver,
+                                    cacheDir = cacheDir,
+                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
+                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                                    appName = application.getString(R.string.app_name),
+                                )
+                            }
                         )
 
-                        myMintsDetailsScreen(navigateUp = navigateUp)
+                        viewingGraph(
+                            startDestination = "$myMintsRoute?forceRefresh={forceRefresh}",
+                            nestedGraphs = {
+                                myMintsScreen(
+                                    navigateToDetails = animNavController::navigateToMyMintsDetails,
+                                    navController = animNavController,
+                                    activityResultSender = activityResultSender,
+                                    navigationItems = listOf(
+                                        NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
+                                        NavigationItem(viewingGraphRoutePattern, Icons.Outlined.AutoAwesome, R.string.my_mints)
+                                    ),
+                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
+                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                                    appName = application.getString(R.string.app_name),
+                                )
+
+                                myMintsDetailsScreen(navigateUp = navigateUp)
+                            }
+                        )
                     }
                 }
             }
