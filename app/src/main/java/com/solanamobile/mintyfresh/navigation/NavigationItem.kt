@@ -10,7 +10,5 @@ import com.solanamobile.mintyfresh.R
 sealed class NavigationItem(var route: String, var icon: ImageVector, var title: Int) {
     object Camera : NavigationItem("camera", Icons.Outlined.AddAPhoto, R.string.camera)
     object Photos : NavigationItem("photos", Icons.Outlined.Image, R.string.photos)
-    object MintDetail : NavigationItem("mint", Icons.Outlined.AutoAwesome, R.string.mint)
     object MyMints : NavigationItem("mymints", Icons.Outlined.AutoAwesome, R.string.my_mints)
-    object MyMintsDetails : NavigationItem("mymintsdetails", Icons.Outlined.AutoAwesome, R.string.my_mints_details)
 }

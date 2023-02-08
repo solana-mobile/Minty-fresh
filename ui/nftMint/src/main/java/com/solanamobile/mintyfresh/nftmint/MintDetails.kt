@@ -1,6 +1,10 @@
 package com.solanamobile.mintyfresh.nftmint
 
+import android.content.ContentResolver
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -27,11 +31,81 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.google.accompanist.navigation.animation.composable
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 import com.solanamobile.mintyfresh.mintycore.usecase.MintState
+import java.io.File
+
+private const val MintDetailsRoute = "mint"
+
+fun NavController.navigateToMintDetailsScreen(imagePath: String, navOptions: NavOptions? = null) {
+    this.navigate("$MintDetailsRoute?imagePath=$imagePath", navOptions)
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.mintDetailsScreen(
+    navigateUp: () -> Boolean = { true },
+    onMintCompleted: () -> Unit,
+    activityResultSender: ActivityResultSender,
+    contentResolver: ContentResolver,
+    cacheDir: File,
+    identityUri: Uri,
+    iconUri: Uri,
+    appName: String
+) {
+    composable(
+        route = "$MintDetailsRoute?imagePath={imagePath}",
+        arguments = listOf(navArgument("imagePath") {
+            type = NavType.StringType
+        }),
+        deepLinks = listOf(navDeepLink {
+            uriPattern = "{imagePath}"
+            action = Intent.ACTION_SEND
+            mimeType = "image/*"
+        })
+    ) { backStackEntry ->
+        val imagePath = backStackEntry.arguments?.getString("imagePath")
+        val deepLinkIntent: Intent? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                backStackEntry.arguments?.getParcelable(
+                    NavController.KEY_DEEP_LINK_INTENT,
+                    Intent::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                backStackEntry.arguments?.getParcelable(
+                    NavController.KEY_DEEP_LINK_INTENT
+                )
+            }
+        val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri
+        val clipDataPath = clipDataUri?.let {
+            val input = contentResolver.openInputStream(clipDataUri)
+            val file = File.createTempFile("shared", ".image", cacheDir)
+
+            input?.let {
+                file.writeBytes(input.readBytes())
+                input.close()
+                file.toPath()
+            }
+        }?.toString()
+
+        MintDetailsPage(
+            imagePath = imagePath ?: clipDataPath
+            ?: throw IllegalStateException("$MintDetailsRoute requires an \"imagePath\" argument to be launched"),
+            navigateUp = navigateUp,
+            onMintCompleted = onMintCompleted,
+            identityUri = identityUri,
+            iconUri = iconUri,
+            identityName = appName,
+            intentSender = activityResultSender
+        )
+    }
+}
+
 
 @OptIn(
     ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,

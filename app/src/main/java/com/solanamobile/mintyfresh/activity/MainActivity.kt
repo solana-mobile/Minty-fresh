@@ -1,8 +1,6 @@
 package com.solanamobile.mintyfresh.activity
 
-import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,10 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -38,10 +34,10 @@ import com.solanamobile.mintyfresh.mymints.composables.myMintsDetailsScreen
 import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMintsDetails
 import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
-import com.solanamobile.mintyfresh.nftmint.MintDetailsPage
+import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
+import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.io.File
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -103,7 +99,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 Gallery(
                                     navigateToDetails = {
-                                        animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                                        animNavController.navigateToMintDetailsScreen(imagePath = it)
                                     }
                                 )
                             }
@@ -133,68 +129,30 @@ class MainActivity : ComponentActivity() {
                         composable(NavigationItem.Camera.route) {
                             Camera(
                                 navigateToDetails = {
-                                    animNavController.navigate("${NavigationItem.MintDetail.route}?imagePath=$it")
+                                    animNavController.navigateToMintDetailsScreen(imagePath = it)
                                 }
                             )
                         }
-                        composable(
-                            route = "${NavigationItem.MintDetail.route}?imagePath={imagePath}",
-                            arguments = listOf(navArgument("imagePath") {
-                                type = NavType.StringType
-                            }),
-                            deepLinks = listOf(navDeepLink {
-                                uriPattern = "{imagePath}"
-                                action = Intent.ACTION_SEND
-                                mimeType = "image/*"
-                            })
-                        ) { backStackEntry ->
-                            val imagePath = backStackEntry.arguments?.getString("imagePath")
-                            val deepLinkIntent: Intent? =
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    backStackEntry.arguments?.getParcelable(
-                                        NavController.KEY_DEEP_LINK_INTENT,
-                                        Intent::class.java
-                                    )
-                                } else {
-                                    @Suppress("DEPRECATION")
-                                    backStackEntry.arguments?.getParcelable(
-                                        NavController.KEY_DEEP_LINK_INTENT
-                                    )
+
+                        mintDetailsScreen(
+                            navigateUp = navigateUp,
+                            onMintCompleted = {
+                                animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
+                                    popUpTo(NavigationItem.Photos.route)
                                 }
-                            val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri
-                            val clipDataPath = clipDataUri?.let {
-                                val input = contentResolver.openInputStream(clipDataUri)
-                                val file = File.createTempFile("shared", ".image", cacheDir)
 
-                                input?.let {
-                                    file.writeBytes(input.readBytes())
-                                    input.close()
-                                    file.toPath()
+                                scope.launch {
+                                    bottomSheetState.show()
                                 }
-                            }?.toString()
-
-                            MintDetailsPage(
-                                imagePath = imagePath ?: clipDataPath
-                                ?: throw IllegalStateException("${NavigationItem.MintDetail.route} requires an \"imagePath\" argument to be launched"),
-                                navigateUp = {
-                                    animNavController.navigateUp()
-                                },
-                                onMintCompleted = {
-                                    animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
-                                        popUpTo(NavigationItem.Photos.route)
-                                    }
-
-                                    scope.launch {
-                                        bottomSheetState.show()
-                                    }
-                                },
-                                identityUri = Uri.parse(stringResource(R.string.id_url)),
-                                iconUri = Uri.parse(stringResource(R.string.id_favico)),
-                                identityName = stringResource(R.string.app_name),
-                                intentSender = activityResultSender
-                            )
-                        }
-                        myMintsDetailsScreen(navigateUp = { onNavigateUp() })
+                            },
+                            activityResultSender = activityResultSender,
+                            contentResolver = contentResolver,
+                            cacheDir = cacheDir,
+                            identityUri = Uri.parse(application.getString((R.string.id_url))),
+                            iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                            appName = application.getString(R.string.app_name),
+                        )
+                        myMintsDetailsScreen(navigateUp = navigateUp)
                     }
                 }
             }
