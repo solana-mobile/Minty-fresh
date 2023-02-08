@@ -16,24 +16,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
+import androidx.navigation.NavOptions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
-import com.solanamobile.mintyfresh.composables.ScaffoldScreen
-import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.gallery.cameraScreen
+import com.solanamobile.mintyfresh.gallery.galleryRoute
 import com.solanamobile.mintyfresh.gallery.galleryScreen
 import com.solanamobile.mintyfresh.gallery.navigateToCamera
-import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
 import com.solanamobile.mintyfresh.mymints.composables.myMintsDetailsScreen
+import com.solanamobile.mintyfresh.mymints.composables.myMintsScreen
+import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMints
 import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMintsDetails
-import com.solanamobile.mintyfresh.navigation.NavigationItem
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
@@ -91,7 +88,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AnimatedNavHost(
                         navController = animNavController,
-                        startDestination = "photos",
+                        startDestination = galleryRoute,
                     ) {
                         galleryScreen(
                             navigateToDetails = animNavController::navigateToMintDetailsScreen,
@@ -102,27 +99,14 @@ class MainActivity : ComponentActivity() {
                             iconUri = Uri.parse(application.getString(R.string.id_favico)),
                             appName = application.getString(R.string.app_name),
                         )
-                        composable(
-                            route = "${NavigationItem.MyMints.route}?forceRefresh={forceRefresh}",
-                            arguments = listOf(navArgument("forceRefresh") {
-                                type = NavType.BoolType
-                                defaultValue = false
-                            }),
-                        ) { backStackEntry ->
-                            val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
-
-                            ScaffoldScreen(
-                                activityResultSender = activityResultSender,
-                                navController = animNavController
-                            ) {
-                                MyMintPage(
-                                    forceRefresh = forceRefresh
-                                        ?: throw IllegalStateException("Argument required")
-                                ) {
-                                    animNavController.navigateToMyMintsDetails(index = it)
-                                }
-                            }
-                        }
+                        myMintsScreen(
+                            navigateToDetails = animNavController::navigateToMyMintsDetails,
+                            navController = animNavController,
+                            activityResultSender = activityResultSender,
+                            identityUri = Uri.parse(application.getString((R.string.id_url))),
+                            iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                            appName = application.getString(R.string.app_name),
+                        )
 
                         cameraScreen(navigateToDetails = {
                             animNavController.navigateToMintDetailsScreen(imagePath = it)
@@ -131,9 +115,13 @@ class MainActivity : ComponentActivity() {
                         mintDetailsScreen(
                             navigateUp = navigateUp,
                             onMintCompleted = {
-                                animNavController.navigate("${NavigationItem.MyMints.route}?forceRefresh=true") {
-                                    popUpTo(NavigationItem.Photos.route)
-                                }
+                                animNavController.navigateToMyMints(
+                                    forceRefresh = true,
+                                    navOptions = NavOptions.Builder().setPopUpTo(
+                                        animNavController.graph.startDestinationId,
+                                        false
+                                    ).build()
+                                )
 
                                 scope.launch {
                                     bottomSheetState.show()
@@ -146,6 +134,7 @@ class MainActivity : ComponentActivity() {
                             iconUri = Uri.parse(application.getString(R.string.id_favico)),
                             appName = application.getString(R.string.app_name),
                         )
+
                         myMintsDetailsScreen(navigateUp = navigateUp)
                     }
                 }

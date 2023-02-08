@@ -43,6 +43,8 @@ import com.solanamobile.mintyfresh.composable.simplecomposables.VideoView
 import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
+const val galleryRoute = "photos"
+
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.galleryScreen(
     navigateToDetails: (String) -> Unit = { },
@@ -53,7 +55,7 @@ fun NavGraphBuilder.galleryScreen(
     iconUri: Uri,
     appName: String
 ) {
-    composable(route = "photos") {
+    composable(route = galleryRoute) {
         Scaffold(
             floatingActionButton = {
                 FloatingActionButton(

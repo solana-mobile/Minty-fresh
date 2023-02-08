@@ -24,8 +24,8 @@ import androidx.compose.material.icons.outlined.Image
 data class NavigationItem(val route: String, val icon: ImageVector, val title: String)
 
 val list = listOf(
-    NavigationItem("photos", Icons.Outlined.Image, "photos"),
-    NavigationItem("mymints", Icons.Outlined.AutoAwesome, "my mints")
+    NavigationItem("photos", Icons.Outlined.Image, "Photos"),
+    NavigationItem("mymints", Icons.Outlined.AutoAwesome, "My Mints")
 )
 
 @Composable

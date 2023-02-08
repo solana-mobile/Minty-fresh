@@ -46,6 +46,7 @@ android {
 
 dependencies {
     implementation(project(":ui:commonComposable"))
+    implementation(project(":ui:walletConnectButton"))
     implementation(project(":libs:mintycore"))
     implementation(project(":libs:persistence"))
     implementation(project(":libs:networkInterface"))
