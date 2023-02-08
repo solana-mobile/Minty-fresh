@@ -1,5 +1,7 @@
 package com.solanamobile.mintyfresh.mymints.composables
 
+import android.net.Uri
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,7 +15,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,15 +30,80 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
+import androidx.navigation.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
-import com.solanamobile.mintyfresh.composable.simplecomposables.ErrorView
-import com.solanamobile.mintyfresh.composable.simplecomposables.loadingPlaceholder
+import com.google.accompanist.navigation.animation.composable
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.composable.simplecomposables.*
 import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
 import com.solanamobile.mintyfresh.mymints.R
+import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
+
+const val myMintsRoute = "myMints"
+
+fun NavController.navigateToMyMints(forceRefresh: Boolean = false, navOptions: NavOptions? = null) {
+    this.navigate("$myMintsRoute?forceRefresh=$forceRefresh", navOptions)
+}
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+fun NavGraphBuilder.myMintsScreen(
+    navigateToDetails: (Int) -> Unit,
+    navController: NavHostController,
+    activityResultSender: ActivityResultSender,
+    navigationItems: List<NavigationItem>,
+    identityUri: Uri,
+    iconUri: Uri,
+    appName: String
+) {
+    composable(
+        route = "$myMintsRoute?forceRefresh={forceRefresh}",
+        arguments = listOf(navArgument("forceRefresh") {
+            type = NavType.BoolType
+            defaultValue = false
+        }),
+    ) { backStackEntry ->
+        val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh") ?: throw IllegalStateException("$myMintsRoute requires an \"forceRefresh\" argument to be launched")
+
+        Scaffold(
+            topBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    ConnectWalletButton(
+                        identityUri = identityUri,
+                        iconUri = iconUri,
+                        identityName = appName,
+                        activityResultSender = activityResultSender
+                    )
+                }
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController,
+                    navigationItems = navigationItems
+                )
+            },
+            content = { padding ->
+                Box(
+                    modifier = Modifier.padding(padding)
+                ) {
+                    MyMintPage(
+                        forceRefresh = forceRefresh,
+                        navigateToDetails = navigateToDetails
+                    )
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        )
+    }
+}
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable
