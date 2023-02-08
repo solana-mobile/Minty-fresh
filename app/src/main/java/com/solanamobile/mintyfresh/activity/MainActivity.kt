@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -119,12 +120,15 @@ class MainActivity : ComponentActivity() {
                                 mintDetailsScreen(
                                     navigateUp = navigateUp,
                                     onMintCompleted = {
+                                        // Remove the MintDetails page from stack first.
+                                        animNavController.popBackStack()
                                         animNavController.navigateToMyMints(
                                             forceRefresh = true,
                                             navOptions = NavOptions.Builder().setPopUpTo(
-                                                animNavController.graph.startDestinationId,
-                                                false
-                                            ).build()
+                                                animNavController.graph.findStartDestination().id,
+                                                inclusive = false,
+                                                saveState = true
+                                            ).setRestoreState(true).setLaunchSingleTop(true).build()
                                         )
 
                                         scope.launch {
