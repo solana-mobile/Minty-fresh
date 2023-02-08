@@ -14,7 +14,6 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavType
@@ -27,8 +26,8 @@ import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.solanamobile.mintyfresh.composables.ScaffoldScreen
-import com.solanamobile.mintyfresh.gallery.Camera
 import com.solanamobile.mintyfresh.gallery.Gallery
+import com.solanamobile.mintyfresh.gallery.cameraScreen
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
 import com.solanamobile.mintyfresh.mymints.composables.myMintsDetailsScreen
 import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMintsDetails
@@ -126,13 +125,9 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        composable(NavigationItem.Camera.route) {
-                            Camera(
-                                navigateToDetails = {
-                                    animNavController.navigateToMintDetailsScreen(imagePath = it)
-                                }
-                            )
-                        }
+                        cameraScreen(navigateToDetails = {
+                            animNavController.navigateToMintDetailsScreen(imagePath = it)
+                        })
 
                         mintDetailsScreen(
                             navigateUp = navigateUp,
