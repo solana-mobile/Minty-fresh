@@ -1,5 +1,6 @@
 package com.solanamobile.mintyfresh.mymints.composables
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -56,6 +57,7 @@ fun NavGraphBuilder.myMintsDetailsScreen(
     ExperimentalGlideComposeApi::class,
     ExperimentalMaterial3Api::class,
 )
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyMintsDetails(
     index: Int,
@@ -83,12 +85,10 @@ fun MyMintsDetails(
                 scrollBehavior = scrollBehavior
             )
         }
-    ) { innerPadding ->
+    ) {
         HorizontalPager(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+            modifier = Modifier.fillMaxSize(),
             count = uiState.myMints.size,
             state = PagerState(index),
         ) { page ->

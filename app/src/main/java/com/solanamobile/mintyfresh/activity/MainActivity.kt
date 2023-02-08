@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -28,8 +26,6 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.simplecomposables.BottomNavigationBar
@@ -47,6 +43,7 @@ import com.solanamobile.mintyfresh.navigation.viewingGraphRoutePattern
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
+import com.solanamobile.mintyfresh.rememberMintyFreshAppState
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -66,20 +63,18 @@ class MainActivity : ComponentActivity() {
         val activityResultSender = ActivityResultSender(this)
 
         setContent {
-            val animNavController = rememberAnimatedNavController()
-            val systemUiController = rememberSystemUiController()
-            val useDarkIcons = !isSystemInDarkTheme()
-            val scope = rememberCoroutineScope()
+            val appState = rememberMintyFreshAppState()
+            val useDarkIcons = appState.useDarkIcons
 
             SideEffect {
-                systemUiController.setSystemBarsColor(
+                appState.systemUiController.setSystemBarsColor(
                     Color.Transparent,
                     darkIcons = useDarkIcons
                 )
             }
 
             AppTheme {
-                val navigateUp = { animNavController.navigateUp() }
+                val navigateUp = { appState.navController.navigateUp() }
 
                 val bottomSheetState =
                     rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
@@ -92,7 +87,7 @@ class MainActivity : ComponentActivity() {
                     sheetContent = {
                         MintConfirmLayout(
                             onDoneClick = {
-                                scope.launch {
+                                appState.coroutineScope.launch {
                                     bottomSheetState.hide()
                                 }
                             }
@@ -102,78 +97,92 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Scaffold(
                         topBar = {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .statusBarsPadding()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                ConnectWalletButton(
-                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
-                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                                    identityName = application.getString(R.string.app_name),
-                                    activityResultSender = activityResultSender
-                                )
+                            if (appState.shouldShowAppBar) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .statusBarsPadding()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    ConnectWalletButton(
+                                        identityUri = Uri.parse(application.getString((R.string.id_url))),
+                                        iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                                        identityName = application.getString(R.string.app_name),
+                                        activityResultSender = activityResultSender
+                                    )
+                                }
                             }
                         },
                         floatingActionButton = {
-                            FloatingActionButton(
-                                shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                                backgroundColor = MaterialTheme.colorScheme.onBackground,
-                                onClick = animNavController::navigateToCamera
-                            ) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    imageVector = Icons.Outlined.AddAPhoto,
-                                    contentDescription = stringResource(R.string.take_pic_content_desc),
-                                    tint = MaterialTheme.colorScheme.background
-                                )
+                            if (appState.shouldShowFAB) {
+                                FloatingActionButton(
+                                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                                    backgroundColor = MaterialTheme.colorScheme.onBackground,
+                                    onClick = appState.navController::navigateToCamera
+                                ) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        imageVector = Icons.Outlined.AddAPhoto,
+                                        contentDescription = stringResource(R.string.take_pic_content_desc),
+                                        tint = MaterialTheme.colorScheme.background
+                                    )
+                                }
                             }
                         },
                         bottomBar = {
-                            BottomNavigationBar(
-                                navController = animNavController,
-                                navigationItems = listOf(
-                                    NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
-                                    NavigationItem(viewingGraphRoutePattern, Icons.Outlined.AutoAwesome, R.string.my_mints)
-                                ),
-                            )
+                            if (appState.shouldShowAppBar) {
+                                BottomNavigationBar(
+                                    navController = appState.navController,
+                                    navigationItems = listOf(
+                                        NavigationItem(
+                                            creatingGraphRoutePattern,
+                                            Icons.Outlined.Image,
+                                            R.string.photos
+                                        ),
+                                        NavigationItem(
+                                            viewingGraphRoutePattern,
+                                            Icons.Outlined.AutoAwesome,
+                                            R.string.my_mints
+                                        )
+                                    ),
+                                )
+                            }
                         },
                         content = {
                             Box(
                                 modifier = Modifier.padding(it)
                             ) {
                                 AnimatedNavHost(
-                                    navController = animNavController,
+                                    navController = appState.navController,
                                     startDestination = creatingGraphRoutePattern,
                                 ) {
                                     creatingGraph(
                                         startDestination = galleryRoute,
                                         nestedGraphs = {
                                             galleryScreen(
-                                                navigateToDetails = animNavController::navigateToMintDetailsScreen,
+                                                navigateToDetails = appState.navController::navigateToMintDetailsScreen,
                                             )
 
                                             cameraScreen(navigateToDetails = {
-                                                animNavController.navigateToMintDetailsScreen(imagePath = it)
+                                                appState.navController.navigateToMintDetailsScreen(imagePath = it)
                                             })
 
                                             mintDetailsScreen(
                                                 navigateUp = navigateUp,
                                                 onMintCompleted = {
                                                     // Remove the MintDetails page from stack first.
-                                                    animNavController.popBackStack()
-                                                    animNavController.navigateToMyMints(
+                                                    appState.navController.popBackStack()
+                                                    appState.navController.navigateToMyMints(
                                                         forceRefresh = true,
                                                         navOptions = NavOptions.Builder().setPopUpTo(
-                                                            animNavController.graph.findStartDestination().id,
+                                                            appState.navController.graph.findStartDestination().id,
                                                             inclusive = false,
                                                             saveState = true
                                                         ).setRestoreState(true).setLaunchSingleTop(true).build()
                                                     )
 
-                                                    scope.launch {
+                                                    appState.coroutineScope.launch {
                                                         bottomSheetState.show()
                                                     }
                                                 },
@@ -191,7 +200,7 @@ class MainActivity : ComponentActivity() {
                                         startDestination = "$myMintsRoute?forceRefresh={forceRefresh}",
                                         nestedGraphs = {
                                             myMintsScreen(
-                                                navigateToDetails = animNavController::navigateToMyMintsDetails,
+                                                navigateToDetails = appState.navController::navigateToMyMintsDetails,
                                             )
 
                                             myMintsDetailsScreen(navigateUp = navigateUp)

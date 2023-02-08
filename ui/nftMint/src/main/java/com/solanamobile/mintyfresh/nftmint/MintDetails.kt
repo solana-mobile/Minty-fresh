@@ -1,5 +1,6 @@
 package com.solanamobile.mintyfresh.nftmint
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
@@ -112,6 +113,7 @@ fun NavGraphBuilder.mintDetailsScreen(
     ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class,
     ExperimentalComposeUiApi::class
 )
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MintDetailsPage(
     identityUri: Uri,
@@ -124,9 +126,10 @@ fun MintDetailsPage(
     intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    if (uiState.mintState is MintState.Complete){
+    if (uiState.mintState is MintState.Complete) {
         onMintCompleted()
     }
 
@@ -151,14 +154,13 @@ fun MintDetailsPage(
                 scrollBehavior = scrollBehavior
             )
         },
-        content = { padding ->
+        content = {
             if (uiState.mintState !is MintState.None) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(padding)
                         .fillMaxWidth()
                         .fillMaxHeight()
                 ) {
@@ -173,10 +175,15 @@ fun MintDetailsPage(
                         text = when (uiState.mintState) {
                             is MintState.UploadingMedia -> stringResource(R.string.uploading_file)
                             is MintState.CreatingMetadata -> stringResource(R.string.uploading_metadata)
-                            is MintState.BuildingTransaction, is MintState.Signing-> stringResource(R.string.requesting_signatuve)
+                            is MintState.BuildingTransaction, is MintState.Signing -> stringResource(
+                                R.string.requesting_signatuve
+                            )
                             is MintState.Minting -> stringResource(R.string.minting)
                             is MintState.AwaitingConfirmation -> stringResource(R.string.waiting_confirmations)
-                            is MintState.Error -> stringResource(id = R.string.generic_error_message, uiState.mintState.message)
+                            is MintState.Error -> stringResource(
+                                id = R.string.generic_error_message,
+                                uiState.mintState.message
+                            )
                             else -> ""
                         },
                         style = MaterialTheme.typography.bodyMedium
@@ -187,7 +194,6 @@ fun MintDetailsPage(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.background)
-                        .padding(padding)
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 16.dp)
                         .verticalScroll(rememberScrollState())
@@ -324,7 +330,11 @@ fun MintDetailsPage(
                             )
                         }
                     ) {
-                        Text(text = if (uiState.isWalletConnected) stringResource(R.string.mint) else stringResource(R.string.connect_and_mint))
+                        Text(
+                            text = if (uiState.isWalletConnected) stringResource(R.string.mint) else stringResource(
+                                R.string.connect_and_mint
+                            )
+                        )
                     }
                 }
             }
