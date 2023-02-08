@@ -28,6 +28,8 @@ import com.solanamobile.mintyfresh.composable.theme.AppTheme
 import com.solanamobile.mintyfresh.composables.ScaffoldScreen
 import com.solanamobile.mintyfresh.gallery.Gallery
 import com.solanamobile.mintyfresh.gallery.cameraScreen
+import com.solanamobile.mintyfresh.gallery.galleryScreen
+import com.solanamobile.mintyfresh.gallery.navigateToCamera
 import com.solanamobile.mintyfresh.mymints.composables.MyMintPage
 import com.solanamobile.mintyfresh.mymints.composables.myMintsDetailsScreen
 import com.solanamobile.mintyfresh.mymints.composables.navigateToMyMintsDetails
@@ -89,20 +91,17 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AnimatedNavHost(
                         navController = animNavController,
-                        startDestination = NavigationItem.Photos.route,
+                        startDestination = "photos",
                     ) {
-                        composable(NavigationItem.Photos.route) {
-                            ScaffoldScreen(
-                                activityResultSender = activityResultSender,
-                                navController = animNavController
-                            ) {
-                                Gallery(
-                                    navigateToDetails = {
-                                        animNavController.navigateToMintDetailsScreen(imagePath = it)
-                                    }
-                                )
-                            }
-                        }
+                        galleryScreen(
+                            navigateToDetails = animNavController::navigateToMintDetailsScreen,
+                            navigateToCamera = animNavController::navigateToCamera,
+                            navController = animNavController,
+                            activityResultSender = activityResultSender,
+                            identityUri = Uri.parse(application.getString((R.string.id_url))),
+                            iconUri = Uri.parse(application.getString(R.string.id_favico)),
+                            appName = application.getString(R.string.app_name),
+                        )
                         composable(
                             route = "${NavigationItem.MyMints.route}?forceRefresh={forceRefresh}",
                             arguments = listOf(navArgument("forceRefresh") {

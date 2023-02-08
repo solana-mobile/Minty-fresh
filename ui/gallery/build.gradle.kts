@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":ui:commonComposable"))
+    implementation(project(":ui:walletConnectButton"))
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
@@ -55,9 +56,11 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.0-alpha04")
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
+    implementation("androidx.compose.material:material:1.4.0-alpha04")
 
     implementation("androidx.compose.material:material-icons-core:1.4.0-alpha04")
     implementation("androidx.compose.material:material-icons-extended:1.4.0-alpha04")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
 
     val cameraxVersion = "1.2.0"
     implementation("androidx.camera:camera-core:${cameraxVersion}")
