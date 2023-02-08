@@ -74,7 +74,13 @@ class PerformMintViewModel @Inject constructor(
 
                 if (result !is TransactionResult.Success) {
                     _viewState.update {
-                        _viewState.value.copy(mintState = MintState.Error("Could not connect to wallet."))
+                        _viewState.value.copy(
+                            mintState = MintState.Error(
+                                getApplication<Application>().getString(
+                                    R.string.wallet_connection_failed
+                                )
+                            )
+                        )
                     }
                     return@launch
                 }

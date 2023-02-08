@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="image_content_desc">Image</string>
     <string name="sparkle_content_desc">Celebrations image</string>
     <string name="mint_success">You minted an NFT!</string>
@@ -21,4 +21,6 @@
     <string name="connect_and_mint">Connect and Mint</string>
     <string name="enter_description">Enter your description here</string>
     <string name="back">Back</string>
+    <string name="wallet_connection_failed">Unable to connect to wallet</string>
+    <string name="generic_error_message">Error while minting\n<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
 </resources>

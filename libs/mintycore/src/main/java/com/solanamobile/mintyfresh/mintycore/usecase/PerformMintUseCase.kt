@@ -130,7 +130,7 @@ class PerformMintUseCase @Inject constructor(
                     }
                 }
                 is TransactionResult.Failure -> {
-                    _mintState.value = MintState.Complete(txResult.message)
+                    _mintState.value = MintState.Error(txResult.message)
                 }
                 else -> { }
             }
