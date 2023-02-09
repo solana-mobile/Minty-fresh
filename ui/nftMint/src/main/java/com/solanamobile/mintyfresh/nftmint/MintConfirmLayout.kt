@@ -45,7 +45,7 @@ fun MintConfirmLayout(
             painter = painterResource(
                 id = R.drawable.mint_confirm
             ),
-            contentDescription = stringResource(R.string.sparkle_content_desc),
+            contentDescription = null,
             contentScale = ContentScale.Inside
         )
         Text(
