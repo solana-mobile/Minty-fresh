@@ -124,211 +124,204 @@ fun MintDetailsPage(
     intentSender: ActivityResultSender
 ) {
     val uiState = performMintViewModel.viewState.collectAsState().value
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-
-    if (uiState.mintState is MintState.Complete){
+    if (uiState.mintState is MintState.Complete) {
         onMintCompleted()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    BackButton(navigateUp)
-                },
-                title = {
-                    Text(
-                        text = stringResource(R.string.add_details),
-                    )
-                },
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                scrollBehavior = scrollBehavior
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            BackButton(Modifier.padding(start = 4.dp), navigateUp)
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = stringResource(R.string.add_details),
+                style = MaterialTheme.typography.bodyLarge
             )
-        },
-        content = { padding ->
-            if (uiState.mintState !is MintState.None) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(padding)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                ) {
-                    if (uiState.mintState !is MintState.Error) {
-                        CircularProgressIndicator()
-                    }
-                    Text(
-                        modifier = Modifier.padding(
-                            top = 28.dp
-                        ),
-                        textAlign = TextAlign.Center,
-                        text = when (uiState.mintState) {
-                            is MintState.UploadingMedia -> stringResource(R.string.uploading_file)
-                            is MintState.CreatingMetadata -> stringResource(R.string.uploading_metadata)
-                            is MintState.BuildingTransaction, is MintState.Signing-> stringResource(R.string.requesting_signatuve)
-                            is MintState.Minting -> stringResource(R.string.minting)
-                            is MintState.AwaitingConfirmation -> stringResource(R.string.waiting_confirmations)
-                            is MintState.Error -> stringResource(id = R.string.generic_error_message, uiState.mintState.message)
-                            else -> ""
-                        },
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+        }
+        if (uiState.mintState !is MintState.None) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+                if (uiState.mintState !is MintState.Error) {
+                    CircularProgressIndicator()
                 }
-            } else {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(padding)
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxWidth()
-                ) {
-                    val title = rememberSaveable { mutableStateOf("") }
-                    val description = rememberSaveable { mutableStateOf("") }
-                    val keyboardController = LocalSoftwareKeyboardController.current
-                    val focusManager = LocalFocusManager.current
+                Text(
+                    modifier = Modifier.padding(
+                        top = 28.dp
+                    ),
+                    textAlign = TextAlign.Center,
+                    text = when (uiState.mintState) {
+                        is MintState.UploadingMedia -> stringResource(R.string.uploading_file)
+                        is MintState.CreatingMetadata -> stringResource(R.string.uploading_metadata)
+                        is MintState.BuildingTransaction, is MintState.Signing -> stringResource(
+                            R.string.requesting_signatuve
+                        )
+                        is MintState.Minting -> stringResource(R.string.minting)
+                        is MintState.AwaitingConfirmation -> stringResource(R.string.waiting_confirmations)
+                        is MintState.Error -> stringResource(
+                            id = R.string.generic_error_message,
+                            uiState.mintState.message
+                        )
+                        else -> ""
+                    },
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
+            ) {
+                val title = rememberSaveable { mutableStateOf("") }
+                val description = rememberSaveable { mutableStateOf("") }
+                val keyboardController = LocalSoftwareKeyboardController.current
+                val focusManager = LocalFocusManager.current
 
-                    GlideImage(
-                        model = imagePath,
-                        contentDescription = stringResource(id = R.string.image_content_desc),
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                            .width(210.dp)
-                            .height(210.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(
-                                color = MaterialTheme.colorScheme.surface
-                            ),
-                        contentScale = ContentScale.Crop
-                    ) {
-                        it.thumbnail()
-                    }
-                    Text(
-                        text = title.value.ifEmpty { stringResource(R.string.your_nft) },
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(top = 16.dp)
-                    )
-                    Text(
-                        text = description.value.ifEmpty { stringResource(R.string.no_description_yet) },
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(
-                            top = 10.dp
-                        )
-                    )
-                    Spacer(
-                        modifier = Modifier.weight(1.0f)
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = 30.dp
-                            ),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-                            placeholderColor = MaterialTheme.colorScheme.outline
+                GlideImage(
+                    model = imagePath,
+                    contentDescription = stringResource(id = R.string.image_content_desc),
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .width(210.dp)
+                        .height(210.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(
+                            color = MaterialTheme.colorScheme.surface
                         ),
-                        value = title.value,
-                        onValueChange = {
-                            title.value = it.trimStart().take(32)
-                        },
-                        label = {
-                            Text(text = stringResource(R.string.nft_title))
-                        },
-                        placeholder = {
-                            Text(text = stringResource(R.string.enter_a_title))
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next,
-                            capitalization = KeyboardCapitalization.Sentences
+                    contentScale = ContentScale.Crop
+                ) {
+                    it.thumbnail()
+                }
+                Text(
+                    text = title.value.ifEmpty { stringResource(R.string.your_nft) },
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+                Text(
+                    text = description.value.ifEmpty { stringResource(R.string.no_description_yet) },
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(
+                        top = 10.dp
+                    )
+                )
+                Spacer(
+                    modifier = Modifier.weight(1.0f)
+                )
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 30.dp
                         ),
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                focusManager.moveFocus(FocusDirection.Down)
-                            }
-                        )
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp),
-                        text = stringResource(R.string.up_to_32_chars),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .padding(top = 24.dp)
-                            .fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            unfocusedLabelColor = MaterialTheme.colorScheme.outline,
-                            placeholderColor = MaterialTheme.colorScheme.outline
-                        ),
-                        value = description.value,
-                        onValueChange = {
-                            description.value = it.trimStart().take(256)
-                        },
-                        label = {
-                            Text(text = stringResource(R.string.description))
-                        },
-                        placeholder = {
-                            Text(text = stringResource(R.string.describe_nft_here))
-                        },
-                        minLines = 3,
-                        maxLines = 3,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Done,
-                            capitalization = KeyboardCapitalization.Sentences
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = { keyboardController?.hide() }
-                        )
-                    )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, bottom = 24.dp),
-                        text = stringResource(R.string.enter_description),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                    Button(
-                        modifier = Modifier
-                            .padding(
-                                top = 32.dp,
-                                bottom = 24.dp
-                            ),
-                        shape = RoundedCornerShape(corner = CornerSize(16.dp)),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
-                        enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
-                        onClick = {
-                            performMintViewModel.performMint(
-                                identityUri,
-                                iconUri,
-                                identityName,
-                                intentSender,
-                                title.value,
-                                description.value,
-                                imagePath
-                            )
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                        placeholderColor = MaterialTheme.colorScheme.outline
+                    ),
+                    value = title.value,
+                    onValueChange = {
+                        title.value = it.trimStart().take(32)
+                    },
+                    label = {
+                        Text(text = stringResource(R.string.nft_title))
+                    },
+                    placeholder = {
+                        Text(text = stringResource(R.string.enter_a_title))
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        capitalization = KeyboardCapitalization.Sentences
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            focusManager.moveFocus(FocusDirection.Down)
                         }
-                    ) {
-                        Text(text = if (uiState.isWalletConnected) stringResource(R.string.mint) else stringResource(R.string.connect_and_mint))
+                    )
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    text = stringResource(R.string.up_to_32_chars),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(top = 24.dp)
+                        .fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+                        placeholderColor = MaterialTheme.colorScheme.outline
+                    ),
+                    value = description.value,
+                    onValueChange = {
+                        description.value = it.trimStart().take(256)
+                    },
+                    label = {
+                        Text(text = stringResource(R.string.description))
+                    },
+                    placeholder = {
+                        Text(text = stringResource(R.string.describe_nft_here))
+                    },
+                    minLines = 3,
+                    maxLines = 3,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                        capitalization = KeyboardCapitalization.Sentences
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { keyboardController?.hide() }
+                    )
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, bottom = 24.dp),
+                    text = stringResource(R.string.enter_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
+                )
+                Button(
+                    modifier = Modifier
+                        .padding(
+                            top = 32.dp,
+                            bottom = 24.dp
+                        ),
+                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onBackground),
+                    enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
+                    onClick = {
+                        performMintViewModel.performMint(
+                            identityUri,
+                            iconUri,
+                            identityName,
+                            intentSender,
+                            title.value,
+                            description.value,
+                            imagePath
+                        )
                     }
+                ) {
+                    Text(
+                        text = if (uiState.isWalletConnected) stringResource(R.string.mint) else stringResource(
+                            R.string.connect_and_mint
+                        )
+                    )
                 }
             }
-        },
-        containerColor = MaterialTheme.colorScheme.background
-    )
+        }
+    }
 }

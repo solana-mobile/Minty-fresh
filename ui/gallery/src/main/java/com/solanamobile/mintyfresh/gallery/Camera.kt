@@ -66,7 +66,7 @@ fun NavGraphBuilder.cameraScreen(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Camera(
     navigateToDetails: (String) -> Unit = { },
@@ -80,38 +80,29 @@ fun Camera(
             }
         }
 
-    Scaffold(
-        content = { padding ->
+    PermissionView(
+        permissionsRequired,
+        content = {
+            StartCamera(navigateToDetails)
+        },
+        emptyView = {
+            LaunchedEffect(key1 = Unit) {
+                if (!it.allPermissionsGranted) {
+                    it.launchMultiplePermissionRequest()
+                }
+            }
             Box(
-                modifier = Modifier.padding(padding)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxSize(),
             ) {
-                PermissionView(
-                    permissionsRequired,
-                    content = {
-                        StartCamera(navigateToDetails)
-                    },
-                    emptyView = {
-                        LaunchedEffect(key1 = Unit) {
-                            if (!it.allPermissionsGranted) {
-                                it.launchMultiplePermissionRequest()
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .fillMaxSize(),
-                        ) {
-                            EmptyView(
-                                it,
-                                stringResource(id = R.string.camera_permission_body),
-                                stringResource(id = R.string.camera_permission_button)
-                            )
-                        }
-                    }
+                EmptyView(
+                    it,
+                    stringResource(id = R.string.camera_permission_body),
+                    stringResource(id = R.string.camera_permission_button)
                 )
             }
-        },
-        containerColor = MaterialTheme.colorScheme.background
+        }
     )
 }
 
