@@ -66,7 +66,7 @@ Each module in the application has its own readme file, which is linked here:
 - ["My Mints" Screens](ui/mymints)
 - [NFT minting screen](ui/nftMint)
 - [Wallet Connect Button](ui/walletConnectButton)
-- [Shared composables](ui/commonComposable)
+- [Shared composable](ui/commonComposable)
 
 ### Logic Modules
 
