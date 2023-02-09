@@ -3,9 +3,10 @@ package com.solanamobile.mintyfresh.mymints.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.solanamobile.mintyfresh.mymints.usecase.ShareMintUseCase
 import com.solanamobile.mintyfresh.mymints.viewmodels.mapper.CacheToViewStateMapper
-import com.solanamobile.mintyfresh.networkinterface.data.MintedMedia
 import com.solanamobile.mintyfresh.mymints.viewmodels.viewstate.MyMintsViewState
+import com.solanamobile.mintyfresh.networkinterface.data.MintedMedia
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
@@ -15,12 +16,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class MyMintsViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: WalletConnectionUseCase,
     private val myMintsUseCase: IMyMintsUseCase,
     private val viewStateMapper: CacheToViewStateMapper,
+    private val shareMintUseCase: ShareMintUseCase
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<MyMintsViewState> =
@@ -115,6 +118,16 @@ class MyMintsViewModel @Inject constructor(
         val myMints = myMintsUseCase.getAllUserMintyFreshNfts(publicKey)
         if (myMints.isEmpty()) {
             _viewState.update { MyMintsViewState.Empty() }
+        }
+    }
+
+    fun shareMyMint(mintIndex: Int) {
+        viewModelScope.launch {
+            val ctx = getApplication<Application>()
+            val selectedMint = _viewState.value.myMints[mintIndex]
+
+            val shareIntent = shareMintUseCase.createMintShareIntent(ctx, selectedMint.mediaUrl, selectedMint.id)
+            ctx.startActivity(shareIntent)
         }
     }
 }

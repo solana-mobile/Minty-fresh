@@ -2,10 +2,13 @@ package com.solanamobile.mintyfresh.mymints.composables
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -27,7 +31,6 @@ import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
-import com.google.accompanist.navigation.animation.composable
 
 private const val MyMintsDetailsRoute = "MyMintsDetails"
 
@@ -80,7 +83,20 @@ fun MyMintsDetails(
                     titleContentColor = MaterialTheme.colorScheme.onSurface,
                     actionIconContentColor = MaterialTheme.colorScheme.onSurface
                 ),
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    Icon(
+                        modifier = Modifier
+                            .padding(
+                                end = 16.dp
+                            )
+                            .clickable {
+                                myMintsViewModel.shareMyMint(index)
+                            },
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = "Share"
+                    )
+                }
             )
         }
     ) { innerPadding ->
