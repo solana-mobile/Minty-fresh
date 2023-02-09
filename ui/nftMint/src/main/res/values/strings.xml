@@ -1,6 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="image_content_desc">Image</string>
-    <string name="sparkle_content_desc">Celebrations image</string>
     <string name="mint_success">You minted an NFT!</string>
     <string name="added_to_wallet">It\u2019s been added to your connected wallet</string>
     <string name="done">Done</string>
