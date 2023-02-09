@@ -61,20 +61,20 @@ Each module in the application has its own readme file, which is linked here:
 
 ### App & Screen Modules
 
-- [Root Application module](tree/main/app)
-- [Photo selection "gallery"](tree/tree/main/ui/gallery)
-- ["My Mints" Screens](tree/main/ui/mymints)
-- [NFT minting screen](tree/main/ui/nftMint)
-- [Wallet Connect Button](tree/main/ui/walletConnectButton)
-- [Shared composables](tree/main/ui/commonComposable)
+- [Root Application module](app)
+- [Photo selection "gallery"](ui/gallery)
+- ["My Mints" Screens](ui/mymints)
+- [NFT minting screen](ui/nftMint)
+- [Wallet Connect Button](ui/walletConnectButton)
+- [Shared composables](ui/commonComposable)
 
 ### Logic Modules
 
-- [NFT minting logic](tree/main/libs/mintycore)
-- [Persistence/local storage](tree/main/libs/persistence)
-- [Networking interfaces](tree/main/libs/networkInterface)
-- [Networking implementation](tree/main/libs/networkInterfaceImpl)
-- [Network interface bindings](tree/main/libs/networkConfigs)
+- [NFT minting logic](libs/mintycore)
+- [Persistence/local storage](libs/persistence)
+- [Networking interfaces](libs/networkInterface)
+- [Networking implementation](libs/networkInterfaceImpl)
+- [Network interface bindings](libs/networkConfigs)
 
 ## License
 
