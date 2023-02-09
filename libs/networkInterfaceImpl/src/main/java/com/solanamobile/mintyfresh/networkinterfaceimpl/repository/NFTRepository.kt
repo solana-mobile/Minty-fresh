@@ -3,7 +3,7 @@ package com.solanamobile.mintyfresh.networkinterfaceimpl.repository
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.metaplex.lib.modules.token.models.metadata
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPda
+import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPubKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class NFTRepository @Inject constructor(
         val pubKey = PublicKey(publicKey)
         return getAllNfts(pubKey).filter { allUserNFts ->
             allUserNFts.creators.firstOrNull { nft -> nft.address == pubKey } != null &&
-                    allUserNFts.creators.firstOrNull { nft -> nft.address.toBase58() == mintyFreshCreatorPda } != null
+                    allUserNFts.creators.firstOrNull { nft -> nft.address.toBase58() == mintyFreshCreatorPubKey } != null
         }
     }
 
