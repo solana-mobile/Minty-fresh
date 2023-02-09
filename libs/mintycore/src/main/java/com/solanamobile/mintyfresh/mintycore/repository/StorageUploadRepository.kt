@@ -2,13 +2,15 @@ package com.solanamobile.mintyfresh.mintycore.repository
 
 import com.solanamobile.mintyfresh.mintycore.BuildConfig
 import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
+import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageResponse
 import com.solanamobile.mintyfresh.mintycore.metaplex.JsonMetadata
-import com.solanamobile.mintyfresh.mintycore.usecase.CidUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -22,16 +24,31 @@ class StorageUploadRepository @Inject constructor(
     suspend fun uploadCar(car: ByteArray, authToken: String) =
         withContext(Dispatchers.IO) {
 
-            val result = endpoints.uploadCar(
-                car.toRequestBody("application/car; charset=utf-8".toMediaType()),
-                "Metaplex $authToken"
-            )
-
-            result.error?.let { err ->
-                throw Error("NFT.Storage returned error: ${err.name}: $${err.message}")
+            // TODO: we use the same injected retrofit instance so currently parallel calls are not possible
+            //  creating a new client for each method call here works as a workaround
+            OkHttpClient().newCall(
+                Request.Builder()
+                    .url("https://api.nft.storage/metaplex/upload")
+                    .header("x-web3auth", "Metaplex $authToken")
+                    .header("Content-Type", "application/car; charset=utf-8")
+                    .post(car.toRequestBody("application/car; charset=utf-8".toMediaType()))
+                    .build()
+            ).execute().run {
+//                println("+++ response = ${this.body!!.string()}")
+                val response = Json { ignoreUnknownKeys = true }.decodeFromString(NftStorageResponse.serializer(), this.body!!.string())
+                "$ipfsUrlPrefix${response.value?.cid}"
             }
 
-            "$ipfsUrlPrefix${result.value?.cid}"
+//            val result = endpoints.uploadCar(
+//                car.toRequestBody("application/car; charset=utf-8".toMediaType()),
+//                "Metaplex $authToken"
+//            )
+//
+//            result.error?.let { err ->
+//                throw Error("NFT.Storage returned error: ${err.name}: $${err.message}")
+//            }
+//
+//            "$ipfsUrlPrefix${result.value?.cid}"
         }
 
     suspend fun uploadFile(filePath: String): String {

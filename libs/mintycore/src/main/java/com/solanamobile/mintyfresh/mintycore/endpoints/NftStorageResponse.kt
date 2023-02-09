@@ -23,7 +23,7 @@ data class FileData(
 
 @Serializable
 data class Error(
-    val name: String,
+    val name: String?,
     val message: String
 )
 

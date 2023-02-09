@@ -14,13 +14,11 @@ import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -72,16 +70,24 @@ class PerformMintUseCase @Inject constructor(
 
         val creator = PublicKey(walletAddy)
 
-        //region create and upload the media file
-        // first build a car file, we need to know the root cid so we can sign it later
+        // create upload files for both metadata and image
+        _mintState.value = MintState.CreatingMetadata
+
+        // first build a car files, we need to know the root cid so we can sign it later
         val imageCar = carFileUseCase.buildNftImageCar(filePath)
+        val metadataCar = carFileUseCase.buildNftMetadataCar(title, desc,
+            "https://${imageCar.rootCids.first().toCanonicalString()}.ipfs.nftstorage.link")
 
         // TODO: need to move this signing step to abstraction
-        val xWeb3MessageImage = web3AuthUseCase
-            .buildxWeb3AuthMessage(creator, imageCar.rootCids.first().toCanonicalString())
+        val xWeb3Messages = listOf(
+            web3AuthUseCase
+                .buildxWeb3AuthMessage(creator, metadataCar.rootCids.first().toCanonicalString()),
+            web3AuthUseCase
+                .buildxWeb3AuthMessage(creator, imageCar.rootCids.first().toCanonicalString())
+        )
 
         // begin message transaction step
-        _mintState.value = MintState.Signing(xWeb3MessageImage.encodeToByteArray())
+        _mintState.value = MintState.Signing(xWeb3Messages.first().encodeToByteArray())
         delay(700)
 
         val signature1 = walletAdapter.transact(sender) {
@@ -89,54 +95,29 @@ class PerformMintUseCase @Inject constructor(
                 reauthorize(identityUri, iconUri, identityName, authToken)
             } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
 
-            val signingResult = signMessages(arrayOf(xWeb3MessageImage.toByteArray()), arrayOf(creator.pubkey))
+            val signingResult = signMessages(
+                xWeb3Messages.map { it.encodeToByteArray() }.toTypedArray(),
+                arrayOf(creator.pubkey)
+            )
 
-            return@transact signingResult.signedPayloads[0]
+            return@transact signingResult.signedPayloads
         }
 
-        val xWeb3TokenImage = web3AuthUseCase
-            .buildXWeb3AuthToken(xWeb3MessageImage, signature1.successPayload!!)
+        val metadataAuthToken = web3AuthUseCase.buildXWeb3AuthToken(xWeb3Messages[0], signature1.successPayload!![0])
+        val mediaAuthToken = web3AuthUseCase.buildXWeb3AuthToken(xWeb3Messages[1], signature1.successPayload!![1])
 
-        // upload the media file
+        // now we can upload the car files, using the web3 auth tokens we just made
         _mintState.value = MintState.UploadingMedia
 
-        // now we can upload the image car file, using the web3 auth token we just made
-        val nftImageUrl = storageRepository.uploadCar(imageCar.build(), xWeb3TokenImage)
-        //endregion
-
-        //region create and upload the NFT metadata
-        _mintState.value = MintState.CreatingMetadata
-
-        // first build a car file, we need to know the root cid so we can sign it later
-        val metadataCar = carFileUseCase.buildNftMetadataCar(title, desc, nftImageUrl)
-
-        // TODO: need to move this signing step to abstraction
-        val xWeb3Message = web3AuthUseCase
-            .buildxWeb3AuthMessage(creator, metadataCar.rootCids.first().toCanonicalString())
-
-        // begin message transaction step
-        _mintState.value = MintState.Signing(xWeb3Message.encodeToByteArray())
-        delay(700)
-
-        val signature2 = walletAdapter.transact(sender) {
-            authToken?.let {
-                reauthorize(identityUri, iconUri, identityName, authToken)
-            } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
-
-            val signingResult = signMessages(arrayOf(xWeb3Message.toByteArray()), arrayOf(creator.pubkey))
-
-            return@transact signingResult.signedPayloads[0]
+        // upload the media file
+        async {
+            storageRepository.uploadCar(imageCar.build(), mediaAuthToken)
         }
 
-        val xWeb3Token = web3AuthUseCase
-            .buildXWeb3AuthToken(xWeb3Message, signature2.successPayload!!)
-
         // create and upload the NFT metadata
-        _mintState.value = MintState.CreatingMetadata
-
-        // now we can upload the metadata car file, using the web3 auth token we just made
-        val metadataUrl = storageRepository.uploadCar(metadataCar.build(), xWeb3Token)
-        //endregion
+        val metadataUrl = async {
+            storageRepository.uploadCar(metadataCar.build(), metadataAuthToken)
+        }.await()
 
         // begin building the mint transaction
         _mintState.value = MintState.BuildingTransaction
