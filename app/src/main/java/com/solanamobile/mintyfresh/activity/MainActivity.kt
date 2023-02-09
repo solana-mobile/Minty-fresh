@@ -124,7 +124,7 @@ class MainActivity : ComponentActivity() {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
                                         imageVector = Icons.Outlined.AddAPhoto,
-                                        contentDescription = stringResource(R.string.take_pic_content_desc),
+                                        contentDescription = stringResource(R.string.camera),
                                         tint = MaterialTheme.colorScheme.background
                                     )
                                 }
