@@ -55,7 +55,7 @@ Roughly speaking, the modules are separated out based on "layers" of app logic, 
 
 The following is a module dependency diagram, showing the modules that exist in the app and how they depend on each other:
 
-<!-- Will need to generate an exported image of the document as it cannot be embedded here -->
+<img src="assets/MintyFreshModuleOverview.png" width="800">
 
 Each module in the application has its own readme file, which is linked here:
 
