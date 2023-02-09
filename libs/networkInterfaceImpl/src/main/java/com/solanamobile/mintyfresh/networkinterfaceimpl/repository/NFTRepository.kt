@@ -10,10 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * TODO: This class will be part of the networking layer in the final PR. This class - a repository
- * that gets 1.) all my mints 2.) metadata - is absolutely one of the classes that can have
- * multiple implementations. For the public implementation, it can look more or less like this. For the
- * prod implementation, it can be communicating with our API abstraction.
+ * A repository to fetch all NFTs and metadata.
  */
 @Singleton
 class NFTRepository @Inject constructor(
