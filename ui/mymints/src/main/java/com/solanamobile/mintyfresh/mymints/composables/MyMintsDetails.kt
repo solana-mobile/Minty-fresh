@@ -72,7 +72,7 @@ fun MyMintsDetails(
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    BackButton(navigateUp)
+                    BackButton(navigateUp = navigateUp)
                 },
                 title = {},
                 colors = TopAppBarDefaults.largeTopAppBarColors(
