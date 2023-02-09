@@ -18,6 +18,6 @@ interface MyMintsDao {
     @Query("SELECT * FROM MyMint WHERE rpc_cluster = :clusterName AND pub_key = :pubKey AND id = :id LIMIT 1")
     suspend fun get(id: String, pubKey: String, clusterName: String): MyMint?
 
-    @Query("DELETE FROM MyMint WHERE pub_key = :pubKey AND id NOT IN (:latestNftIds)")
-    suspend fun deleteStaleData(pubKey: String, latestNftIds: List<String>)
+    @Query("DELETE FROM MyMint WHERE pub_key = :pubKey AND rpc_cluster = :clusterName AND id NOT IN (:latestNftIds)")
+    suspend fun deleteStaleData(pubKey: String, clusterName: String, latestNftIds: List<String>)
 }

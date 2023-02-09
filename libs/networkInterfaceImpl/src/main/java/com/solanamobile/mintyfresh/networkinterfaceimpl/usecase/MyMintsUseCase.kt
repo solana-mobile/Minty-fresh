@@ -20,7 +20,7 @@ class MyMintsUseCase @Inject constructor(
     override fun getCachedMints(publicKey: String): Flow<List<MyMint>> {
         return myMintsCacheRepository.get(
             pubKey = publicKey,
-            rpcClusterName = rpcConfig.rpcCluster.name
+            clusterName = rpcConfig.rpcCluster.name
         )
     }
 
@@ -31,7 +31,8 @@ class MyMintsUseCase @Inject constructor(
         val currentMintList = metaplexToCacheMapper.map(nfts, clusterName)
         myMintsCacheRepository.deleteStaleData(
             currentMintList = currentMintList,
-            publicKey
+            clusterName = clusterName,
+            pubKey = publicKey
         )
 
         if (nfts.isNotEmpty()) {
@@ -40,7 +41,7 @@ class MyMintsUseCase @Inject constructor(
                 val cachedMint = myMintsCacheRepository.get(
                     id = nft.mint.toString(),
                     pubKey = publicKey,
-                    rpcClusterName = clusterName
+                    clusterName = clusterName
                 )
                 if (cachedMint == null) {
                     val metadata = nftRepository.getNftsMetadata(nft)

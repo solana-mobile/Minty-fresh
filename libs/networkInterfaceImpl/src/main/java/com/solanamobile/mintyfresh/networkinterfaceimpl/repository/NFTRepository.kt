@@ -3,17 +3,14 @@ package com.solanamobile.mintyfresh.networkinterfaceimpl.repository
 import com.metaplex.lib.modules.nfts.models.NFT
 import com.metaplex.lib.modules.token.models.metadata
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPda
+import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPubKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * TODO: This class will be part of the networking layer in the final PR. This class - a repository
- * that gets 1.) all my mints 2.) metadata - is absolutely one of the classes that can have
- * multiple implementations. For the public implementation, it can look more or less like this. For the
- * prod implementation, it can be communicating with our API abstraction.
+ * A repository to fetch all NFTs and metadata.
  */
 @Singleton
 class NFTRepository @Inject constructor(
@@ -24,7 +21,7 @@ class NFTRepository @Inject constructor(
         val pubKey = PublicKey(publicKey)
         return getAllNfts(pubKey).filter { allUserNFts ->
             allUserNFts.creators.firstOrNull { nft -> nft.address == pubKey } != null &&
-                    allUserNFts.creators.firstOrNull { nft -> nft.address.toBase58() == mintyFreshCreatorPda } != null
+                    allUserNFts.creators.firstOrNull { nft -> nft.address.toBase58() == mintyFreshCreatorPubKey } != null
         }
     }
 

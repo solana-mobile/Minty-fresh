@@ -5,7 +5,7 @@ import com.metaplex.lib.experimental.jen.tokenmetadata.Creator
 import com.metaplex.lib.modules.nfts.builders.CreateNftTransactionBuilder
 import com.metaplex.lib.modules.nfts.models.Metadata
 import com.solana.core.PublicKey
-import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPda
+import com.solanamobile.mintyfresh.networkinterface.pda.mintyFreshCreatorPubKey
 import javax.inject.Inject
 
 class MintTransactionRepository @Inject constructor(private val connectionDriver: Connection)  {
@@ -27,7 +27,7 @@ class MintTransactionRepository @Inject constructor(private val connectionDriver
         sellerFeeBasisPoints = 0,
         creators = listOf(
             Creator(creator, true, 100.toUByte()),
-            Creator(PublicKey(mintyFreshCreatorPda), false, 0.toUByte())
+            Creator(PublicKey(mintyFreshCreatorPubKey), false, 0.toUByte())
         ),
     )
 }
