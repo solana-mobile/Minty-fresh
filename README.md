@@ -23,9 +23,9 @@ A quick, snappy sentence hyping Minty Fresh! (We should write this as a team)
 
 ## Take a Look 
 
-| Screenshot 1 | Screenshot 2 | Screenshot 3 | Screenshot 4 |
-|---|---|---|---|
-<img src="assets/device_shot_1.png" width="250"> | <img src="assets/device_shot_2.png" width="250"> | <img src="assets/device_shot_3.png" width="250"> | <img src="assets/device_shot_4.png" width="250"> |
+| Screenshot 1 | Screenshot 2                                   | Screenshot 3                               | Screenshot 4                                      |
+|---|------------------------------------------------|--------------------------------------------|---------------------------------------------------|
+<img src="assets/Gallery.png" width="250"> | <img src="assets/MintDetails.png" width="250"> | <img src="assets/MyMints.png" width="250"> | <img src="assets/MyMintsDetails.png" width="250"> |
 
 ## Technologies
 
