@@ -36,7 +36,7 @@ Minty Fresh is built using 100% native Kotlin Android code, and is meant to demo
 - Coroutines with Flow & StateFlow
 - Multi-module app
 - Hilt Dependency Injection
-- Room local database=
+- Room local database
 
 ## Building & Running
 
