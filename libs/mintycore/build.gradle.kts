@@ -77,6 +77,7 @@ dependencies {
     implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
     implementation("com.github.metaplex-foundation:metaplex-android:1.3.0b3")
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
+    implementation("com.github.ipfs:java-ipfs-http-client:1.4.0")
 
     testImplementation("junit:junit:4.13.2")
 

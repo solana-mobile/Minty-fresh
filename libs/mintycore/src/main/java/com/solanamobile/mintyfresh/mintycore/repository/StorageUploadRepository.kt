@@ -3,11 +3,12 @@ package com.solanamobile.mintyfresh.mintycore.repository
 import com.solanamobile.mintyfresh.mintycore.BuildConfig
 import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
 import com.solanamobile.mintyfresh.mintycore.metaplex.JsonMetadata
+import com.solanamobile.mintyfresh.mintycore.usecase.CidUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -17,6 +18,21 @@ import javax.inject.Inject
 class StorageUploadRepository @Inject constructor(
     private val endpoints: NftStorageEndpoints
 ) {
+
+    suspend fun uploadCar(car: ByteArray, authToken: String) =
+        withContext(Dispatchers.IO) {
+
+            val result = endpoints.uploadCar(
+                car.toRequestBody("application/car; charset=utf-8".toMediaType()),
+                "Metaplex $authToken"
+            )
+
+            result.error?.let { err ->
+                throw Error("NFT.Storage returned error: ${err.name}: $${err.message}")
+            }
+
+            "$ipfsUrlPrefix${result.value?.cid}"
+        }
 
     suspend fun uploadFile(filePath: String): String {
         return withContext(Dispatchers.IO) {
@@ -46,7 +62,7 @@ class StorageUploadRepository @Inject constructor(
                 )
             )
 
-            val body = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+            val body = json.toRequestBody("application/json; charset=utf-8".toMediaType())
 
             upload(body)
         }
