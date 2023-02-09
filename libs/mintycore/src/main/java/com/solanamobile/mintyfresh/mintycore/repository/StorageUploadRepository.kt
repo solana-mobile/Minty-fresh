@@ -24,31 +24,16 @@ class StorageUploadRepository @Inject constructor(
     suspend fun uploadCar(car: ByteArray, authToken: String) =
         withContext(Dispatchers.IO) {
 
-            // TODO: we use the same injected retrofit instance so currently parallel calls are not possible
-            //  creating a new client for each method call here works as a workaround
-            OkHttpClient().newCall(
-                Request.Builder()
-                    .url("https://api.nft.storage/metaplex/upload")
-                    .header("x-web3auth", "Metaplex $authToken")
-                    .header("Content-Type", "application/car; charset=utf-8")
-                    .post(car.toRequestBody("application/car; charset=utf-8".toMediaType()))
-                    .build()
-            ).execute().run {
-//                println("+++ response = ${this.body!!.string()}")
-                val response = Json { ignoreUnknownKeys = true }.decodeFromString(NftStorageResponse.serializer(), this.body!!.string())
-                "$ipfsUrlPrefix${response.value?.cid}"
+            val result = endpoints.uploadCar(
+                car.toRequestBody("application/car; charset=utf-8".toMediaType()),
+                "Metaplex $authToken"
+            )
+
+            result.error?.let { err ->
+                throw Error("NFT.Storage returned error: ${err.name}: $${err.message}")
             }
 
-//            val result = endpoints.uploadCar(
-//                car.toRequestBody("application/car; charset=utf-8".toMediaType()),
-//                "Metaplex $authToken"
-//            )
-//
-//            result.error?.let { err ->
-//                throw Error("NFT.Storage returned error: ${err.name}: $${err.message}")
-//            }
-//
-//            "$ipfsUrlPrefix${result.value?.cid}"
+            "$ipfsUrlPrefix${result.value?.cid}"
         }
 
     suspend fun uploadFile(filePath: String): String {

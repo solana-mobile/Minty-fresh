@@ -110,14 +110,10 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.UploadingMedia
 
         // upload the media file
-        async {
-            storageRepository.uploadCar(imageCar.build(), mediaAuthToken)
-        }
+        storageRepository.uploadCar(imageCar.build(), mediaAuthToken)
 
         // create and upload the NFT metadata
-        val metadataUrl = async {
-            storageRepository.uploadCar(metadataCar.build(), metadataAuthToken)
-        }.await()
+        val metadataUrl = storageRepository.uploadCar(metadataCar.build(), metadataAuthToken)
 
         // begin building the mint transaction
         _mintState.value = MintState.BuildingTransaction
