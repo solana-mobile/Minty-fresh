@@ -1,13 +1,13 @@
 package com.solanamobile.mintyfresh.mymints.composables
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.*
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -28,7 +29,6 @@ import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.mymints.ktx.hiltActivityViewModel
 import com.solanamobile.mintyfresh.mymints.viewmodels.MyMintsViewModel
-import com.google.accompanist.navigation.animation.composable
 
 private const val MyMintsDetailsRoute = "MyMintsDetails"
 
@@ -52,40 +52,22 @@ fun NavGraphBuilder.myMintsDetailsScreen(
     }
 }
 
-@OptIn(
-    ExperimentalPagerApi::class,
-    ExperimentalGlideComposeApi::class,
-    ExperimentalMaterial3Api::class,
-)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun MyMintsDetails(
     index: Int,
     navigateUp: () -> Boolean = { true },
     myMintsViewModel: MyMintsViewModel = hiltActivityViewModel(),
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val uiState = myMintsViewModel.viewState.collectAsState().value
 
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    BackButton(navigateUp = navigateUp)
-                },
-                title = {},
-                colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    scrolledContainerColor = MaterialTheme.colorScheme.background,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
-                ),
-                scrollBehavior = scrollBehavior
-            )
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            BackButton(Modifier.padding(start = 4.dp), navigateUp)
         }
-    ) {
         HorizontalPager(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxSize(),
