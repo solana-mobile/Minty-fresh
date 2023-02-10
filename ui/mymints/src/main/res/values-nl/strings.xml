@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Metadata</string>
+    <string name="mint_address">Mintadres</string>
+    <string name="description">Beschrijving</string>
+    <string name="no_mints_yet">Nog geen mints. Begin nu met minten met Minty Fresh!</string>
+    <string name="connect_to_see_mints">Verbind je wallet om je mints te bekijken</string>
+    <string name="my">Mijn </string>
+    <string name="mints">\"\u0020 mints</string>
+    <string name="error_fetching_mints">Er is een fout opgetreden bij het ophalen van je Mints</string>
+    <string name="retry">Opnieuw proberen</string>
+</resources>
