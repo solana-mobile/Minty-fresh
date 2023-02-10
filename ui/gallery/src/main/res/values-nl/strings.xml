@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">Zo </string>
+    <string name="minty_fresh">fris als munt.</string>
+    <string name="select_photo">Selecteer een foto om te minten:</string>
+    <string name="image_content_desc">Afbeelding</string>
+    <string name="take_pic_content_desc">Neem foto</string>
+    <string name="gallery_permission_body">Het zou mooier zijn als je hier je foto\'s kon bekijken, of niet?\n&#128071;</string>
+    <string name="gallery_permission_button">Toegang tot foto\'s toestaan</string>
+    <string name="camera_permission_body">Mint meteen vanaf je camera zonder de app te verlaten\n&#128071;</string>
+    <string name="camera_permission_button">Camera-toegang toestaan</string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">البيانات الوصفية</string>
+    <string name="mint_address">عنوان النشر</string>
+    <string name="description">الوصف</string>
+    <string name="no_mints_yet">لا توجد منشورات بعد. ابدأ نشر الصور مع Minty Fresh!</string>
+    <string name="connect_to_see_mints">قم بربط محفظتك لرؤية منشوراتك</string>
+    <string name="my">خاصتي</string>
+    <string name="mints">منشورات \"\u0020</string>
+    <string name="error_fetching_mints">حدث خطأ خلال جلب منشوراتك</string>
+    <string name="retry">حاول مجددًا</string>
+</resources>

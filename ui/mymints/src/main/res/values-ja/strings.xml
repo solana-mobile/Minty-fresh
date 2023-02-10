@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">メタデータ</string>
+    <string name="mint_address">ミントアドレス</string>
+    <string name="description">説明</string>
+    <string name="no_mints_yet">まだミントされていません。Minty Freshで写真のミントを始めましょう！</string>
+    <string name="connect_to_see_mints">ウォレットを接続してあなたがミントしたものを確認しましょう</string>
+    <string name="my">私の</string>
+    <string name="mints">“ ミント</string>
+    <string name="error_fetching_mints">ミント結果を取得中にエラーが発生しました</string>
+    <string name="retry">リトライ</string>
+</resources>

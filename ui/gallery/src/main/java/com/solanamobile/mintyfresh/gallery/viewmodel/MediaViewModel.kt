@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh.composable.viewmodel
+package com.solanamobile.mintyfresh.gallery.viewmodel
 
 import android.app.Application
 import android.database.ContentObserver
@@ -21,7 +21,6 @@ import javax.inject.Inject
 data class Media(
     val path: String,
     val dateAdded: String,
-    val mediaType: Int,
     val mimeType: String,
     val title: String
 )
@@ -95,7 +94,6 @@ class MediaViewModel @Inject constructor(application: Application) : AndroidView
                 Media(
                     path = absolutePathOfImage,
                     dateAdded = dateAdded,
-                    mediaType = MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE,
                     mimeType = mimeType,
                     title = title
                 )

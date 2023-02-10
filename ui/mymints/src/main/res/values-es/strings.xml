@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Metadatos </string>
+    <string name="mint_address">Dirección de acuñación</string>
+    <string name="description">Descripción</string>
+    <string name="no_mints_yet">No hay acuñaciones aún. ¡Comienza a acuñar imágenes con minty fresh!</string>
+    <string name="connect_to_see_mints">Conecta la billetera para ver las acuñaciones</string>
+    <string name="my">Mis</string>
+    <string name="mints">\"\u0020acuñaciones</string>
+    <string name="error_fetching_mints">Ocurrió un error mientras se buscaban las acuñaciones</string>
+    <string name="retry">Reintentar</string>
+</resources>

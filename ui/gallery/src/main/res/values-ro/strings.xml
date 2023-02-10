@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">Descarcă</string>
+    <string name="minty_fresh">nou create.</string>
+    <string name="select_photo">Selectează o fotografie ca bază de creație:</string>
+    <string name="image_content_desc">Imagine</string>
+    <string name="take_pic_content_desc">Fă o fotografie</string>
+    <string name="gallery_permission_body">Ar fi și mai bine dacă ți-ai putea vedea fotografiile aici, nu-i așa?\n&#128071;</string>
+    <string name="gallery_permission_button">Permite accesul la fotografii</string>
+    <string name="camera_permission_body">Creează direct din camera foto, fără să ieși din aplicație\n&#128071;</string>
+    <string name="camera_permission_button">Permite accesul la cameră</string>
+</resources>

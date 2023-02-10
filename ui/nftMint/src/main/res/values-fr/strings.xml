@@ -1,0 +1,25 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="image_content_desc">Image</string>
+    <string name="mint_success">Vous avez minté un NFT !</string>
+    <string name="added_to_wallet">Il a été ajouté à votre portefeuille connecté</string>
+    <string name="done">C\'est fait</string>
+    <string name="add_details">Ajouter les détails du NFT</string>
+    <string name="uploading_file">Téléversement du fichier \u2026</string>
+    <string name="uploading_metadata">Téléversement des métadonnées \u2026</string>
+    <string name="requesting_signatuve">Réquisition de la signature du portefeuille \u2026</string>
+    <string name="minting">Mintage \u2026</string>
+    <string name="waiting_confirmations">Attente des confirmations \u2026</string>
+    <string name="your_nft">Votre NFT</string>
+    <string name="no_description_yet">Pas encore de description.</string>
+    <string name="nft_title">Titre du NFT</string>
+    <string name="enter_a_title">Entrez un titre</string>
+    <string name="up_to_32_chars">Utilisez jusqu\'à 32 caractères</string>
+    <string name="description">Description</string>
+    <string name="describe_nft_here">Décrivez votre NFT ici</string>
+    <string name="mint">Minter</string>
+    <string name="connect_and_mint">Connectez-vous et Mintez</string>
+    <string name="enter_description">Entrez votre description ici</string>
+    <string name="back">Retour</string>
+    <string name="wallet_connection_failed">Échec de la connexion au portefeuille</string>
+    <string name="generic_error_message">Erreur pendant le mintage\n<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
+</resources>

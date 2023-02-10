@@ -54,6 +54,7 @@ fun NavGraphBuilder.myMintsScreen(
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
+    navDestination: NavDestination?,
     identityUri: Uri,
     iconUri: Uri,
     appName: String
@@ -88,7 +89,8 @@ fun NavGraphBuilder.myMintsScreen(
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
-                    navigationItems = navigationItems
+                    navigationItems = navigationItems,
+                    currentDestination = navDestination
                 )
             },
             content = { padding ->

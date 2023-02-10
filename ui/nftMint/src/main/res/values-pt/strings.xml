@@ -1,0 +1,25 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="image_content_desc">Imagem</string>
+    <string name="mint_success">Fez mint de um NFT!</string>
+    <string name="added_to_wallet">It\u2019s foi adicionado à sua carteira conectada</string>
+    <string name="done">Feito</string>
+    <string name="add_details">Adicionar detalhes do NFT</string>
+    <string name="uploading_file">A carregar ficheiro \u2026</string>
+    <string name="uploading_metadata">A carregar metadados \u2026</string>
+    <string name="requesting_signatuve">Pedir assinatura de carteira \u2026</string>
+    <string name="minting">A fazer mint \u2026</string>
+    <string name="waiting_confirmations">A aguardar confirmações \u2026</string>
+    <string name="your_nft">O seu NFT</string>
+    <string name="no_description_yet">Ainda sem descrição.</string>
+    <string name="nft_title">Título do NFT</string>
+    <string name="enter_a_title">Introduza um título</string>
+    <string name="up_to_32_chars">Utilize até 32 caracteres</string>
+    <string name="description">Descrição</string>
+    <string name="describe_nft_here">Descreva aqui o seu NFT</string>
+    <string name="mint">Fazer mint</string>
+    <string name="connect_and_mint">Conectar e Fazer Mint</string>
+    <string name="enter_description">Introduza a sua descrição aqui</string>
+    <string name="back">Voltar</string>
+    <string name="wallet_connection_failed">Não é possível conectar a carteira</string>
+    <string name="generic_error_message">Erro ao fazer mint\n<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
+</resources>

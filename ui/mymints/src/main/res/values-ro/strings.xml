@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Metadata</string>
+    <string name="mint_address">Adresă creare</string>
+    <string name="description">Descriere</string>
+    <string name="no_mints_yet">Nicip creație încă. Începe să creezi fotografii cu Minty Fresh!</string>
+    <string name="connect_to_see_mints">Conectează-ți portofelul și vezi creațiile proprii</string>
+    <string name="my">Proprii</string>
+    <string name="mints">creații</string>
+    <string name="error_fetching_mints">A survenit o eroare în timpul preluării Creațiilor</string>
+    <string name="retry">Încearcă din nou</string>
+</resources>

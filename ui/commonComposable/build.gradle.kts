@@ -58,7 +58,6 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core:1.4.0-alpha04")
     implementation("androidx.compose.material:material-icons-extended:1.4.0-alpha04")
 
-    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
     implementation("com.google.accompanist:accompanist-placeholder:0.28.0")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">元数据</string>
+    <string name="mint_address">铸造地址</string>
+    <string name="description">描述</string>
+    <string name="no_mints_yet">还没有铸造。开始用 Minty Fresh 铸造照片！</string>
+    <string name="connect_to_see_mints">连接你的钱包以查看您的铸造</string>
+    <string name="my">我的</string>
+    <string name="mints">\"\u0020铸造</string>
+    <string name="error_fetching_mints">获取您的铸造时发生错误</string>
+    <string name="retry">重试</string>
+</resources>
