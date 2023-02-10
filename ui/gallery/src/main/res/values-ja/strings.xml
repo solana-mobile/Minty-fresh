@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">手に入れましょう</string>
+    <string name="minty_fresh">　Minty fresh</string>
+    <string name="select_photo">ミントする写真を選択：</string>
+    <string name="image_content_desc">画像</string>
+    <string name="take_pic_content_desc">写真を撮る</string>
+    <string name="gallery_permission_body">こちらであなたの写真が見えればいいのですが、よろしいですか？\n&#128071;</string>
+    <string name="gallery_permission_button">写真へのアクセスを許可してください</string>
+    <string name="camera_permission_body">アプリを離れずにカメラから直接ミントする\n&#128071;</string>
+    <string name="camera_permission_button">写真へのアクセスを許可してください</string>
+</resources>
