@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -22,8 +21,6 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.simplecomposables.NavigationItem
@@ -33,10 +30,7 @@ import com.solanamobile.mintyfresh.gallery.galleryRoute
 import com.solanamobile.mintyfresh.gallery.galleryScreen
 import com.solanamobile.mintyfresh.gallery.navigateToCamera
 import com.solanamobile.mintyfresh.mymints.composables.*
-import com.solanamobile.mintyfresh.navigation.creatingGraph
-import com.solanamobile.mintyfresh.navigation.creatingGraphRoutePattern
-import com.solanamobile.mintyfresh.navigation.viewingGraph
-import com.solanamobile.mintyfresh.navigation.viewingGraphRoutePattern
+import com.solanamobile.mintyfresh.navigation.*
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
@@ -58,20 +52,19 @@ class MainActivity : ComponentActivity() {
         val activityResultSender = ActivityResultSender(this)
 
         setContent {
-            val animNavController = rememberAnimatedNavController()
-            val systemUiController = rememberSystemUiController()
-            val useDarkIcons = !isSystemInDarkTheme()
+            val appState = rememberMintyFreshAppState()
+            val useDarkIcons = appState.useDarkIcons
             val scope = rememberCoroutineScope()
 
             SideEffect {
-                systemUiController.setSystemBarsColor(
+                appState.systemUiController.setSystemBarsColor(
                     Color.Transparent,
                     darkIcons = useDarkIcons
                 )
             }
 
             AppTheme {
-                val navigateUp = { animNavController.navigateUp() }
+                val navigateUp = { appState.navController.navigateUp() }
 
                 val bottomSheetState =
                     rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
@@ -84,7 +77,7 @@ class MainActivity : ComponentActivity() {
                     sheetContent = {
                         MintConfirmLayout(
                             onDoneClick = {
-                                scope.launch {
+                                appState.coroutineScope.launch {
                                     bottomSheetState.hide()
                                 }
                             }
@@ -93,16 +86,16 @@ class MainActivity : ComponentActivity() {
                     sheetState = bottomSheetState
                 ) {
                     AnimatedNavHost(
-                        navController = animNavController,
+                        navController = appState.navController,
                         startDestination = creatingGraphRoutePattern,
                     ) {
                         creatingGraph(
                             startDestination = galleryRoute,
                             nestedGraphs = {
                                 galleryScreen(
-                                    navigateToDetails = animNavController::navigateToMintDetailsScreen,
-                                    navigateToCamera = animNavController::navigateToCamera,
-                                    navController = animNavController,
+                                    navigateToDetails = appState.navController::navigateToMintDetailsScreen,
+                                    navigateToCamera = appState.navController::navigateToCamera,
+                                    navController = appState.navController,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(
                                         NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
@@ -114,18 +107,18 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 cameraScreen(navigateToDetails = {
-                                    animNavController.navigateToMintDetailsScreen(imagePath = it)
+                                    appState.navController.navigateToMintDetailsScreen(imagePath = it)
                                 })
 
                                 mintDetailsScreen(
                                     navigateUp = navigateUp,
                                     onMintCompleted = {
                                         // Remove the MintDetails page from stack first.
-                                        animNavController.popBackStack()
-                                        animNavController.navigateToMyMints(
+                                        appState.navController.popBackStack()
+                                        appState.navController.navigateToMyMints(
                                             forceRefresh = true,
                                             navOptions = NavOptions.Builder().setPopUpTo(
-                                                animNavController.graph.findStartDestination().id,
+                                                appState.navController.graph.findStartDestination().id,
                                                 inclusive = false,
                                                 saveState = true
                                             ).setRestoreState(true).setLaunchSingleTop(true).build()
@@ -149,8 +142,8 @@ class MainActivity : ComponentActivity() {
                             startDestination = "$myMintsRoute?forceRefresh={forceRefresh}",
                             nestedGraphs = {
                                 myMintsScreen(
-                                    navigateToDetails = animNavController::navigateToMyMintsDetails,
-                                    navController = animNavController,
+                                    navigateToDetails = appState.navController::navigateToMyMintsDetails,
+                                    navController = appState.navController,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(
                                         NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
