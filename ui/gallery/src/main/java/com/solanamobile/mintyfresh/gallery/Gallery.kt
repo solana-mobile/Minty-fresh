@@ -3,7 +3,6 @@ package com.solanamobile.mintyfresh.gallery
 import android.Manifest
 import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,8 +35,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.composable.simplecomposables.*
-import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
+import com.solanamobile.mintyfresh.composable.simplecomposables.BottomNavigationBar
+import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
+import com.solanamobile.mintyfresh.composable.simplecomposables.NavigationItem
+import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
+import com.solanamobile.mintyfresh.gallery.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
 const val galleryRoute = "photos"
