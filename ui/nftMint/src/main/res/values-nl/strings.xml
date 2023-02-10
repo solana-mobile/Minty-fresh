@@ -1,0 +1,25 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="image_content_desc">Afbeeldi</string>
+    <string name="mint_success">Je hebt een NFT gemint!</string>
+    <string name="added_to_wallet">Het is aan je wallet toegevoegd</string>
+    <string name="done">Klaar</string>
+    <string name="add_details">Voeg NFT-gegevens toe</string>
+    <string name="uploading_file">Bestand uploaden \u2026</string>
+    <string name="uploading_metadata">Metadata uploaden \u2026</string>
+    <string name="requesting_signatuve">Wallethandtekening verzoeken \u2026</string>
+    <string name="minting">Minten \u2026</string>
+    <string name="waiting_confirmations">Wachten op bevestiging \u2026</string>
+    <string name="your_nft">Jouw NFT</string>
+    <string name="no_description_yet">Nog geen beschrijving.</string>
+    <string name="nft_title">NFT-titel</string>
+    <string name="enter_a_title">Titel invoeren</string>
+    <string name="up_to_32_chars">Tot 32 karakters </string>
+    <string name="description">Beschrijving</string>
+    <string name="describe_nft_here">Beschrijf hier je NFT</string>
+    <string name="mint">Mint</string>
+    <string name="connect_and_mint">Verbind en Mint</string>
+    <string name="enter_description">Voer hier je beschrijving in </string>
+    <string name="back">Terug</string>
+    <string name="wallet_connection_failed">Kon niet verbinden met wallet</string>
+    <string name="generic_error_message">Fout opgetreden tijdens het minten \n<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
+</resources>
