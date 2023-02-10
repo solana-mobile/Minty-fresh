@@ -9,6 +9,10 @@ import javax.inject.Inject
 
 class CarFileUseCase @Inject constructor(private val cidUseCase: CidUseCase) {
 
+    val MAX_BLOCK_SIZE = 1 shl 20 // 1MB
+
+    val MAX_FILE_SIZE = MAX_BLOCK_SIZE * 90 // 90 MB
+
     fun buildNftMetadataCar(title: String, description: String, imageUrl: String): CarWriter {
         val metadataJson = Json.encodeToString(
             JsonMetadata(
@@ -46,12 +50,22 @@ class CarFileUseCase @Inject constructor(private val cidUseCase: CidUseCase) {
     fun buildNftCar(title: String, description: String, imageFilePath: String): CarWriter {
 
         // first get the media file info (metadata depends on the file cid)
-        val uploadFile = File(imageFilePath)
-        val fileBytes = uploadFile.readBytes()
-        val fileCid  = cidUseCase.getCid(fileBytes)
+        val mediaFile = File(imageFilePath)
+        val fileBytes = mediaFile.readBytes()
+
+        val mediaFileBlocks = fileBytes.asIterable().chunked(MAX_BLOCK_SIZE).associate {
+            val chunkBytes = it.toByteArray()
+            cidUseCase.getCid(chunkBytes) to chunkBytes
+        }
+
+        val mediaFileRoot = IpdlFile(mediaFileBlocks.map { (cid, data) ->
+            PBLink(null, data.size, cid)
+        }).encode()
+
+        val mediaFileCid = cidUseCase.getRootCid(mediaFileRoot)
 
         // TODO: get this link from repository layer
-        val imageUrl = "https://${fileCid.toCanonicalString()}.ipfs.nftstorage.link"
+        val imageUrl = "https://${mediaFileCid.toCanonicalString()}.ipfs.nftstorage.link"
         // "https://ipfs.io/ipfs/${fileCid}"
 
         // build the nft metadata (json)
@@ -77,16 +91,21 @@ class CarFileUseCase @Inject constructor(private val cidUseCase: CidUseCase) {
         val metadataCid  = cidUseCase.getCid(metadataBytes)
 
         // Build the root node, to store both files in an IPLD bucket
-        val rootNode = PBNode(byteArrayOf(8, 1), listOf(
+        val rootNode = IpdlDirectory(listOf(
             PBLink("$title.json", metadataBytes.size, metadataCid),
-            PBLink("$title.png", fileBytes.size, fileCid)
+            PBLink("$title.png", mediaFileRoot.size, mediaFileCid)
         )).encode()
 
         val rootCid = cidUseCase.getRootCid(rootNode)
 
         return CarWriter(rootCid)
+            .apply {
+                mediaFileBlocks.forEach { (cid, data) ->
+                    add(cid, data)
+                }
+            }
+            .add(mediaFileCid, mediaFileRoot)
             .add(metadataCid, metadataBytes)
-            .add(fileCid, fileBytes)
             .add(rootCid, rootNode)
     }
 }
