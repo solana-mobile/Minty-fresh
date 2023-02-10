@@ -1,0 +1,5 @@
+<resources>
+    <string name="camera">相机</string>
+    <string name="photos">照片</string>
+    <string name="my_mints">我的铸造</string>
+</resources>
