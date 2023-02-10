@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Метаданные</string>
+    <string name="mint_address">Адрес созданного токена</string>
+    <string name="description">Описание</string>
+    <string name="no_mints_yet">Пока нет созданых токенов. Начните создавать картинки для токенов с Minty Fresh!</string>
+    <string name="connect_to_see_mints">Подключите свой кошелек, чтобы увидеть свои созданные токены</string>
+    <string name="my">Мои</string>
+    <string name="mints">\"\u0020mints</string>
+    <string name="error_fetching_mints">Произошла ошибка при получении созданных вами токенов</string>
+    <string name="retry">Повторить попытку</string>
+</resources>
