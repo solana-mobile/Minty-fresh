@@ -73,8 +73,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
 
-    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
-
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
     implementation("com.google.dagger:hilt-android-gradle-plugin:2.44.2")

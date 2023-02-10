@@ -174,27 +174,20 @@ fun Gallery(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         itemsIndexed(items = uiState) { _, media ->
-                            when (media.mediaType) {
-                                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
-                                    GlideImage(
-                                        model = media.path,
-                                        contentDescription = stringResource(R.string.image_content_desc),
-                                        modifier = Modifier
-                                            .width(76.dp)
-                                            .aspectRatio(1.0f)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = MaterialTheme.colorScheme.surface)
-                                            .clickable {
-                                                navigateToDetails(media.path)
-                                            },
-                                        contentScale = ContentScale.Crop
-                                    ) {
-                                        it.thumbnail()
-                                    }
-                                }
-                                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
-                                    VideoView(media)
-                                }
+                            GlideImage(
+                                model = media.path,
+                                contentDescription = stringResource(R.string.image_content_desc),
+                                modifier = Modifier
+                                    .width(76.dp)
+                                    .aspectRatio(1.0f)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(color = MaterialTheme.colorScheme.surface)
+                                    .clickable {
+                                        navigateToDetails(media.path)
+                                    },
+                                contentScale = ContentScale.Crop
+                            ) {
+                                it.thumbnail()
                             }
                         }
                     }
