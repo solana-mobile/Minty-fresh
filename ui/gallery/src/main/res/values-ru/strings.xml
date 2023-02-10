@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">Получить Let\u2019s</string>
+    <string name="minty_fresh">\u0020 minty fresh.</string>
+    <string name="select_photo">Выберите фотографию для создания токена:</string>
+    <string name="image_content_desc">Изображение</string>
+    <string name="take_pic_content_desc">Сделать фотографию</string>
+    <string name="gallery_permission_body">It\u2019d выглядел бы лучше, если бы вы могли видеть свои фотографии размещенные на нем, не так ли?\n&#128071;</string>
+    <string name="gallery_permission_button">Разрешить доступ к фотографиям</string>
+    <string name="camera_permission_body">Создавайте токен с помощью камеры, не выходя из приложения\n&#128071;</string>
+    <string name="camera_permission_button">Разрешить доступ к камере</string>
+</resources>

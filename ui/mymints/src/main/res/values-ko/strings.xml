@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">메타데이터</string>
+    <string name="mint_address">민팅 주소</string>
+    <string name="description">설명</string>
+    <string name="no_mints_yet">아직 민팅이 없습니다. Minty Fresh에서 사진 민팅을 시작하세요!</string>
+    <string name="connect_to_see_mints">지갑을 연결하여 내 민팅 보기</string>
+    <string name="my">나의</string>
+    <string name="mints">\"\u0020민팅</string>
+    <string name="error_fetching_mints">민팅을 내보내는 중 오류가 발생했습니다</string>
+    <string name="retry">재시도</string>
+</resources>

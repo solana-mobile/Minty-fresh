@@ -1,0 +1,5 @@
+<resources>
+    <string name="camera">Kamera</string>
+    <string name="photos">Zdjęcia</string>
+    <string name="my_mints">Moje wybite tokeny</string>
+</resources>
