@@ -28,6 +28,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -51,6 +52,7 @@ fun NavGraphBuilder.galleryScreen(
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
+    navDestination: NavDestination?,
     identityUri: Uri,
     iconUri: Uri,
     appName: String
@@ -90,7 +92,8 @@ fun NavGraphBuilder.galleryScreen(
             bottomBar = {
                 BottomNavigationBar(
                     navController = navController,
-                    navigationItems = navigationItems
+                    navigationItems = navigationItems,
+                    currentDestination = navDestination
                 )
             },
             content = { padding ->
