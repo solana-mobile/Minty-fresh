@@ -14,11 +14,10 @@ import com.solanamobile.mintyfresh.composable.R
 
 @Composable
 fun BackButton(
-    modifier: Modifier = Modifier,
     navigateUp: () -> Boolean = { true },
 ) {
     IconButton(
-        modifier = modifier
+        modifier = Modifier
             .size(48.dp),
         onClick = { navigateUp() }
     ) {

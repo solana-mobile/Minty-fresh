@@ -1,6 +1,7 @@
 package com.solanamobile.mintyfresh.gallery
 
 import android.Manifest
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -10,9 +11,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AddAPhoto
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -26,24 +30,77 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
-import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
-import com.solanamobile.mintyfresh.composable.simplecomposables.VideoView
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solanamobile.mintyfresh.composable.simplecomposables.*
 import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
+import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
 const val galleryRoute = "photos"
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.galleryScreen(
     navigateToDetails: (String) -> Unit = { },
+    navigateToCamera: () -> Unit = { },
+    navController: NavHostController,
+    activityResultSender: ActivityResultSender,
+    navigationItems: List<NavigationItem>,
+    identityUri: Uri,
+    iconUri: Uri,
+    appName: String
 ) {
     composable(route = galleryRoute) {
-        Gallery(
-            navigateToDetails = navigateToDetails
+        Scaffold(
+            floatingActionButton = {
+                FloatingActionButton(
+                    shape = RoundedCornerShape(corner = CornerSize(16.dp)),
+                    backgroundColor = MaterialTheme.colorScheme.onBackground,
+                    onClick = navigateToCamera
+                ) {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = Icons.Outlined.AddAPhoto,
+                        contentDescription = stringResource(R.string.take_pic_content_desc),
+                        tint = MaterialTheme.colorScheme.background
+                    )
+                }
+            },
+            topBar = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    ConnectWalletButton(
+                        identityUri = identityUri,
+                        iconUri = iconUri,
+                        identityName = appName,
+                        activityResultSender = activityResultSender
+                    )
+                }
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController,
+                    navigationItems = navigationItems
+                )
+            },
+            content = { padding ->
+                Box(
+                    modifier = Modifier.padding(padding)
+                ) {
+                    Gallery(
+                        navigateToDetails = navigateToDetails
+                    )
+                }
+            },
+            containerColor = MaterialTheme.colorScheme.background
         )
     }
 }
