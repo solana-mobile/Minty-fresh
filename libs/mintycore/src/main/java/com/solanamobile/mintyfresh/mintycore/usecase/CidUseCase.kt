@@ -16,4 +16,10 @@ class CidUseCase @Inject constructor() {
         val fileHash = MessageDigest.getInstance("SHA-256").digest(data)
         return CID(Cid.buildCidV1(Cid.Codec.Raw, Multihash.Type.sha2_256, fileHash).toBytes())
     }
+
+    fun getRootCid(data: ByteArray): CID {
+        // really silly that this ipfs library supports Multihash decode but not encode :face-palm:
+        val fileHash = MessageDigest.getInstance("SHA-256").digest(data)
+        return CID(Cid.buildCidV1(Cid.Codec.DagProtobuf, Multihash.Type.sha2_256, fileHash).toBytes())
+    }
 }

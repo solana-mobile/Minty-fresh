@@ -1,13 +1,13 @@
 package com.solanamobile.mintyfresh.mintycore.usecase
 
-import com.solanamobile.mintyfresh.mintycore.ipld.CarWriter
+import com.solanamobile.mintyfresh.mintycore.ipld.*
 import com.solanamobile.mintyfresh.mintycore.metaplex.JsonMetadata
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import javax.inject.Inject
 
-class CarFileUseCase @Inject constructor() {
+class CarFileUseCase @Inject constructor(private val cidUseCase: CidUseCase) {
 
     fun buildNftMetadataCar(title: String, description: String, imageUrl: String): CarWriter {
         val metadataJson = Json.encodeToString(
@@ -28,7 +28,7 @@ class CarFileUseCase @Inject constructor() {
         )
 
         val metadataBytes = metadataJson.encodeToByteArray()
-        val metadataCid  = CidUseCase().getCid(metadataBytes)
+        val metadataCid  = cidUseCase.getCid(metadataBytes)
 
         return CarWriter(metadataCid)
             .add(metadataCid, metadataBytes)
@@ -37,7 +37,7 @@ class CarFileUseCase @Inject constructor() {
     fun buildNftImageCar(filePath: String): CarWriter {
         val uploadFile = File(filePath)
         val fileBytes = uploadFile.readBytes()
-        val fileCid  = CidUseCase().getCid(fileBytes)
+        val fileCid  = cidUseCase.getCid(fileBytes)
 
         return CarWriter(fileCid)
             .add(fileCid, fileBytes)
@@ -45,13 +45,16 @@ class CarFileUseCase @Inject constructor() {
 
     fun buildNftCar(title: String, description: String, imageFilePath: String): CarWriter {
 
+        // first get the media file info (metadata depends on the file cid)
         val uploadFile = File(imageFilePath)
         val fileBytes = uploadFile.readBytes()
-        val fileCid  = CidUseCase().getCid(fileBytes)
+        val fileCid  = cidUseCase.getCid(fileBytes)
 
-        val imageUrl = "https://${fileCid}.ipfs.nftstorage.link"
+        // TODO: get this link from repository layer
+        val imageUrl = "https://${fileCid.toCanonicalString()}.ipfs.nftstorage.link"
         // "https://ipfs.io/ipfs/${fileCid}"
 
+        // build the nft metadata (json)
         val metadataJson = Json.encodeToString(
             JsonMetadata(
                 name = title,
@@ -69,11 +72,21 @@ class CarFileUseCase @Inject constructor() {
             )
         )
 
+        // get the metadata file info
         val metadataBytes = metadataJson.encodeToByteArray()
-        val metadataCid  = CidUseCase().getCid(metadataBytes)
+        val metadataCid  = cidUseCase.getCid(metadataBytes)
 
-        return CarWriter(listOf(metadataCid, fileCid))
+        // Build the root node, to store both files in an IPLD bucket
+        val rootNode = PBNode(byteArrayOf(8, 1), listOf(
+            PBLink("$title.json", metadataBytes.size, metadataCid),
+            PBLink("$title.png", fileBytes.size, fileCid)
+        )).encode()
+
+        val rootCid = cidUseCase.getRootCid(rootNode)
+
+        return CarWriter(rootCid)
             .add(metadataCid, metadataBytes)
             .add(fileCid, fileBytes)
+            .add(rootCid, rootNode)
     }
 }

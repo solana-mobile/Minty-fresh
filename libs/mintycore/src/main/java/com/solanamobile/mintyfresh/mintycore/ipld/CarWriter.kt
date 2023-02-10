@@ -3,11 +3,9 @@ package com.solanamobile.mintyfresh.mintycore.ipld
 import kotlin.experimental.or
 
 // TODO: test with multiple root nodes
-class CarWriter(val rootCids: List<CID>) {
+class CarWriter(val rootCid: CID) {
 
-    constructor(rootCID: CID): this(listOf(rootCID))
-
-    val headerBlock = buildHeader(rootCids)
+    val headerBlock = buildHeader(listOf(rootCid))
     val dataBlocks = mutableMapOf<CID, ByteArray>()
 
     /*

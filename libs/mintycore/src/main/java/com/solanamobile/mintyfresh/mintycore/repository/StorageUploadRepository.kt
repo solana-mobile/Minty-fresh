@@ -2,15 +2,12 @@ package com.solanamobile.mintyfresh.mintycore.repository
 
 import com.solanamobile.mintyfresh.mintycore.BuildConfig
 import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
-import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageResponse
 import com.solanamobile.mintyfresh.mintycore.metaplex.JsonMetadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
