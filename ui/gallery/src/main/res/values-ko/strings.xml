@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">시작해 봅시다</string>
+    <string name="minty_fresh">\u0020민티 프레시.</string>
+    <string name="select_photo">민팅할 사진 선택:</string>
+    <string name="image_content_desc">이미지</string>
+    <string name="take_pic_content_desc">사진 촬영</string>
+    <string name="gallery_permission_body">여기에서 사진을 볼 수 있으면 더 좋지 않겠어요?\n&#128071;</string>
+    <string name="gallery_permission_button">사진 앨범 접근 허용</string>
+    <string name="camera_permission_body">앱을 떠나지 않고 카메라에서 직접 민팅하세요\n&#128071;</string>
+    <string name="camera_permission_button">카메라 접근 허용</string>
+</resources>
