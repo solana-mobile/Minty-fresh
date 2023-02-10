@@ -5,13 +5,15 @@ import android.content.Intent
 import androidx.core.content.FileProvider
 import com.solanamobile.mintyfresh.mymints.R
 import com.solanamobile.mintyfresh.mymints.repository.FileDownloadRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ShareMintUseCase @Inject constructor(
+    @ApplicationContext private val ctx: Context,
     private val fileDownloadRepository: FileDownloadRepository
 ) {
 
-    suspend fun createMintShareIntent(ctx: Context, imgUrl: String, mintAddr: String): Intent {
+    suspend fun createMintShareIntent(imgUrl: String, mintAddr: String): Intent {
         val outFile = fileDownloadRepository.downloadFileByUrl(imgUrl, ctx.cacheDir)
 
         val providerName = ctx.packageName + ".provider"
@@ -19,7 +21,7 @@ class ShareMintUseCase @Inject constructor(
 
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, ctx.resources.getString(R.string.share_mint_text, mintAddr))
+            putExtra(Intent.EXTRA_TEXT, "${ ctx.resources.getString(R.string.share_mint_text) }https://solscan.io/token/$mintAddr")
             putExtra(Intent.EXTRA_STREAM, uri)
             setDataAndType(uri, "image/jpeg")
 

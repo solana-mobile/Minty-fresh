@@ -126,7 +126,7 @@ class MyMintsViewModel @Inject constructor(
             val ctx = getApplication<Application>()
             val selectedMint = _viewState.value.myMints[mintIndex]
 
-            val shareIntent = shareMintUseCase.createMintShareIntent(ctx, selectedMint.mediaUrl, selectedMint.id)
+            val shareIntent = shareMintUseCase.createMintShareIntent(selectedMint.mediaUrl, selectedMint.id)
             ctx.startActivity(shareIntent)
         }
     }
