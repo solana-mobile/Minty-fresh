@@ -66,7 +66,7 @@ fun NavGraphBuilder.cameraScreen(
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun Camera(
     navigateToDetails: (String) -> Unit = { },
@@ -80,29 +80,38 @@ fun Camera(
             }
         }
 
-    PermissionView(
-        permissionsRequired,
-        content = {
-            StartCamera(navigateToDetails)
-        },
-        emptyView = {
-            LaunchedEffect(key1 = Unit) {
-                if (!it.allPermissionsGranted) {
-                    it.launchMultiplePermissionRequest()
-                }
-            }
+    Scaffold(
+        content = { padding ->
             Box(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxSize(),
+                modifier = Modifier.padding(padding)
             ) {
-                EmptyView(
-                    it,
-                    stringResource(id = R.string.camera_permission_body),
-                    stringResource(id = R.string.camera_permission_button)
+                PermissionView(
+                    permissionsRequired,
+                    content = {
+                        StartCamera(navigateToDetails)
+                    },
+                    emptyView = {
+                        LaunchedEffect(key1 = Unit) {
+                            if (!it.allPermissionsGranted) {
+                                it.launchMultiplePermissionRequest()
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxSize(),
+                        ) {
+                            EmptyView(
+                                it,
+                                stringResource(id = R.string.camera_permission_body),
+                                stringResource(id = R.string.camera_permission_button)
+                            )
+                        }
+                    }
                 )
             }
-        }
+        },
+        containerColor = MaterialTheme.colorScheme.background
     )
 }
 

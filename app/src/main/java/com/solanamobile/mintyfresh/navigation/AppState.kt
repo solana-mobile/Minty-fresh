@@ -1,4 +1,4 @@
-package com.solanamobile.mintyfresh
+package com.solanamobile.mintyfresh.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -11,8 +11,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.solanamobile.mintyfresh.gallery.galleryRoute
-import com.solanamobile.mintyfresh.mymints.composables.myMintsRoute
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -36,18 +34,6 @@ class MintyFreshAppState(
     val currentDestination: NavDestination?
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
-
-    val shouldShowAppBar: Boolean
-        @Composable get() {
-            val route = currentDestination?.route?.split("?")?.firstOrNull()
-            return route == galleryRoute || route == myMintsRoute
-        }
-
-    val shouldShowFAB: Boolean
-        @Composable get() {
-            val route = currentDestination?.route?.split("?")?.firstOrNull()
-            return route == galleryRoute
-        }
 
     val useDarkIcons: Boolean
         @Composable get() = !isSystemInDarkTheme()
