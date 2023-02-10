@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">Deja u\2019s obtener</string>
+    <string name="minty_fresh">\u0020minty fresh.</string>
+    <string name="select_photo">Selecciona una foto para acuñar:</string>
+    <string name="image_content_desc">Imagen</string>
+    <string name="take_pic_content_desc">Tomar foto</string>
+    <string name="gallery_permission_body">Sería\u2019d mejor si pudieras ver las fotos aquí, ¿verdad?\n&#128071;</string>
+    <string name="gallery_permission_button">Permitir acceso a las fotos </string>
+    <string name="camera_permission_body">Acuña directamente de la cámara sin dejar la aplicación\n&#128071;</string>
+    <string name="camera_permission_button">Permite acceso de la cámara </string>
+</resources>
