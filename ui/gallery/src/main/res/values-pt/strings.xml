@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">Let\u2019s get</string>
+    <string name="minty_fresh">\u0020minty fresh.</string>
+    <string name="select_photo">Seleciona uma foto para fazer mint:</string>
+    <string name="image_content_desc">Imagem</string>
+    <string name="take_pic_content_desc">Tirar Foto</string>
+    <string name="gallery_permission_body">It\u2019d era melhor se conseguisse ver as fotos aqui, certot?\n&#128071;</string>
+    <string name="gallery_permission_button">Permitir acesso às fotos</string>
+    <string name="camera_permission_body">Faça mint diretamente a partir da câmara sem sair da aplicação\n&#128071;</string>
+    <string name="camera_permission_button">Permitir acesso à câmara</string>
+</resources>
