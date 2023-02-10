@@ -2,7 +2,6 @@ package com.solanamobile.mintyfresh.gallery
 
 import android.Manifest
 import android.os.Build
-import android.provider.MediaStore
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,8 +31,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
 import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
-import com.solanamobile.mintyfresh.composable.simplecomposables.VideoView
-import com.solanamobile.mintyfresh.composable.viewmodel.MediaViewModel
+import com.solanamobile.mintyfresh.gallery.viewmodel.MediaViewModel
 
 const val galleryRoute = "photos"
 
@@ -117,27 +115,20 @@ fun Gallery(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         itemsIndexed(items = uiState) { _, media ->
-                            when (media.mediaType) {
-                                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
-                                    GlideImage(
-                                        model = media.path,
-                                        contentDescription = stringResource(R.string.image_content_desc),
-                                        modifier = Modifier
-                                            .width(76.dp)
-                                            .aspectRatio(1.0f)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .background(color = MaterialTheme.colorScheme.surface)
-                                            .clickable {
-                                                navigateToDetails(media.path)
-                                            },
-                                        contentScale = ContentScale.Crop
-                                    ) {
-                                        it.thumbnail()
-                                    }
-                                }
-                                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
-                                    VideoView(media)
-                                }
+                            GlideImage(
+                                model = media.path,
+                                contentDescription = stringResource(R.string.image_content_desc),
+                                modifier = Modifier
+                                    .width(76.dp)
+                                    .aspectRatio(1.0f)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(color = MaterialTheme.colorScheme.surface)
+                                    .clickable {
+                                        navigateToDetails(media.path)
+                                    },
+                                contentScale = ContentScale.Crop
+                            ) {
+                                it.thumbnail()
                             }
                         }
                     }
