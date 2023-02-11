@@ -14,3 +14,5 @@ object Varint {
         }
     }
 }
+
+fun Int.asVarint() = Varint.encode(this)

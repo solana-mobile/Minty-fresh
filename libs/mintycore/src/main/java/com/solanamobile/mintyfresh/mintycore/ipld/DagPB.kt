@@ -26,11 +26,11 @@ fun PBNode.encode(): ByteArray {
 
     val linkBlocks = links?.map {
         val bytes = it.encode()
-        byteArrayOf(0x12) + Varint.encode(bytes.size) + bytes
+        byteArrayOf(0x12) + bytes.size.asVarint() + bytes
     }
 
     val dataBlock = if (data.isNotEmpty())
-        byteArrayOf(0xa) + Varint.encode(data.size) + data
+        byteArrayOf(0xa) + data.size.asVarint() + data
     else byteArrayOf()
 
     return (linkBlocks?.reduce { acc, bytes -> acc + bytes } ?: byteArrayOf()) + dataBlock
@@ -41,8 +41,8 @@ fun PBNode.encode(): ByteArray {
  * see here: https://github.com/ipld/js-dag-pb/blob/master/src/pb-encode.js
  */
 fun PBLink.encode() =
-    byteArrayOf(0x0a) + Varint.encode(cid.bytes.size) + cid.bytes +                     // link cid
-            (name?.let {
-                byteArrayOf(0x12) + Varint.encode(name.length) + name.encodeToByteArray()
-            } ?: byteArrayOf()) +                                                       // link name
-            byteArrayOf(0x18) + Varint.encode(size)                                     // link size
+    byteArrayOf(0x0a) + cid.bytes.size.asVarint() + cid.bytes +                     // link cid
+            (name?.let {                                                            // link name
+                byteArrayOf(0x12) + name.length.asVarint() + name.encodeToByteArray()
+            } ?: byteArrayOf()) +
+            byteArrayOf(0x18) + size.asVarint()                                     // link size

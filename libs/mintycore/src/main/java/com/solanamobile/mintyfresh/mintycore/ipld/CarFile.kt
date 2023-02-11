@@ -12,8 +12,8 @@ class CarFile(val rootCid: CID) {
      */
     fun serialize() =
         // |------------------- Header ------------------|
-        // [    varint (header size)    | DAG-CBOR block ]
-        Varint.encode(headerBlock.size) +   headerBlock  +
+        // [  varint (header size)  | DAG-CBOR block ]
+        headerBlock.size.asVarint() +   headerBlock  +
                 dataBlocks.flatMap { (cid, data) ->
                     //     |----------------------------- Block -------------------------------|
                     //     [        varint block size (cid + data)         |    CID    | block ]
