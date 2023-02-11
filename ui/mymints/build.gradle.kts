@@ -35,6 +35,10 @@ android {
         }
     }
 
+    lint {
+        disable.add("MissingTranslation")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -70,6 +74,8 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.44.2")
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
+
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
