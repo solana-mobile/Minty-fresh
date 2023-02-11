@@ -5,11 +5,11 @@ import org.intellij.lang.annotations.Language
 import java.util.*
 import javax.inject.Inject
 
-class XWeb3AuthUseCase @Inject constructor(private val didUseCase: DidUseCase) {
+class XWeb3AuthUseCase @Inject constructor(private val didUseCase: Web3IdUseCase) {
 
     fun buildxWeb3AuthMessage(user: PublicKey, rootCid: String): String {
 
-        val did = didUseCase.getDidForUser(user)
+        val did = didUseCase.getDecentralizedIdForUser(user)
 
         // TODO: these language tags are useful in dev but should probably be removed
         @Language("json")

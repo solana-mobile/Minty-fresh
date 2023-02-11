@@ -10,7 +10,7 @@ import java.nio.file.Files
 import javax.inject.Inject
 
 class CarFileUseCase @Inject constructor(
-    private val cidUseCase: CidUseCase,
+    private val cidUseCase: Web3IdUseCase,
     private val storageRepository: StorageUploadRepository
 ) {
 
@@ -26,14 +26,14 @@ class CarFileUseCase @Inject constructor(
 
         val mediaFileBlocks = fileBytes.asIterable().chunked(MAX_BLOCK_SIZE).associate {
             val chunkBytes = it.toByteArray()
-            cidUseCase.getCid(chunkBytes) to chunkBytes
+            cidUseCase.getContentId(chunkBytes) to chunkBytes
         }
 
         val mediaFileRoot = IpdlFile(mediaFileBlocks.map { (cid, data) ->
             PBLink(null, data.size, cid)
         }).encode()
 
-        val mediaFileCid = cidUseCase.getRootCid(mediaFileRoot)
+        val mediaFileCid = cidUseCase.getRootContentId(mediaFileRoot)
         val imageUrl = storageRepository.getNftStorageLinkForCid(mediaFileCid)
 
         // build the nft metadata (json)
@@ -41,7 +41,7 @@ class CarFileUseCase @Inject constructor(
 
         // get the metadata file info
         val metadataBytes = metadataJson.encodeToByteArray()
-        val metadataCid  = cidUseCase.getCid(metadataBytes)
+        val metadataCid  = cidUseCase.getContentId(metadataBytes)
 
         // Build the root node, to store both files in an IPLD bucket
         val rootNode = IpdlDirectory(listOf(
@@ -49,7 +49,7 @@ class CarFileUseCase @Inject constructor(
             PBLink("$title.$mediaFileExtension", mediaFileRoot.size, mediaFileCid)
         )).encode()
 
-        val rootCid = cidUseCase.getRootCid(rootNode)
+        val rootCid = cidUseCase.getRootContentId(rootNode)
 
         return CarFile(rootCid)
             .apply {
