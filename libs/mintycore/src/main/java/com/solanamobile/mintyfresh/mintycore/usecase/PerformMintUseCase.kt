@@ -103,7 +103,7 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.UploadingMedia
 
         // upload the media file
-        val directoryUrl = storageRepository.uploadCar(fullCar.build(), web3AuthToken)
+        val directoryUrl = storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
 
         // TODO: should get this some other way, or get a direct link via the metadata cid
         val metadataUrl = "$directoryUrl/$title.json"
