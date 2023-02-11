@@ -94,7 +94,7 @@ fun MyMintsDetails(
                                 myMintsViewModel.shareMyMint(index)
                             },
                         imageVector = Icons.Outlined.Share,
-                        contentDescription = "Share"
+                        contentDescription = stringResource(R.string.share)
                     )
                 }
             )
