@@ -1,11 +1,15 @@
 package com.solanamobile.mintyfresh.mintycore.usecase
 
 import com.solana.core.PublicKey
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import org.intellij.lang.annotations.Language
 import java.util.*
 import javax.inject.Inject
 
-class XWeb3AuthUseCase @Inject constructor(private val didUseCase: Web3IdUseCase) {
+class XWeb3AuthUseCase @Inject constructor(
+    private val didUseCase: Web3IdUseCase,
+    private val rpcConfig: IRpcConfig
+) {
 
     fun buildxWeb3AuthMessage(user: PublicKey, rootCid: String): String {
 
@@ -29,9 +33,9 @@ class XWeb3AuthUseCase @Inject constructor(private val didUseCase: Web3IdUseCase
                 "put": {
                   "rootCID": "$rootCid",
                   "tags": {
-                    "mintingAgent": "https://github.com/solana-mobile/Minty-fresh",
+                    "mintingAgent": "solana-mobile/Minty-fresh",
                     "chain": "solana",
-                    "solanaCluster": "devnet"
+                    "solanaCluster": "${rpcConfig.rpcCluster.name}"
                   }
                 }
               }
