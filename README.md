@@ -23,9 +23,10 @@ Mint your favorite photos as NFTs, on the go!
 
 ## Take a Look 
 
-Mint | On | Your | Device!
----|---|---|---
-<img src="assets/screen1.png" width="250"> | <img src="assets/screen2.png" width="250"> | <img src="assets/screen3.png" width="250"> | <img src="assets/screen4.png" width="250"> |
+<img src="assets/screen1.png" width="22%">
+<img src="assets/screen2.png" width="22%">
+<img src="assets/screen3.png" width="22%">
+<img src="assets/screen4.png" width="22%">
 
 ## Technologies
 
