@@ -17,15 +17,15 @@
 
 # Minty Fresh
 
-A quick, snappy sentence hyping Minty Fresh! (We should write this as a team)
+Mint your favorite photos as NFTs, on the go!
 
 <!-- This would be a great place to include our store download badge -->
 
 ## Take a Look 
 
-| Screenshot 1 | Screenshot 2                                   | Screenshot 3                               | Screenshot 4                                      |
-|---|------------------------------------------------|--------------------------------------------|---------------------------------------------------|
-<img src="assets/Gallery.png" width="250"> | <img src="assets/MintDetails.png" width="250"> | <img src="assets/MyMints.png" width="250"> | <img src="assets/MyMintsDetails.png" width="250"> |
+| Your photos                                | Easy to mint                              | On the go                                  | Wherever you are                          |
+|--------------------------------------------|-------------------------------------------|--------------------------------------------|-------------------------------------------|
+ <img src="assets/screen1.png" width="250"> | <img src="assets/screen2.png" width="250"> | <img src="assets/screen3.png" width="250"> | <img src="assets/screen4.png" width="250"> |
 
 ## Technologies
 
