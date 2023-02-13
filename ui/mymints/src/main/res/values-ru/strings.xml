@@ -9,4 +9,6 @@
     <string name="mints">\"\u0020mints</string>
     <string name="error_fetching_mints">Произошла ошибка при получении созданных вами токенов</string>
     <string name="retry">Повторить попытку</string>
+    <string name="share_mint_text">Я только что освежился с Minty Fresh и создал этот NFT\n\n</string>
+    <string name="share">Поделиться</string>
 </resources>
