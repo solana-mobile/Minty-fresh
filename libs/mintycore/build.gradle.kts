@@ -25,12 +25,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        //TODO: All of these values will come from the networking layer when that is refactored
-        buildConfigField(
-            "String",
-            "NFTSTORAGE_KEY",
-            "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
-        )
+        // NFT.Storage API Url
         buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
     }
 
@@ -39,11 +34,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
-            buildConfigField(
-                "String",
-                "NFTSTORAGE_KEY",
-                "\"${properties.getProperty("NFTSTORAGE_API_KEY")}\""
-            )
+            // NFT.Storage API Url
             buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
         }
     }

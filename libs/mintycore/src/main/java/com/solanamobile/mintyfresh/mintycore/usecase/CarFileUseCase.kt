@@ -34,7 +34,7 @@ class CarFileUseCase @Inject constructor(
         }).encode()
 
         val mediaFileCid = cidUseCase.getRootContentId(mediaFileRoot)
-        val imageUrl = storageRepository.getNftStorageLinkForCid(mediaFileCid)
+        val imageUrl = storageRepository.getIpfsLinkForCid(mediaFileCid)
 
         // build the nft metadata (json)
         val metadataJson = buildNftMetadata(title, description, imageUrl, mediaMimeType)
