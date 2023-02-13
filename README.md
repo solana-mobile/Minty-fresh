@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="assets/banner.png" width="800px" height="150px" />
+    <img src="assets/banner.png" width="800px" />
 </div>
 
 <div align="center">
@@ -23,9 +23,9 @@ Mint your favorite photos as NFTs, on the go!
 
 ## Take a Look 
 
-| Your photos                                | Easy to mint                              | On the go                                  | Wherever you are                          |
-|--------------------------------------------|-------------------------------------------|--------------------------------------------|-------------------------------------------|
- <img src="assets/screen1.png" width="250"> | <img src="assets/screen2.png" width="250"> | <img src="assets/screen3.png" width="250"> | <img src="assets/screen4.png" width="250"> |
+Mint | On | Your | Device!
+---|---|---|---
+<img src="assets/screen1.png" width="250"> | <img src="assets/screen2.png" width="250"> | <img src="assets/screen3.png" width="250"> | <img src="assets/screen4.png" width="250"> |
 
 ## Technologies
 
