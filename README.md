@@ -17,7 +17,7 @@
 
 # Minty Fresh
 
-Mint your favorite photos as NFTs, on the go!
+Mint NFTs directly from images on your phone with just a few taps!
 
 <!-- This would be a great place to include our store download badge -->
 
