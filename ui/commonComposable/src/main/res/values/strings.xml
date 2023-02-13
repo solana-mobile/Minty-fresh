@@ -1,5 +1,3 @@
 <resources>
     <string name="back">Back</string>
-    <string name="permission_important">Please grant these permissions %1$s</string>
-    <string name="permission_required">Please grant the following required permission(s): %1$s</string>
 </resources>

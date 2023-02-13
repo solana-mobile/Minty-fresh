@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">开始使用</string>
+    <string name="minty_fresh">\u0020Minty fresh。</string>
+    <string name="select_photo">选择要铸造的照片：</string>
+    <string name="image_content_desc">图片</string>
+    <string name="take_pic_content_desc">拍摄照片</string>
+    <string name="gallery_permission_body">如果您能在这里看到您的照片就更好了，对吧？\n&#128071;</string>
+    <string name="gallery_permission_button">允许访问相册</string>
+    <string name="camera_permission_body">无需退出应用即可直接从您的相机铸造\n&#128071;</string>
+    <string name="camera_permission_button">允许相机访问</string>
+</resources>

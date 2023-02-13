@@ -9,4 +9,6 @@
     <string name="mints">"\u0020mints</string>
     <string name="error_fetching_mints">An error happened while fetching your Mints</string>
     <string name="retry">Retry</string>
+    <string name="share_mint_text">I just got fresh with Minty Fresh and minted this NFT!\n\n</string>
+    <string name="share">Share</string>
 </resources>

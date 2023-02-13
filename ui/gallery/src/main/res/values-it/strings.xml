@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lets_get">Cominciamo a usare</string>
+    <string name="minty_fresh">Minty Fresh.</string>
+    <string name="select_photo">Seleziona una foto da mintare:</string>
+    <string name="image_content_desc">Immagine</string>
+    <string name="take_pic_content_desc">Scatta una foto</string>
+    <string name="gallery_permission_body">Sarebbe meglio se tu potessi vedere le tue foto qui, giusto?\n&#128071;</string>
+    <string name="gallery_permission_button">Consenti l\'accesso alle foto</string>
+    <string name="camera_permission_body">Minta direttamente dalla tua fotocamera senza uscire dall\'app\n&#128071;</string>
+    <string name="camera_permission_button">Consenti l\'accesso alla fotocamera</string>
+</resources>

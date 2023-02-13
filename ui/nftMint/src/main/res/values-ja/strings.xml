@@ -1,0 +1,26 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="image_content_desc">画像</string>
+    <string name="mint_success">NFTをミントしました！</string>
+    <string name="added_to_wallet">接続されたあなたのjウォレットに追加されました</string>
+    <string name="done">完了</string>
+    <string name="add_details">NFTの詳細を追加</string>
+    <string name="uploading_file">ファイルをアップロード中…
+</string>
+    <string name="uploading_metadata">メタデータをアップロード中…</string>
+    <string name="requesting_signatuve">ウォレットの署名をリクエスト中…</string>
+    <string name="minting">ミント処理中…</string>
+    <string name="waiting_confirmations">確認待ち…</string>
+    <string name="your_nft">あなたのNFT</string>
+    <string name="no_description_yet">まだ説明がありません。</string>
+    <string name="nft_title">NFTのタイトル</string>
+    <string name="enter_a_title">タイトルを入力してください</string>
+    <string name="up_to_32_chars">最大32文字利用可能です</string>
+    <string name="description">説明</string>
+    <string name="describe_nft_here">こちらにNFTの説明を加えてください</string>
+    <string name="mint">ミント</string>
+    <string name="connect_and_mint">接続してミント</string>
+    <string name="enter_description">こちらに説明を入力してください</string>
+    <string name="back">戻る</string>
+    <string name="wallet_connection_failed">ウォレットに接続できません</string>
+    <string name="generic_error_message">ミント中にエラー発生<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
+</resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">मेटाडेटा</string>
+    <string name="mint_address">मिंट एड्रेस</string>
+    <string name="description">जानकारी</string>
+    <string name="no_mints_yet">अभी तक कोई मिंट नहीं. Minty Fresh के साथ तस्वीरें मिंट करना शुरू करें!</string>
+    <string name="connect_to_see_mints">अपने मिंट्स देखने के लिए अपने वॉलेट को कनेक्ट करें</string>
+    <string name="my">मेरे</string>
+    <string name="mints">\"\u0020मिंट्स </string>
+    <string name="error_fetching_mints">आपके मिंट्स को ढूंढने के दौरान एक एरर हुआ</string>
+    <string name="retry">दोबारा कोशिश करें</string>
+</resources>

@@ -1,8 +1,5 @@
 <resources>
-    <string name="take_pic_content_desc">Take Picture</string>
     <string name="camera">Camera</string>
     <string name="photos">Photos</string>
-    <string name="mint">Mint</string>
     <string name="my_mints">My Mints</string>
-    <string name="my_mints_details">My Mints Details</string>
 </resources>

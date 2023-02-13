@@ -14,6 +14,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
 import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
@@ -45,6 +50,21 @@ import java.util.*
 
 private var imageCapture: ImageCapture? = null
 private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+
+fun NavController.navigateToCamera(navOptions: NavOptions? = null) {
+    this.navigate("camera", navOptions)
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.cameraScreen(
+    navigateToDetails: (String) -> Unit = { },
+) {
+    composable(route = "camera") {
+        Camera(
+            navigateToDetails = navigateToDetails
+        )
+    }
+}
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable

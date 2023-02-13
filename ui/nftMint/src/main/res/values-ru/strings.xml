@@ -1,0 +1,25 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="image_content_desc">Изображение</string>
+    <string name="mint_success">Вы создали NFT!</string>
+    <string name="added_to_wallet">It\u2019s был добавлен в ваш привязанный кошелек</string>
+    <string name="done">Готово</string>
+    <string name="add_details">Добавить детали о NFT</string>
+    <string name="uploading_file">Загрузка файла  \u2026</string>
+    <string name="uploading_metadata">Загрузка метаданных \u2026</string>
+    <string name="requesting_signatuve">Запрос подписи кошелька \u2026</string>
+    <string name="minting">Создание токена \u2026</string>
+    <string name="waiting_confirmations">Ожидание подтверждений \u2026</string>
+    <string name="your_nft">Ваш NFT</string>
+    <string name="no_description_yet">Описания пока нет.</string>
+    <string name="nft_title">Название NFT</string>
+    <string name="enter_a_title">Введите название</string>
+    <string name="up_to_32_chars">Используйте до 32 символов</string>
+    <string name="description">Описание</string>
+    <string name="describe_nft_here">Опишите свой NFT здесь</string>
+    <string name="mint">Создать токен</string>
+    <string name="connect_and_mint">Подключиться и создать токен</string>
+    <string name="enter_description">Введите здесь свое описание </string>
+    <string name="back">Назад</string>
+    <string name="wallet_connection_failed">Не удается подключиться к кошельку</string>
+    <string name="generic_error_message">Ошибка при создании токена\n<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
+</resources>

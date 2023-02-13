@@ -1,0 +1,5 @@
+<resources>
+    <string name="camera">카메라</string>
+    <string name="photos">사진</string>
+    <string name="my_mints">내 민팅</string>
+</resources>

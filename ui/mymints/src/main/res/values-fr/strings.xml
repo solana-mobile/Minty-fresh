@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Métadonnées</string>
+    <string name="mint_address">Adresse de Mint</string>
+    <string name="description">Description</string>
+    <string name="no_mints_yet">Pas encore de Mints. Commencez à minter des photos avec Minty Fresh !</string>
+    <string name="connect_to_see_mints">Connectez-vous au portefeuille pour voir vos mints</string>
+    <string name="my">Mes</string>
+    <string name="mints">\"\u0020mints</string>
+    <string name="error_fetching_mints">Une erreur est survenue lors de la récupération de vos Mints</string>
+    <string name="retry">Réessayer</string>
+</resources>

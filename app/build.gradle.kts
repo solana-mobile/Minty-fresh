@@ -14,8 +14,8 @@ android {
         applicationId = "com.solanamobile.mintyfresh"
         minSdk = 26
         targetSdk = 33
-        versionCode = 6
-        versionName = "v0.3.1"
+        versionCode = 7
+        versionName = "v0.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations.addAll(listOf("en", "es", "pt", "pl", "it", "de", "fr", "nl", "ar", "zh", "hi", "ja", "ko", "ro", "ru"))
@@ -102,8 +102,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
-
-    implementation("com.google.android.exoplayer:exoplayer:2.18.2")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
 

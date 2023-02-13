@@ -1,0 +1,25 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="image_content_desc">Imagen</string>
+    <string name="mint_success">¡Has acuñado un NFT!</string>
+    <string name="added_to_wallet">Ha\u2019s sido añadido a la billetera conectada</string>
+    <string name="done">Hecho</string>
+    <string name="add_details">Añade detalles del NFT</string>
+    <string name="uploading_file">Subiendo archivo \u2026</string>
+    <string name="uploading_metadata">Subiendo metadatos \u2026</string>
+    <string name="requesting_signatuve">Solicitando firma de billetera \u2026</string>
+    <string name="minting">Acuñando \u2026</string>
+    <string name="waiting_confirmations">Esperando confirmaciones \u2026</string>
+    <string name="your_nft">Tu NFT</string>
+    <string name="no_description_yet">No hay descripción aún. </string>
+    <string name="nft_title">Título de NFT</string>
+    <string name="enter_a_title">Ingresar un título</string>
+    <string name="up_to_32_chars">Usar hasta 32 caracteres</string>
+    <string name="description">Descripción</string>
+    <string name="describe_nft_here">Describe tu NFT aquí</string>
+    <string name="mint">Acuñar </string>
+    <string name="connect_and_mint">Conectar y acuñar</string>
+    <string name="enter_description">Ingresa la descripción aquí</string>
+    <string name="back">Volver</string>
+    <string name="wallet_connection_failed">Incapaz de conectar a la billetera </string>
+    <string name="generic_error_message">Error mientras se acuña\n<xliff:g example="Network Error" id="error_messge">%1$s</xliff:g></string>
+</resources>

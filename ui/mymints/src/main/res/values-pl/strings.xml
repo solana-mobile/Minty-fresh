@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="metadata">Metadane</string>
+    <string name="mint_address">Wybij adres</string>
+    <string name="description">Opis</string>
+    <string name="no_mints_yet">Na razie brak wybić. Rozpocznij wybijanie zdjęć z pomocą aplikacji Minty Fresh!</string>
+    <string name="connect_to_see_mints">Żeby zobaczyć swoje wybite tokeny, podłącz portfel</string>
+    <string name="my">Moje</string>
+    <string name="mints">\"\u0020wybite tokeny</string>
+    <string name="error_fetching_mints">Podczas pobierania Twoich wybitych tokenów wystąpił błąd</string>
+    <string name="retry">Spróbuj ponownie</string>
+</resources>

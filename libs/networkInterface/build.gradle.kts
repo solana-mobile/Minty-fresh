@@ -16,7 +16,7 @@ android {
 
         buildConfigField(
             "String",
-            "MINTY_FRESH_CREATOR_PDA",
+            "MINTY_FRESH_CREATOR_PUBKEY",
             "\"3QFrGD1VHLKqeuCWUt6jgcM5ZESBzhY9dUvZcDbZFisB\""
         )
     }
