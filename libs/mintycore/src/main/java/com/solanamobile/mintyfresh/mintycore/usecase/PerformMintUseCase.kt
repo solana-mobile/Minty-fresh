@@ -2,7 +2,11 @@ package com.solanamobile.mintyfresh.mintycore.usecase
 
 import android.net.Uri
 import com.solana.core.*
-import com.solana.mobilewalletadapter.clientlib.*
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
+import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solana.mobilewalletadapter.clientlib.successPayload
+import com.solanamobile.mintyfresh.mintycore.ipld.*
 import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
 import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
 import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
@@ -10,12 +14,11 @@ import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -32,6 +35,8 @@ sealed interface MintState {
 
 class PerformMintUseCase @Inject constructor(
     private val walletAdapter: MobileWalletAdapter,
+    private val carFileUseCase: CarFileUseCase,
+    private val web3AuthUseCase: XWeb3AuthUseCase,
     private val storageRepository: StorageUploadRepository,
     private val persistenceUseCase: WalletConnectionUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
@@ -52,87 +57,117 @@ class PerformMintUseCase @Inject constructor(
                             desc: String,
                             filePath: String
     ) = withContext(Dispatchers.IO) {
-            val authToken = persistenceUseCase.walletDetails.map {
-                if (it is Connected) it.authToken else null
-            }.stateIn(this).value
 
-            val creator = persistenceUseCase.walletDetails.map {
-                if (it is Connected) it.publicKey else null
-            }.stateIn(this).value
+        val authToken = persistenceUseCase.walletDetails.map {
+            if (it is Connected) it.authToken else null
+        }.stateIn(this).value
 
-            check(creator != null)
+        val walletAddy = persistenceUseCase.walletDetails.map {
+            if (it is Connected) it.publicKey else null
+        }.stateIn(this).value
 
-            // upload the media file
-            _mintState.value = MintState.UploadingMedia
+        check(walletAddy != null)
 
-            val nftImageUrl = storageRepository.uploadFile(filePath)
+        val creator = PublicKey(walletAddy)
 
-            // create and upload the NFT metadata
-            _mintState.value = MintState.CreatingMetadata
+        // create upload files for both metadata and image
+        _mintState.value = MintState.CreatingMetadata
 
-            val metadataUrl = storageRepository.uploadMetadata(title, desc, nftImageUrl)
+        val fullCar = carFileUseCase.buildNftCar(title, desc, filePath)
 
-            // begin building the transaction
-            _mintState.value = MintState.BuildingTransaction
+        val xWeb3Message = web3AuthUseCase
+            .buildxWeb3AuthMessage(creator, fullCar.rootCid.toCanonicalString())
 
-            val mintAccount = HotAccount()
-            val mintTxn = mintTransactionRepository.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, PublicKey(creator))
+        // begin message transaction step
+        _mintState.value = MintState.Signing(xWeb3Message.encodeToByteArray())
+        delay(700)
 
-            mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+        val signatureResult = walletAdapter.transact(sender) {
+            authToken?.let {
+                reauthorize(identityUri, iconUri, identityName, authToken)
+            } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
 
-            val transactionBytes =
-                mintTxn.serialize(SerializeConfig(
-                    requireAllSignatures = false,
-                    verifySignatures = false
-                ))
+            val signingResult = signMessages(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
 
-            // begin signing transaction step
-            _mintState.value = MintState.Signing(transactionBytes)
-
-            val txResult = walletAdapter.transact(sender) {
-                authToken?.let {
-                    reauthorize(identityUri, iconUri, identityName, authToken)
-                } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
-
-                val signingResult = signTransactions(arrayOf(transactionBytes))
-
-                return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
-            }
-
-            when (txResult) {
-                is TransactionResult.Success -> {
-                    txResult.successPayload?.let { primarySignature ->
-                        // rebuild transaction object from signed bytes
-                        // there is a deserialization bug in solana.core.Message.from(byteArray) so have to
-                        // build up the Message (and Transaction) object manually (for now)
-                        // val signed = Transaction.from(signedBytes)
-                        val signed = Transaction().apply {
-                            setRecentBlockHash(mintTxn.recentBlockhash)
-                            feePayer = PublicKey(creator)
-                            addInstruction(*mintTxn.instructions.toTypedArray())
-                            addSignature(PublicKey(creator), primarySignature)
-                        }
-
-                        // now that the primary signer (creator) has signed, the mint account can sign
-                        signed.partialSign(mintAccount)
-
-                        _mintState.value = MintState.Minting(mintAccount.publicKey)
-
-                        // send the signed transaction to the cluster
-                        val transactionSignature = sendTransactionRepository.sendTransaction(signed)
-
-                        _mintState.value = MintState.AwaitingConfirmation
-
-                        // Await for transaction confirmation
-                        sendTransactionRepository.confirmTransaction(transactionSignature)
-
-                        _mintState.value = MintState.Complete(transactionSignature)
-                    }
-                }
-                is TransactionResult.Failure -> {
-                    _mintState.value = MintState.Error(txResult.message)
-                }
-                else -> { }
-            }
+            return@transact signingResult.signedPayloads[0]
         }
+
+        val signature = signatureResult.successPayload ?: run {
+            _mintState.value = MintState.Error("Wallet signature failed")
+            return@withContext
+        }
+
+        val web3AuthToken = web3AuthUseCase.buildXWeb3AuthToken(xWeb3Message, signature)
+
+        // now we can upload the car files, using the web3 auth tokens we just made
+        _mintState.value = MintState.UploadingMedia
+
+        // upload the media file
+        val directoryUrl = storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
+
+        // TODO: should get this some other way, or get a direct link via the metadata cid
+        val metadataUrl = "$directoryUrl/$title.json"
+
+        // begin building the mint transaction
+        _mintState.value = MintState.BuildingTransaction
+
+        val mintAccount = HotAccount()
+        val mintTxn = mintTransactionRepository.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, creator)
+
+        mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+
+        val transactionBytes =
+            mintTxn.serialize(SerializeConfig(
+                requireAllSignatures = false,
+                verifySignatures = false
+            ))
+
+        // begin signing transaction step
+        _mintState.value = MintState.Signing(transactionBytes)
+        delay(700)
+
+        val txResult = walletAdapter.transact(sender) {
+            authToken?.let {
+                reauthorize(identityUri, iconUri, identityName, authToken)
+            } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
+
+            val signingResult = signTransactions(arrayOf(transactionBytes))
+
+            return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
+        }
+
+        when (txResult) {
+            is TransactionResult.Success -> {
+                // rebuild transaction object from signed bytes
+                // there is a deserialization bug in solana.core.Message.from(byteArray) so have to
+                // build up the Message (and Transaction) object manually (for now)
+                // val signed = Transaction.from(signedBytes)
+                val signed = Transaction().apply {
+                    setRecentBlockHash(mintTxn.recentBlockhash)
+                    feePayer = creator
+                    addInstruction(*mintTxn.instructions.toTypedArray())
+                    addSignature(creator, txResult.payload)
+                }
+
+                // now that the primary signer (creator) has signed, the mint account can sign
+                signed.partialSign(mintAccount)
+
+                _mintState.value = MintState.Minting(mintAccount.publicKey)
+
+                // send the signed transaction to the cluster
+                val transactionSignature = sendTransactionRepository.sendTransaction(signed)
+
+                _mintState.value = MintState.AwaitingConfirmation
+
+                // Await for transaction confirmation
+                sendTransactionRepository.confirmTransaction(transactionSignature)
+
+                _mintState.value = MintState.Complete(transactionSignature)
+            }
+            is TransactionResult.Failure -> {
+                _mintState.value = MintState.Error(txResult.message)
+            }
+            else -> { }
+        }
+    }
 }
