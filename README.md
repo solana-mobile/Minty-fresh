@@ -17,15 +17,18 @@
 
 # Minty Fresh
 
-Mint your favorite photos as NFTs, on the go!
+Mint NFTs directly from images on your phone with just a few taps!
 
 <!-- This would be a great place to include our store download badge -->
 
 ## Take a Look 
 
-Mint | On | Your | Device!
----|---|---|---
-<img src="assets/screen1.png" width="250"> | <img src="assets/screen2.png" width="250"> | <img src="assets/screen3.png" width="250"> | <img src="assets/screen4.png" width="250"> |
+<div style="display: flex;">
+    <img src="assets/screen1.png" width="22%">
+    &nbsp;<img src="assets/screen2.png" width="22%">
+    &nbsp;<img src="assets/screen3.png" width="22%">
+    &nbsp;<img src="assets/screen4.png" width="22%">
+</div>
 
 ## Technologies
 
