@@ -64,10 +64,15 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
 
-    // SolanaKT & Metaplex
-    implementation("com.github.metaplex-foundation:SolanaKT:2.0.0")
-    implementation("com.github.metaplex-foundation:metaplex-android:1.3.0b3")
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
+
+    // SolanaKT & Metaplex
+    implementation("com.github.metaplex-foundation:SolanaKT:2.0.1")
+    implementation("com.github.metaplex-foundation:metaplex-android:1.4.1")  {
+        exclude("com.github.metaplex-foundation.kborsh", "kborsh-android")
+    }
+
+    // Multibase Encoding + CID (IPFS file upload stuff)
     implementation("com.github.multiformats:java-multibase:1.1.1")
     implementation("com.github.ipld:java-cid:1.3.5")
 

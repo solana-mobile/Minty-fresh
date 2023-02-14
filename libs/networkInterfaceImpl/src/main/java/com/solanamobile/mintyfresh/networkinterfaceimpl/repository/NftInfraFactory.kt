@@ -10,7 +10,6 @@ import com.metaplex.lib.modules.nfts.NftClient
 import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import okhttp3.OkHttpClient
-import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +22,7 @@ class NftInfraFactory @Inject constructor(
 
     fun createNftClient(publicKey: PublicKey): NftClient {
         val connection = SolanaConnectionDriver(
-            JdkRpcDriver(URL(rpcConfig.solanaRpcUrl)),
+            JdkRpcDriver(rpcConfig.solanaRpcUrl),
             TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
         )
 
