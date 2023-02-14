@@ -68,7 +68,7 @@ dependencies {
 
     // SolanaKT & Metaplex
     implementation("com.github.metaplex-foundation:SolanaKT:2.0.1")
-    implementation("com.github.metaplex-foundation:metaplex-android:1.4.1b1")  {
+    implementation("com.github.metaplex-foundation:metaplex-android:1.4.1")  {
         exclude("com.github.metaplex-foundation.kborsh", "kborsh-android")
     }
 
