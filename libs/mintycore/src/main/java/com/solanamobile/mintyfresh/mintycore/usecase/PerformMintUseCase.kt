@@ -1,6 +1,7 @@
 package com.solanamobile.mintyfresh.mintycore.usecase
 
 import android.net.Uri
+import android.util.Log
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
@@ -20,6 +21,7 @@ import javax.inject.Inject
 
 sealed interface MintState {
     object None : MintState
+    object Simulating : MintState
     object UploadingMedia : MintState
     object CreatingMetadata : MintState
     object BuildingTransaction : MintState
@@ -68,21 +70,11 @@ class PerformMintUseCase @Inject constructor(
 
         val creator = PublicKey(walletAddy)
 
-        val estimatedFee = mintTransactionRepository.estimateFeeForMintTransaction(title, creator)
-            .getOrElse {
-                _mintState.value = MintState.Error("Could not estimate fee for transaction: ${it.message}")
-                return@withContext
-            }
+        _mintState.value = MintState.Simulating
 
-        accountBalanceRepository.getSolBalanceForAccount(creator)
-            .onSuccess { balance ->
-                if (balance <= estimatedFee) {
-                    _mintState.value = MintState.Error("Account balance too low: $balance")
-                    return@withContext
-                }
-            }
+        mintTransactionRepository.simulateMintTransaction(title, creator)
             .onFailure {
-                _mintState.value = MintState.Error("Could not retrieve account balance: ${it.message}")
+                _mintState.value = MintState.Error("Transaction simulation failed: ${it.message}")
                 return@withContext
             }
 

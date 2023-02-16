@@ -4,6 +4,7 @@
     <string name="added_to_wallet">It\u2019s been added to your connected wallet</string>
     <string name="done">Done</string>
     <string name="add_details">Add NFT details</string>
+    <string name="processing">Processing \u2026</string>
     <string name="uploading_file">Uploading file \u2026</string>
     <string name="uploading_metadata">Uploading metadata \u2026</string>
     <string name="requesting_signatuve">Requesting wallet signature \u2026</string>
