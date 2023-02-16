@@ -80,7 +80,6 @@ class PerformMintUseCase @Inject constructor(
 
         // begin message transaction step
         _mintState.value = MintState.Signing(xWeb3Message.encodeToByteArray())
-        delay(700)
 
         val signatureResult = walletAdapter.transact(sender) {
             authToken?.let {
@@ -124,7 +123,6 @@ class PerformMintUseCase @Inject constructor(
 
         // begin signing transaction step
         _mintState.value = MintState.Signing(transactionBytes)
-        delay(700)
 
         val txResult = walletAdapter.transact(sender) {
             authToken?.let {

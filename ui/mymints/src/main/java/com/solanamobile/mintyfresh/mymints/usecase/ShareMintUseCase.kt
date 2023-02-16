@@ -9,19 +9,19 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ShareMintUseCase @Inject constructor(
-    @ApplicationContext private val ctx: Context,
+    @ApplicationContext private val context: Context,
     private val fileDownloadRepository: FileDownloadRepository
 ) {
 
     suspend fun createMintShareIntent(imgUrl: String, mintAddr: String): Intent {
-        val outFile = fileDownloadRepository.downloadFileByUrl(imgUrl, ctx.cacheDir)
+        val outFile = fileDownloadRepository.downloadFileByUrl(imgUrl, context.cacheDir)
 
-        val providerName = ctx.packageName + ".provider"
-        val uri = FileProvider.getUriForFile(ctx, providerName, outFile)
+        val providerName = context.packageName + ".provider"
+        val uri = FileProvider.getUriForFile(context, providerName, outFile)
 
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "${ ctx.resources.getString(R.string.share_mint_text) }https://solscan.io/token/$mintAddr")
+            putExtra(Intent.EXTRA_TEXT, "${ context.resources.getString(R.string.share_mint_text) }https://solscan.io/token/$mintAddr")
             putExtra(Intent.EXTRA_STREAM, uri)
             setDataAndType(uri, "image/jpeg")
 

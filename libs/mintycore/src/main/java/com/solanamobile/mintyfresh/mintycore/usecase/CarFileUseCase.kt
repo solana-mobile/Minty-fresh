@@ -14,8 +14,6 @@ class CarFileUseCase @Inject constructor(
     private val storageRepository: StorageUploadRepository
 ) {
 
-    val MAX_BLOCK_SIZE = 1 shl 20 // 1MB
-
     fun buildNftCar(title: String, description: String, imageFilePath: String): CarFile {
 
         // first get the media file info (metadata depends on the file cid)
@@ -79,4 +77,8 @@ class CarFileUseCase @Inject constructor(
                 )
             )
         )
+
+    companion object {
+        private const val MAX_BLOCK_SIZE = 1 shl 20 // 1MB
+    }
 }

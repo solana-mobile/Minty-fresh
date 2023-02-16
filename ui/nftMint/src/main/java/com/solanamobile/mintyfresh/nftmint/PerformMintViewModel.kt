@@ -63,7 +63,7 @@ class PerformMintViewModel @Inject constructor(
         identityName: String,
         sender: ActivityResultSender,
         title: String,
-        desc: String,
+        description: String,
         filePath: String
     ) {
         viewModelScope.launch {
@@ -98,7 +98,7 @@ class PerformMintViewModel @Inject constructor(
                 identityName,
                 sender,
                 title,
-                desc,
+                description,
                 filePath
             )
         }
