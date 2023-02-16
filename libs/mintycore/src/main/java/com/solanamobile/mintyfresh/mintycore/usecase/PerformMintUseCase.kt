@@ -7,10 +7,7 @@ import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solana.mobilewalletadapter.clientlib.successPayload
 import com.solanamobile.mintyfresh.mintycore.ipld.*
-import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
-import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
-import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
-import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
+import com.solanamobile.mintyfresh.mintycore.repository.*
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
@@ -41,6 +38,7 @@ class PerformMintUseCase @Inject constructor(
     private val persistenceUseCase: WalletConnectionUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
     private val blockhashRepository: LatestBlockhashRepository,
+    private val accountBalanceRepository: AccountBalanceRepository,
     private val sendTransactionRepository: SendTransactionRepository,
     private val rpcConfig: IRpcConfig
 ) {
@@ -69,6 +67,24 @@ class PerformMintUseCase @Inject constructor(
         check(walletAddy != null)
 
         val creator = PublicKey(walletAddy)
+
+        val estimatedFee = mintTransactionRepository.estimateFeeForMintTransaction(title, creator)
+            .getOrElse {
+                _mintState.value = MintState.Error("Could not estimate fee for transaction: ${it.message}")
+                return@withContext
+            }
+
+        accountBalanceRepository.getSolBalanceForAccount(creator)
+            .onSuccess { balance ->
+                if (balance <= estimatedFee) {
+                    _mintState.value = MintState.Error("Account balance too low: $balance")
+                    return@withContext
+                }
+            }
+            .onFailure {
+                MintState.Error("Could not retrieve account balance: ${it.message}")
+                return@withContext
+            }
 
         // create upload files for both metadata and image
         _mintState.value = MintState.CreatingMetadata
