@@ -82,7 +82,7 @@ class PerformMintUseCase @Inject constructor(
                 }
             }
             .onFailure {
-                MintState.Error("Could not retrieve account balance: ${it.message}")
+                _mintState.value = MintState.Error("Could not retrieve account balance: ${it.message}")
                 return@withContext
             }
 
