@@ -52,7 +52,6 @@ fun NavGraphBuilder.galleryScreen(
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
-    navDestination: NavDestination?,
     identityUri: Uri,
     iconUri: Uri,
     appName: String
@@ -93,7 +92,6 @@ fun NavGraphBuilder.galleryScreen(
                 BottomNavigationBar(
                     navController = navController,
                     navigationItems = navigationItems,
-                    currentDestination = navDestination
                 )
             },
             content = { padding ->

@@ -55,7 +55,6 @@ class MainActivity : ComponentActivity() {
             val appState = rememberMintyFreshAppState()
             val useDarkIcons = appState.useDarkIcons
             val scope = rememberCoroutineScope()
-            val navDestination = appState.currentDestination
 
             SideEffect {
                 appState.systemUiController.setSystemBarsColor(
@@ -97,7 +96,6 @@ class MainActivity : ComponentActivity() {
                                     navigateToDetails = appState.navController::navigateToMintDetailsScreen,
                                     navigateToCamera = appState.navController::navigateToCamera,
                                     navController = appState.navController,
-                                    navDestination = navDestination,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(
                                         NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
@@ -147,7 +145,6 @@ class MainActivity : ComponentActivity() {
                                     navigateToDetails = appState.navController::navigateToMyMintsDetails,
                                     navController = appState.navController,
                                     activityResultSender = activityResultSender,
-                                    navDestination = navDestination,
                                     navigationItems = listOf(
                                         NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
                                         NavigationItem(viewingGraphRoutePattern, Icons.Outlined.AutoAwesome, R.string.my_mints)
