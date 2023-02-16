@@ -9,15 +9,25 @@ import com.solana.networking.serialization.serializers.solana.SolanaResponseSeri
 import io.ipfs.multibase.binary.Base64
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
 
 @Serializable
 data class TransactionSimulation(
-    @SerialName("err") val error: String?,
     val logs: List<String>,
     val accounts: List<JsonObject?>?,
-    val unitsConsumed: Long
+    val unitsConsumed: Long,
+    @Serializable(with=TransactionErrorSerializer::class) @SerialName("err") val error: String?
 )
+
+object TransactionErrorSerializer : JsonTransformingSerializer<String>(String.serializer()) {
+
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        if (element !is JsonObject) return element
+        else return JsonPrimitive(element.toString())
+    }
+
+}
 
 private class SimulateTransactionRequest(transaction: String,
                                          accounts: List<PublicKey>? = null

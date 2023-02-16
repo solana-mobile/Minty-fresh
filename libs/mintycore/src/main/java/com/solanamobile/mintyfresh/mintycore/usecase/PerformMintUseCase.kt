@@ -74,7 +74,7 @@ class PerformMintUseCase @Inject constructor(
 
         mintTransactionRepository.simulateMintTransaction(title, creator)
             .onFailure {
-                _mintState.value = MintState.Error("Transaction simulation failed: ${it.message}")
+                _mintState.value = MintState.Error("Transaction simulation failed: check account balance")
                 return@withContext
             }
 
