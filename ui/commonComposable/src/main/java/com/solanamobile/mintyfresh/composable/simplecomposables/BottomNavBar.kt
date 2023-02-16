@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -25,7 +24,6 @@ data class NavigationItem(val route: String, val icon: ImageVector, val title: I
 fun BottomNavigationBar(
     navController: NavHostController,
     navigationItems: List<NavigationItem>,
-    currentDestination: NavDestination?
 ) {
     Surface(
         color = MaterialTheme.colorScheme.background,
@@ -46,7 +44,7 @@ fun BottomNavigationBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 content = {
                     navigationItems.forEach { item ->
-
+                        val currentDestination = navController.currentDestination
                         val selected = currentDestination?.hierarchy?.any {
                             it.route?.split("?")?.firstOrNull() == item.route.split("?").firstOrNull()
                         } == true
