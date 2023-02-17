@@ -30,5 +30,10 @@ git:
       file_format: ANDROID
       source_language: en
       translation_files_expression: 'ui/walletConnectButton/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
+      source_file: libs/mintycore/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'libs/mintycore/src/main/res/values-<lang>/strings.xml'
   settings:
     pr_branch_name: l10n_transifex_<br_unique_id>

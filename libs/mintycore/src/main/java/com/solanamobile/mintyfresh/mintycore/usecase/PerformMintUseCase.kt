@@ -1,11 +1,13 @@
 package com.solanamobile.mintyfresh.mintycore.usecase
 
+import android.content.Context
 import android.net.Uri
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solana.mobilewalletadapter.clientlib.successPayload
+import com.solanamobile.mintyfresh.mintycore.R
 import com.solanamobile.mintyfresh.mintycore.ipld.*
 import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
 import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
@@ -14,6 +16,7 @@ import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,10 +33,11 @@ sealed interface MintState {
     class Signing(val transaction: ByteArray) : MintState
     class Minting(val mintAddress: PublicKey) : MintState
     class Complete(val transactionSignature: String) : MintState
-    class Error(val message: String): MintState
+    class Error(val message: String) : MintState
 }
 
 class PerformMintUseCase @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val walletAdapter: MobileWalletAdapter,
     private val carFileUseCase: CarFileUseCase,
     private val web3AuthUseCase: XWeb3AuthUseCase,
@@ -49,26 +53,27 @@ class PerformMintUseCase @Inject constructor(
 
     val mintState: StateFlow<MintState> = _mintState
 
-    suspend fun performMint(identityUri: Uri,
-                            iconUri: Uri,
-                            identityName: String,
-                            sender: ActivityResultSender,
-                            title: String,
-                            desc: String,
-                            filePath: String
+    suspend fun performMint(
+        identityUri: Uri,
+        iconUri: Uri,
+        identityName: String,
+        sender: ActivityResultSender,
+        title: String,
+        desc: String,
+        filePath: String
     ) = withContext(Dispatchers.IO) {
 
         val authToken = persistenceUseCase.walletDetails.map {
             if (it is Connected) it.authToken else null
         }.stateIn(this).value
 
-        val walletAddy = persistenceUseCase.walletDetails.map {
+        val walletAddress = persistenceUseCase.walletDetails.map {
             if (it is Connected) it.publicKey else null
         }.stateIn(this).value
 
-        check(walletAddy != null)
+        check(walletAddress != null)
 
-        val creator = PublicKey(walletAddy)
+        val creator = PublicKey(walletAddress)
 
         // create upload files for both metadata and image
         _mintState.value = MintState.CreatingMetadata
@@ -86,13 +91,15 @@ class PerformMintUseCase @Inject constructor(
                 reauthorize(identityUri, iconUri, identityName, authToken)
             } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
 
-            val signingResult = signMessages(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
+            val signingResult =
+                signMessages(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
 
             return@transact signingResult.signedPayloads[0]
         }
 
         val signature = signatureResult.successPayload ?: run {
-            _mintState.value = MintState.Error("Wallet signature failed")
+            _mintState.value =
+                MintState.Error(context.getString(R.string.wallet_signature_error_message))
             return@withContext
         }
 
@@ -102,7 +109,14 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.UploadingMedia
 
         // upload the media file
-        val directoryUrl = storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
+        val directoryUrl = try {
+            storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
+        } catch (throwable: Throwable) {
+            _mintState.value = MintState.Error(
+                throwable.message ?: context.getString(R.string.upload_file_error_message)
+            )
+            return@withContext
+        }
 
         // TODO: should get this some other way, or get a direct link via the metadata cid
         val metadataUrl = "$directoryUrl/$title.json"
@@ -111,15 +125,22 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.BuildingTransaction
 
         val mintAccount = HotAccount()
-        val mintTxn = mintTransactionRepository.buildMintTransaction(title, metadataUrl, mintAccount.publicKey, creator)
+        val mintTxn = mintTransactionRepository.buildMintTransaction(
+            title,
+            metadataUrl,
+            mintAccount.publicKey,
+            creator
+        )
 
         mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
 
         val transactionBytes =
-            mintTxn.serialize(SerializeConfig(
-                requireAllSignatures = false,
-                verifySignatures = false
-            ))
+            mintTxn.serialize(
+                SerializeConfig(
+                    requireAllSignatures = false,
+                    verifySignatures = false
+                )
+            )
 
         // begin signing transaction step
         _mintState.value = MintState.Signing(transactionBytes)
@@ -165,7 +186,7 @@ class PerformMintUseCase @Inject constructor(
             is TransactionResult.Failure -> {
                 _mintState.value = MintState.Error(txResult.message)
             }
-            else -> { }
+            else -> {}
         }
     }
 }
