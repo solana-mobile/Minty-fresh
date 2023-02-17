@@ -28,7 +28,7 @@ class StorageUploadRepository @Inject constructor(
             )
 
             result.error?.let { err ->
-                throw Error("${application.getString(R.string.error_message)}\n${err.name}\n${err.message}")
+                throw Error("${application.getString(R.string.upload_file_error_message)}\n${err.name}\n${err.message}")
             }
 
             "$ipfsUrlPrefix${result.value?.cid}"

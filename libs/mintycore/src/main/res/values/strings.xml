@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="error_message">An error occurred while uploading the file</string>
+    <string name="wallet_signature_error_message">Wallet signature failed</string>
+    <string name="upload_file_error_message">An error occurred while uploading the file</string>
 </resources>

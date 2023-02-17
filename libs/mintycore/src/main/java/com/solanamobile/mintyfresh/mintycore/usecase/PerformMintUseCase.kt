@@ -97,7 +97,8 @@ class PerformMintUseCase @Inject constructor(
         }
 
         val signature = signatureResult.successPayload ?: run {
-            _mintState.value = MintState.Error("Wallet signature failed")
+            _mintState.value =
+                MintState.Error(application.getString(R.string.wallet_signature_error_message))
             return@withContext
         }
 
@@ -111,7 +112,7 @@ class PerformMintUseCase @Inject constructor(
             storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
         } catch (throwable: Throwable) {
             _mintState.value = MintState.Error(
-                throwable.message ?: application.getString(R.string.error_message)
+                throwable.message ?: application.getString(R.string.upload_file_error_message)
             )
             return@withContext
         }
