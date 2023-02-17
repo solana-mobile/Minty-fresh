@@ -1,16 +1,14 @@
 package com.solanamobile.mintyfresh.mintycore.usecase
 
 import android.net.Uri
+import android.util.Log
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solana.mobilewalletadapter.clientlib.successPayload
 import com.solanamobile.mintyfresh.mintycore.ipld.*
-import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
-import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
-import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
-import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
+import com.solanamobile.mintyfresh.mintycore.repository.*
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
@@ -23,6 +21,7 @@ import javax.inject.Inject
 
 sealed interface MintState {
     object None : MintState
+    object Simulating : MintState
     object UploadingMedia : MintState
     object CreatingMetadata : MintState
     object BuildingTransaction : MintState
@@ -41,6 +40,7 @@ class PerformMintUseCase @Inject constructor(
     private val persistenceUseCase: WalletConnectionUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
     private val blockhashRepository: LatestBlockhashRepository,
+    private val accountBalanceRepository: AccountBalanceRepository,
     private val sendTransactionRepository: SendTransactionRepository,
     private val rpcConfig: IRpcConfig
 ) {
@@ -69,6 +69,14 @@ class PerformMintUseCase @Inject constructor(
         check(walletAddy != null)
 
         val creator = PublicKey(walletAddy)
+
+        _mintState.value = MintState.Simulating
+
+        mintTransactionRepository.simulateMintTransaction(title, creator)
+            .onFailure {
+                _mintState.value = MintState.Error("Transaction simulation failed: check account balance")
+                return@withContext
+            }
 
         // create upload files for both metadata and image
         _mintState.value = MintState.CreatingMetadata

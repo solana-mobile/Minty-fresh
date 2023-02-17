@@ -171,6 +171,7 @@ fun MintDetailsPage(
                         ),
                         textAlign = TextAlign.Center,
                         text = when (uiState.mintState) {
+                            is MintState.Simulating -> stringResource(R.string.processing)
                             is MintState.UploadingMedia -> stringResource(R.string.uploading_file)
                             is MintState.CreatingMetadata -> stringResource(R.string.uploading_metadata)
                             is MintState.BuildingTransaction, is MintState.Signing-> stringResource(R.string.requesting_signatuve)
