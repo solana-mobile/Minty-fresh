@@ -13,7 +13,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(
@@ -22,9 +24,10 @@ import retrofit2.Retrofit
 class MintyCoreModule {
 
     @Provides
-    fun providesNftStorageApi(): NftStorageEndpoints {
+    fun providesNftStorageApi(okHttpClient: OkHttpClient): NftStorageEndpoints {
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(NftStorageResponseConverter)
             .build()
 
@@ -37,4 +40,12 @@ class MintyCoreModule {
             JdkRpcDriver(rpcConfig.solanaRpcUrl),
             TransactionOptions(Commitment.CONFIRMED, skipPreflight = true)
         )
+
+    @Provides
+    fun providesOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .readTimeout(10, TimeUnit.SECONDS)
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .build()
+    }
 }
