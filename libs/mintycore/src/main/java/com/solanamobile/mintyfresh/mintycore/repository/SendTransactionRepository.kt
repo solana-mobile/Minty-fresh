@@ -9,9 +9,9 @@ import javax.inject.Inject
 
 class SendTransactionRepository @Inject constructor(private val connectionDriver: Connection)  {
     suspend fun sendTransaction(transaction: Transaction) =
-        connectionDriver.sendTransaction(transaction).getOrThrow()
+        connectionDriver.sendTransaction(transaction)
 
-    suspend fun confirmTransaction(transactionSignature: String): Boolean =
+    suspend fun confirmTransaction(transactionSignature: String): Result<Boolean> =
         withTimeout(connectionDriver.transactionOptions.timeout.toMillis()) {
 
             val commitment = connectionDriver.transactionOptions.commitment.toString()
@@ -19,7 +19,7 @@ class SendTransactionRepository @Inject constructor(private val connectionDriver
             suspend fun confirmationStatus() =
                 connectionDriver.getSignatureStatuses(listOf(transactionSignature), null)
                     .getOrNull()?.first()?.also { it.err?.let { error ->
-                        throw Error("Transaction Confirmation Failed: $error")
+                        Result.failure<Boolean>(Error("Transaction Confirmation Failed: $error"))
                     } }
 
             // wait for desired transaction status
@@ -33,6 +33,6 @@ class SendTransactionRepository @Inject constructor(private val connectionDriver
                 if (!isActive) break // breakout after timeout
             }
 
-            return@withTimeout isActive
+            return@withTimeout Result.success(isActive)
         }
 }

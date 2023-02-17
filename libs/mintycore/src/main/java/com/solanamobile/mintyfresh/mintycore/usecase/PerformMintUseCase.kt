@@ -154,11 +154,19 @@ class PerformMintUseCase @Inject constructor(
 
                 // send the signed transaction to the cluster
                 val transactionSignature = sendTransactionRepository.sendTransaction(signed)
+                    .getOrElse {
+                        _mintState.value = MintState.Error("Transaction failed: ${it.message}")
+                        return@withContext
+                    }
 
                 _mintState.value = MintState.AwaitingConfirmation
 
                 // Await for transaction confirmation
                 sendTransactionRepository.confirmTransaction(transactionSignature)
+                    .getOrElse {
+                        _mintState.value = MintState.Error(it.message ?: "Transaction Confirmation Failed")
+                        return@withContext
+                    }
 
                 _mintState.value = MintState.Complete(transactionSignature)
             }
