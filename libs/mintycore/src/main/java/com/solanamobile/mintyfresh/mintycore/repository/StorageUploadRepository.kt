@@ -1,10 +1,11 @@
 package com.solanamobile.mintyfresh.mintycore.repository
 
-import android.app.Application
+import android.content.Context
 import com.solanamobile.mintyfresh.mintycore.R
 import com.solanamobile.mintyfresh.mintycore.endpoints.NftStorageEndpoints
 import com.solanamobile.mintyfresh.mintycore.ipld.CID
 import com.solanamobile.mintyfresh.mintycore.ipld.toCanonicalString
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -12,7 +13,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 class StorageUploadRepository @Inject constructor(
-    private val application: Application,
+    @ApplicationContext private val context: Context,
     private val endpoints: NftStorageEndpoints
 ) {
 
@@ -28,7 +29,7 @@ class StorageUploadRepository @Inject constructor(
             )
 
             result.error?.let { err ->
-                throw Error("${application.getString(R.string.upload_file_error_message)}\n${err.name}\n${err.message}")
+                throw Error("${context.getString(R.string.upload_file_error_message)}\n${err.name}\n${err.message}")
             }
 
             "$ipfsUrlPrefix${result.value?.cid}"

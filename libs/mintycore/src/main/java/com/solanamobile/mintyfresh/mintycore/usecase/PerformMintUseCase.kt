@@ -1,6 +1,6 @@
 package com.solanamobile.mintyfresh.mintycore.usecase
 
-import android.app.Application
+import android.content.Context
 import android.net.Uri
 import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -16,6 +16,7 @@ import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +37,7 @@ sealed interface MintState {
 }
 
 class PerformMintUseCase @Inject constructor(
-    private val application: Application,
+    @ApplicationContext private val context: Context,
     private val walletAdapter: MobileWalletAdapter,
     private val carFileUseCase: CarFileUseCase,
     private val web3AuthUseCase: XWeb3AuthUseCase,
@@ -98,7 +99,7 @@ class PerformMintUseCase @Inject constructor(
 
         val signature = signatureResult.successPayload ?: run {
             _mintState.value =
-                MintState.Error(application.getString(R.string.wallet_signature_error_message))
+                MintState.Error(context.getString(R.string.wallet_signature_error_message))
             return@withContext
         }
 
@@ -112,7 +113,7 @@ class PerformMintUseCase @Inject constructor(
             storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
         } catch (throwable: Throwable) {
             _mintState.value = MintState.Error(
-                throwable.message ?: application.getString(R.string.upload_file_error_message)
+                throwable.message ?: context.getString(R.string.upload_file_error_message)
             )
             return@withContext
         }
