@@ -68,6 +68,9 @@ fun NavGraphBuilder.myMintsScreen(
         val forceRefresh = backStackEntry.arguments?.getBoolean("forceRefresh")
             ?: throw IllegalStateException("$myMintsRoute requires an \"forceRefresh\" argument to be launched")
 
+        // Remove forceRefresh param from backstack once used.
+        backStackEntry.arguments?.remove("forceRefresh")
+
         Scaffold(
             topBar = {
                 Row(
