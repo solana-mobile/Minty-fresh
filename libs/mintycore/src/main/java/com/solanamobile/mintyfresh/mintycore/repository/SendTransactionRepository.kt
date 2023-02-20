@@ -15,9 +15,9 @@ class SendTransactionRepository @Inject constructor(
     private val connectionDriver: Connection
 ) {
     suspend fun sendTransaction(transaction: Transaction) =
-        connectionDriver.sendTransaction(transaction).getOrThrow()
+        connectionDriver.sendTransaction(transaction)
 
-    suspend fun confirmTransaction(transactionSignature: String): Boolean =
+    suspend fun confirmTransaction(transactionSignature: String): Result<Boolean> =
         withTimeout(connectionDriver.transactionOptions.timeout.toMillis()) {
 
             val commitment = connectionDriver.transactionOptions.commitment.toString()
@@ -26,7 +26,7 @@ class SendTransactionRepository @Inject constructor(
                 connectionDriver.getSignatureStatuses(listOf(transactionSignature), null)
                     .getOrNull()?.first()?.also {
                         it.err?.let { error ->
-                            throw Error("${context.getString(R.string.transaction_confirmation_failure_message)}\n$error")
+                            Result.failure<Boolean>(Error("${context.getString(R.string.transaction_failure_message)}\n$error"))
                         }
                     }
 
@@ -43,6 +43,6 @@ class SendTransactionRepository @Inject constructor(
                 if (!isActive) break // breakout after timeout
             }
 
-            return@withTimeout isActive
+            return@withTimeout Result.success(isActive)
         }
 }
