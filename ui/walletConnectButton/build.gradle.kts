@@ -47,10 +47,10 @@ dependencies {
     implementation(project(":libs:networkInterface"))
 
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
-    implementation("androidx.compose.material:material-icons-core:1.4.0-alpha04")
-    implementation("androidx.compose.material:material-icons-extended:1.4.0-alpha04")
+    implementation("androidx.compose.material:material-icons-core:1.4.0-beta01")
+    implementation("androidx.compose.material:material-icons-extended:1.4.0-beta01")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 

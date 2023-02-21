@@ -46,20 +46,20 @@ dependencies {
     implementation(project(":ui:walletConnectButton"))
 
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
 
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
     implementation("com.google.android.material:material:1.8.0")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha04")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
     implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
-    implementation("androidx.compose.material:material:1.4.0-alpha04")
+    implementation("androidx.compose.material:material:1.4.0-beta01")
 
-    implementation("androidx.compose.material:material-icons-core:1.4.0-alpha04")
-    implementation("androidx.compose.material:material-icons-extended:1.4.0-alpha04")
+    implementation("androidx.compose.material:material-icons-core:1.4.0-beta01")
+    implementation("androidx.compose.material:material-icons-extended:1.4.0-beta01")
     implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
 
     val cameraxVersion = "1.2.0"
