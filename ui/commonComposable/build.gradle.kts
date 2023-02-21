@@ -45,18 +45,18 @@ android {
 
 dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.8.0")
     implementation("com.google.dagger:hilt-android-gradle-plugin:2.44.2")
-    implementation("androidx.compose.material3:material3:1.1.0-alpha04")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha06")
     kapt("com.google.dagger:hilt-compiler:2.44.2")
     implementation("com.google.dagger:dagger:2.44.2")
     kapt("com.google.dagger:dagger-compiler:2.44.2")
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
-    implementation("androidx.compose.material:material:1.4.0-alpha04")
-    implementation("androidx.compose.material:material-icons-core:1.4.0-alpha04")
-    implementation("androidx.compose.material:material-icons-extended:1.4.0-alpha04")
+    implementation("androidx.compose.material:material:1.4.0-beta01")
+    implementation("androidx.compose.material:material-icons-core:1.4.0-beta01")
+    implementation("androidx.compose.material:material-icons-extended:1.4.0-beta01")
 
     implementation("com.google.accompanist:accompanist-placeholder:0.28.0")
 
