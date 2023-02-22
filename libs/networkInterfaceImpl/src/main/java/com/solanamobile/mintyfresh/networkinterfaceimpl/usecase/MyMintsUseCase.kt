@@ -1,5 +1,6 @@
 package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 
+import android.util.Log
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
 import com.solanamobile.mintyfresh.networkinterfaceimpl.repository.NFTRepository
@@ -44,11 +45,15 @@ class MyMintsUseCase @Inject constructor(
                     clusterName = clusterName
                 )
                 if (cachedMint == null) {
-                    val metadata = nftRepository.getNftsMetadata(nft)
-                    val mint = metaplexToCacheMapper.map(nft, metadata, clusterName)
+                    try {
+                        val metadata = nftRepository.getNftsMetadata(nft)
+                        val mint = metaplexToCacheMapper.map(nft, metadata, clusterName)
 
-                    if (mint != null) {
-                        myMintsCacheRepository.insertAll(listOf(mint))
+                        if (mint != null) {
+                            myMintsCacheRepository.insertAll(listOf(mint))
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MintyFresh", "Error loading NFT", e)
                     }
                 }
             }
