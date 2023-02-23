@@ -100,6 +100,7 @@ class PerformMintUseCase @Inject constructor(
         val signature = signatureResult.successPayload ?: run {
             _mintState.value =
                 MintState.Error(context.getString(R.string.wallet_signature_error_message))
+            persistenceUseCase.clearConnection()
             return@withContext
         }
 
@@ -132,7 +133,14 @@ class PerformMintUseCase @Inject constructor(
             creator
         )
 
-        mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+        try {
+            mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+        } catch (throwable: Throwable) {
+            _mintState.value = MintState.Error(
+                throwable.message ?: context.getString(R.string.transaction_failure_message)
+            )
+            return@withContext
+        }
 
         val transactionBytes =
             mintTxn.serialize(
