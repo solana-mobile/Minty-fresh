@@ -191,22 +191,22 @@ class PerformMintUseCase @Inject constructor(
 
                 _mintState.value = MintState.AwaitingConfirmation
 
-                // Await for transaction confirmation
-                val isConfirmed = sendTransactionRepository.confirmTransaction(transactionSignature)
-                    .getOrElse {
-                        _mintState.value = MintState.Error(
-                            it.message
-                                ?: context.getString(R.string.transaction_confirmation_failure_message)
-                        )
-                        return@withContext
-                    }
+                // Wait for ~600ms before checking for confirmations.
+                // https://www.validators.app/ping-thing
+                delay(600)
 
-                if (isConfirmed) {
-                    _mintState.value = MintState.Complete(transactionSignature)
-                } else {
-                    _mintState.value =
-                        MintState.Error(context.getString(R.string.transaction_confirmation_failure_message))
+                // Await for transaction confirmation
+                try {
+                    sendTransactionRepository.confirmTransaction(transactionSignature)
+                } catch (throwable: Throwable) {
+                    _mintState.value = MintState.Error(
+                        throwable.message
+                            ?: context.getString(R.string.transaction_confirmation_failure_message)
+                    )
+                    return@withContext
                 }
+
+                _mintState.value = MintState.Complete(transactionSignature)
             }
             is TransactionResult.Failure -> {
                 _mintState.value = MintState.Error(txResult.message)
