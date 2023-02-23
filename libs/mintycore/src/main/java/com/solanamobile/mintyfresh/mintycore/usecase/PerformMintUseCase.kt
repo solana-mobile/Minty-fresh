@@ -100,6 +100,7 @@ class PerformMintUseCase @Inject constructor(
         val signature = signatureResult.successPayload ?: run {
             _mintState.value =
                 MintState.Error(context.getString(R.string.wallet_signature_error_message))
+            persistenceUseCase.clearConnection()
             return@withContext
         }
 
