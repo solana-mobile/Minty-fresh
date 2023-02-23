@@ -191,6 +191,7 @@ fun MintDetailsPage(
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 16.dp)
                         .verticalScroll(rememberScrollState())
+                        .imePadding()
                         .fillMaxWidth()
                 ) {
                     val title = rememberSaveable { mutableStateOf("") }
