@@ -192,7 +192,7 @@ class PerformMintUseCase @Inject constructor(
                 _mintState.value = MintState.AwaitingConfirmation
 
                 // Await for transaction confirmation
-                sendTransactionRepository.confirmTransaction(transactionSignature)
+                val isConfirmed = sendTransactionRepository.confirmTransaction(transactionSignature)
                     .getOrElse {
                         _mintState.value = MintState.Error(
                             it.message
@@ -201,7 +201,12 @@ class PerformMintUseCase @Inject constructor(
                         return@withContext
                     }
 
-                _mintState.value = MintState.Complete(transactionSignature)
+                if (isConfirmed) {
+                    _mintState.value = MintState.Complete(transactionSignature)
+                } else {
+                    _mintState.value =
+                        MintState.Error(context.getString(R.string.transaction_confirmation_failure_message))
+                }
             }
             is TransactionResult.Failure -> {
                 _mintState.value = MintState.Error(txResult.message)
