@@ -55,7 +55,6 @@ dependencies {
     implementation("com.google.android.material:material:1.8.0")
     implementation("androidx.compose.material3:material3:1.1.0-alpha06")
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
     implementation("androidx.compose.material:material:1.4.0-beta01")
 
     implementation("androidx.compose.material:material-icons-core:1.4.0-beta01")

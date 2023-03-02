@@ -38,7 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
 import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView

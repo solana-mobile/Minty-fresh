@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptions
-import com.google.accompanist.navigation.animation.AnimatedNavHost
+import androidx.navigation.compose.NavHost
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solanamobile.mintyfresh.R
 import com.solanamobile.mintyfresh.composable.simplecomposables.NavigationItem
@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     },
                     sheetState = bottomSheetState
                 ) {
-                    AnimatedNavHost(
+                    NavHost(
                         navController = appState.navController,
                         startDestination = creatingGraphRoutePattern,
                     ) {
