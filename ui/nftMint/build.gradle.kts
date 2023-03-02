@@ -70,7 +70,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-placeholder:0.28.0")
     implementation("com.google.accompanist:accompanist-permissions:0.28.0")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.28.0")
-    implementation("com.google.accompanist:accompanist-navigation-animation:0.28.0")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

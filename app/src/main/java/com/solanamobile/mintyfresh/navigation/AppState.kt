@@ -8,7 +8,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +16,8 @@ import kotlinx.coroutines.CoroutineScope
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun rememberMintyFreshAppState(
-    navController: NavHostController = rememberAnimatedNavController(),
+//    navController: NavHostController = rememberAnimatedNavController(),
+    navController: NavHostController = rememberNavController(),
     systemUiController: SystemUiController = rememberSystemUiController(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ): MintyFreshAppState {
