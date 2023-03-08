@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -126,8 +127,10 @@ fun MintDetailsPage(
     val uiState = performMintViewModel.viewState.collectAsState().value
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
-    if (uiState.mintState is MintState.Complete){
-        onMintCompleted()
+    if (uiState.mintState is MintState.Complete) {
+        LaunchedEffect(uiState.mintState) {
+            onMintCompleted()
+        }
     }
 
     Scaffold(
