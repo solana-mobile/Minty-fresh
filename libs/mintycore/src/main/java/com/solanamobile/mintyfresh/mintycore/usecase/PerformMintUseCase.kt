@@ -8,7 +8,7 @@ import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
 import com.solana.mobilewalletadapter.clientlib.successPayload
 import com.solanamobile.mintyfresh.mintycore.R
-import com.solanamobile.mintyfresh.mintycore.ipld.*
+import com.solanamobile.mintyfresh.mintycore.ipld.toCanonicalString
 import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
 import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
 import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
@@ -17,11 +17,13 @@ import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -53,6 +55,10 @@ class PerformMintUseCase @Inject constructor(
 
     val mintState: StateFlow<MintState> = _mintState
 
+    private suspend fun getWalletConnection(scope: CoroutineScope): Connected {
+        return persistenceUseCase.walletDetails.stateIn(scope).value as Connected
+    }
+
     suspend fun performMint(
         identityUri: Uri,
         iconUri: Uri,
@@ -63,15 +69,9 @@ class PerformMintUseCase @Inject constructor(
         filePath: String
     ) = withContext(Dispatchers.IO) {
 
-        val authToken = persistenceUseCase.walletDetails.map {
-            if (it is Connected) it.authToken else null
-        }.stateIn(this).value
-
-        val walletAddress = persistenceUseCase.walletDetails.map {
-            if (it is Connected) it.publicKey else null
-        }.stateIn(this).value
-
-        check(walletAddress != null)
+        val currConn = getWalletConnection(this)
+        val authToken = currConn.authToken
+        val walletAddress = currConn.publicKey
 
         val creator = PublicKey(walletAddress)
 
@@ -87,19 +87,16 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.Signing(xWeb3Message.encodeToByteArray())
 
         val signatureResult = walletAdapter.transact(sender) {
-            authToken?.let {
-                reauthorize(identityUri, iconUri, identityName, authToken)
-            } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
+            val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
+            persistenceUseCase.persistConnection(reauth.publicKey, reauth.accountLabel ?: "", reauth.authToken)
 
-            val signingResult =
-                signMessages(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
+            val signingResult = signMessages(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
 
             return@transact signingResult.signedPayloads[0]
         }
 
         val signature = signatureResult.successPayload ?: run {
-            _mintState.value =
-                MintState.Error(context.getString(R.string.wallet_signature_error_message))
+            _mintState.value = MintState.Error(context.getString(R.string.wallet_signature_error_message))
             persistenceUseCase.clearConnection()
             return@withContext
         }
@@ -153,10 +150,10 @@ class PerformMintUseCase @Inject constructor(
         // begin signing transaction step
         _mintState.value = MintState.Signing(transactionBytes)
 
+        val token = getWalletConnection(this).authToken
         val txResult = walletAdapter.transact(sender) {
-            authToken?.let {
-                reauthorize(identityUri, iconUri, identityName, authToken)
-            } ?: authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
+            val reauth = reauthorize(identityUri, iconUri, identityName, token)
+            persistenceUseCase.persistConnection(reauth.publicKey, reauth.accountLabel ?: "", reauth.authToken)
 
             val signingResult = signTransactions(arrayOf(transactionBytes))
 
@@ -184,8 +181,7 @@ class PerformMintUseCase @Inject constructor(
                 // send the signed transaction to the cluster
                 val transactionSignature = sendTransactionRepository.sendTransaction(signed)
                     .getOrElse {
-                        _mintState.value =
-                            MintState.Error("${context.getString(R.string.transaction_confirmation_failure_message)}\n${it.message}")
+                        _mintState.value = MintState.Error("${context.getString(R.string.transaction_confirmation_failure_message)}\n${it.message}")
                         return@withContext
                     }
 
@@ -199,10 +195,7 @@ class PerformMintUseCase @Inject constructor(
                 try {
                     sendTransactionRepository.confirmTransaction(transactionSignature)
                 } catch (throwable: Throwable) {
-                    _mintState.value = MintState.Error(
-                        throwable.message
-                            ?: context.getString(R.string.transaction_confirmation_failure_message)
-                    )
+                    _mintState.value = MintState.Error(throwable.message ?: context.getString(R.string.transaction_confirmation_failure_message))
                     return@withContext
                 }
 
