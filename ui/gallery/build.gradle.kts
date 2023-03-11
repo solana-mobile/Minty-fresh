@@ -20,7 +20,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 
     buildTypes {
@@ -59,7 +59,7 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-core:1.4.0-beta01")
     implementation("androidx.compose.material:material-icons-extended:1.4.0-beta01")
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
 
     val cameraxVersion = "1.2.0"
     implementation("androidx.camera:camera-core:${cameraxVersion}")

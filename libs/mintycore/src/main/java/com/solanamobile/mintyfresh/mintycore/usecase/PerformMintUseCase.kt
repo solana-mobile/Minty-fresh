@@ -13,7 +13,6 @@ import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepositor
 import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
 import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
 import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
-import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,7 +47,6 @@ class PerformMintUseCase @Inject constructor(
     private val mintTransactionRepository: MintTransactionRepository,
     private val blockhashRepository: LatestBlockhashRepository,
     private val sendTransactionRepository: SendTransactionRepository,
-    private val rpcConfig: IRpcConfig
 ) {
 
     private val _mintState = MutableStateFlow<MintState>(MintState.None)
@@ -90,9 +88,9 @@ class PerformMintUseCase @Inject constructor(
             val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
             persistenceUseCase.persistConnection(reauth.publicKey, reauth.accountLabel ?: "", reauth.authToken)
 
-            val signingResult = signMessages(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
+            val signingResult = signMessagesDetached(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
 
-            return@transact signingResult.signedPayloads[0]
+            return@transact signingResult.messages.first().signatures[0]
         }
 
         val signature = signatureResult.successPayload ?: run {

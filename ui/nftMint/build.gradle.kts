@@ -37,7 +37,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 }
 
@@ -87,7 +87,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
 
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
 
     testImplementation("junit:junit:4.13.2")
 

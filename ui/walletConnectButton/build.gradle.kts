@@ -38,7 +38,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.2"
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 }
 
@@ -62,7 +62,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
 
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.0.4")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
     implementation("androidx.compose.material3:material3:1.1.0-alpha04")
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
