@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.webkit.MimeTypeMap
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -70,7 +71,6 @@ fun NavGraphBuilder.mintDetailsScreen(
             mimeType = "image/*"
         })
     ) { backStackEntry ->
-        val imagePath = backStackEntry.arguments?.getString("imagePath")
         val deepLinkIntent: Intent? =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 backStackEntry.arguments?.getParcelable(
@@ -86,7 +86,8 @@ fun NavGraphBuilder.mintDetailsScreen(
         val clipDataUri = deepLinkIntent?.clipData?.getItemAt(0)?.uri
         val clipDataPath = clipDataUri?.let {
             val input = contentResolver.openInputStream(clipDataUri)
-            val file = File.createTempFile("shared", ".image", cacheDir)
+            val ext = MimeTypeMap.getFileExtensionFromUrl(clipDataUri.toString())
+            val file = File.createTempFile("shared", ".$ext", cacheDir)
 
             input?.let {
                 file.writeBytes(input.readBytes())
@@ -94,6 +95,8 @@ fun NavGraphBuilder.mintDetailsScreen(
                 file.toPath()
             }
         }?.toString()
+
+        val imagePath = backStackEntry.arguments?.getString("imagePath")
 
         MintDetailsPage(
             imagePath = imagePath ?: clipDataPath
