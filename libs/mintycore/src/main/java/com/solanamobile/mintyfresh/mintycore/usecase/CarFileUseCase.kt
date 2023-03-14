@@ -19,7 +19,7 @@ class CarFileUseCase @Inject constructor(
         // first get the media file info (metadata depends on the file cid)
         val mediaFile = File(imageFilePath)
         val mediaFileExtension = mediaFile.extension
-        val mediaMimeType = Files.probeContentType(mediaFile.toPath()) ?: "image/jpeg"
+        val mediaMimeType = Files.probeContentType(mediaFile.toPath())
         val fileBytes = mediaFile.readBytes()
 
         val mediaFileBlocks = fileBytes.asIterable().chunked(MAX_BLOCK_SIZE).associate {
