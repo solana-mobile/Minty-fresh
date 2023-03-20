@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -19,7 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -94,6 +92,7 @@ class MainActivity : ComponentActivity() {
                                 galleryScreen(
                                     navigateToDetails = appState.navController::navigateToMintDetailsScreen,
                                     navigateToCamera = appState.navController::navigateToCamera,
+                                    navigateToSettings = appState.navController::navigateToSettingsPage,
                                     navController = appState.navController,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(
@@ -142,6 +141,7 @@ class MainActivity : ComponentActivity() {
                             nestedGraphs = {
                                 myMintsScreen(
                                     navigateToDetails = appState.navController::navigateToMyMintsDetails,
+                                    navigateToSettings = appState.navController::navigateToSettingsPage,
                                     navController = appState.navController,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(

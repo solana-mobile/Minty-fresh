@@ -1,6 +1,5 @@
 package com.solanamobile.mintyfresh.composable.simplecomposables
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -26,7 +25,7 @@ fun SettingsButton(
         modifier = modifier
             .size(48.dp)
             .clip(CircleShape),
-        colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface),
+        colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         onClick = onClick
     ) {
         Icon(

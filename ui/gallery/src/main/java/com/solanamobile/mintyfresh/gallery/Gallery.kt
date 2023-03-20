@@ -34,10 +34,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.composable.simplecomposables.BottomNavigationBar
-import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
-import com.solanamobile.mintyfresh.composable.simplecomposables.NavigationItem
-import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
+import com.solanamobile.mintyfresh.composable.simplecomposables.*
 import com.solanamobile.mintyfresh.gallery.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
@@ -47,6 +44,7 @@ const val galleryRoute = "photos"
 fun NavGraphBuilder.galleryScreen(
     navigateToDetails: (String) -> Unit = { },
     navigateToCamera: () -> Unit = { },
+    navigateToSettings: () -> Unit = { },
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
@@ -83,6 +81,10 @@ fun NavGraphBuilder.galleryScreen(
                         iconUri = iconUri,
                         identityName = appName,
                         activityResultSender = activityResultSender
+                    )
+                    SettingsButton(
+                        modifier = Modifier.padding(start = 16.dp),
+                        onClick = navigateToSettings
                     )
                 }
             },
