@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.NavHost
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -34,6 +35,9 @@ import com.solanamobile.mintyfresh.navigation.*
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
+import com.solanamobile.mintyfresh.settings.navigateToSettingsPage
+import com.solanamobile.mintyfresh.settings.settingsRoute
+import com.solanamobile.mintyfresh.settings.settingsScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -155,6 +159,15 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 myMintsDetailsScreen(navigateUp = navigateUp)
+                            }
+                        )
+
+                        settingsGraph(
+                            startDestination = settingsRoute,
+                            nestedGraphs = {
+                                settingsScreen(
+                                    onNavigateToUrl = { _, _ -> },
+                                )
                             }
                         )
                     }

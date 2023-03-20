@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="privacy_policy_title">Privacy Policy</string>
+    <string name="terms_of_service_title">Terms of Service</string>
+    <string name="open_source_licenses_title">Open Source Licenses</string>
+    <string name="terms_of_service_url" translatable="false">https://solanamobile.com/tos</string>
+    <string name="privacy_policy_url" translatable="false">https://solanamobile.com/privacy-policy</string>
+</resources>

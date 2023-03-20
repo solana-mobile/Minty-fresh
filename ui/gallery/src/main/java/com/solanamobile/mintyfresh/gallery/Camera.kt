@@ -55,7 +55,6 @@ fun NavController.navigateToCamera(navOptions: NavOptions? = null) {
     this.navigate("camera", navOptions)
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.cameraScreen(
     navigateToDetails: (String) -> Unit = { },
 ) {

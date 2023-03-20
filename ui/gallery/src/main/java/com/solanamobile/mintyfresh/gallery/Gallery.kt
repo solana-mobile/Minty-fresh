@@ -3,7 +3,6 @@ package com.solanamobile.mintyfresh.gallery
 import android.Manifest
 import android.net.Uri
 import android.os.Build
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -44,7 +43,7 @@ import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWallet
 
 const val galleryRoute = "photos"
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.galleryScreen(
     navigateToDetails: (String) -> Unit = { },
     navigateToCamera: () -> Unit = { },
