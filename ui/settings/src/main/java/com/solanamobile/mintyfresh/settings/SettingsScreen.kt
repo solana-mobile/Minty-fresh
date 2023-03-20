@@ -7,10 +7,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +19,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 
 const val settingsRoute = "settings"
 
@@ -31,12 +29,32 @@ fun NavController.navigateToSettingsPage(navOptions: NavOptions? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.settingsScreen(
-    onNavigateToUrl: (title: String, url: String) -> Unit = { _, _ -> }
+    onNavigateToUrl: (title: String, url: String) -> Unit = { _, _ -> },
+    navigateUp: () -> Boolean = { true },
 ) {
     composable(route = settingsRoute) {
+        val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
         val context = LocalContext.current
         Scaffold(
             topBar = {
+                LargeTopAppBar(
+                    navigationIcon = {
+                        BackButton(navigateUp)
+                    },
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.settings),
+                        )
+                    },
+                    colors = TopAppBarDefaults.largeTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.background,
+                        scrolledContainerColor = MaterialTheme.colorScheme.background,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                        actionIconContentColor = MaterialTheme.colorScheme.onSurface
+                    ),
+                    scrollBehavior = scrollBehavior
+                )
             },
             content = { padding ->
                 LazyColumn(

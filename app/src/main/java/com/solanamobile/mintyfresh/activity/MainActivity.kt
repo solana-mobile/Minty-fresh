@@ -162,6 +162,7 @@ class MainActivity : ComponentActivity() {
                             nestedGraphs = {
                                 settingsScreen(
                                     onNavigateToUrl = { title, url -> appState.navController.navigateToWebView(title = title, url = url) },
+                                    navigateUp = navigateUp,
                                 )
 
                                 webViewScreen(

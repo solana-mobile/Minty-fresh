@@ -21,7 +21,7 @@ import com.solanamobile.mintyfresh.composable.simplecomposables.BackButton
 private const val WebViewRoute = "WebView"
 
 fun NavController.navigateToWebView(title: String, url: String, navOptions: NavOptions? = null) {
-    this.navigate("$WebViewRoute?url=$url&urlTitle=$title\")", navOptions)
+    this.navigate("$WebViewRoute?url=$url&urlTitle=$title", navOptions)
 }
 
 fun NavGraphBuilder.webViewScreen(
