@@ -31,7 +31,7 @@ fun NavController.navigateToSettingsPage(navOptions: NavOptions? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.settingsScreen(
-    onNavigateToUrl: (title: String?, url: String) -> Unit = { _, _ -> }
+    onNavigateToUrl: (title: String, url: String) -> Unit = { _, _ -> }
 ) {
     composable(route = settingsRoute) {
         val context = LocalContext.current

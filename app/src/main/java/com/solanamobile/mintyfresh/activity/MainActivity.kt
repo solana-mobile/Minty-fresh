@@ -35,19 +35,14 @@ import com.solanamobile.mintyfresh.navigation.*
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
-import com.solanamobile.mintyfresh.settings.navigateToSettingsPage
-import com.solanamobile.mintyfresh.settings.settingsRoute
-import com.solanamobile.mintyfresh.settings.settingsScreen
+import com.solanamobile.mintyfresh.settings.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @OptIn(
-        ExperimentalAnimationApi::class,
-        ExperimentalMaterialApi::class
-    )
+    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -166,7 +161,11 @@ class MainActivity : ComponentActivity() {
                             startDestination = settingsRoute,
                             nestedGraphs = {
                                 settingsScreen(
-                                    onNavigateToUrl = { _, _ -> },
+                                    onNavigateToUrl = { title, url -> appState.navController.navigateToWebView(title = title, url = url) },
+                                )
+
+                                webViewScreen(
+                                    navigateUp = navigateUp,
                                 )
                             }
                         )

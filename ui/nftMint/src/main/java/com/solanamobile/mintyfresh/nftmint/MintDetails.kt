@@ -49,7 +49,6 @@ fun NavController.navigateToMintDetailsScreen(imagePath: String, navOptions: Nav
     this.navigate("$MintDetailsRoute?imagePath=$imagePath", navOptions)
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.mintDetailsScreen(
     navigateUp: () -> Boolean = { true },
     onMintCompleted: () -> Unit,
