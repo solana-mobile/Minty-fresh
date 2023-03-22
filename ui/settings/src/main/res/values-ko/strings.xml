@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">설정</string>
+    <string name="privacy_policy_title">개인정보 보호정책</string>
+    <string name="terms_of_service_title">서비스 약관</string>
+    <string name="open_source_licenses_title">오픈 소스 라이선스</string>
+    </resources>
