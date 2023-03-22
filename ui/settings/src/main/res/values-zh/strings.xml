@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">设置</string>
+    <string name="privacy_policy_title">隐私政策</string>
+    <string name="terms_of_service_title">服务条款</string>
+    <string name="open_source_licenses_title">开源许可证</string>
+    </resources>
