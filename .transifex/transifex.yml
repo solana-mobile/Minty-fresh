@@ -26,6 +26,11 @@ git:
       source_language: en
       translation_files_expression: 'ui/nftMint/src/main/res/values-<lang>/strings.xml'
     - filter_type: file
+      source_file: ui/settings/src/main/res/values/strings.xml
+      file_format: ANDROID
+      source_language: en
+      translation_files_expression: 'ui/settings/src/main/res/values-<lang>/strings.xml'
+    - filter_type: file
       source_file: ui/walletConnectButton/src/main/res/values/strings.xml
       file_format: ANDROID
       source_language: en
