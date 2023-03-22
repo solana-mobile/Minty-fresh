@@ -51,6 +51,7 @@ fun NavController.navigateToMyMints(forceRefresh: Boolean = false, navOptions: N
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.myMintsScreen(
     navigateToDetails: (Int) -> Unit,
+    navigateToSettings: () -> Unit = { },
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
@@ -85,6 +86,10 @@ fun NavGraphBuilder.myMintsScreen(
                         iconUri = iconUri,
                         identityName = appName,
                         activityResultSender = activityResultSender
+                    )
+                    SettingsButton(
+                        modifier = Modifier.padding(start = 16.dp),
+                        onClick = navigateToSettings
                     )
                 }
             },

@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("kotlinx-serialization")
     id("dagger.hilt.android.plugin")
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 android {
@@ -73,6 +74,7 @@ dependencies {
     implementation(project(":ui:gallery"))
     implementation(project(":ui:mymints"))
     implementation(project(":ui:nftMint"))
+    implementation(project(":ui:settings"))
     implementation(project(":ui:walletConnectButton"))
     implementation(project(":libs:networkConfigs"))
 

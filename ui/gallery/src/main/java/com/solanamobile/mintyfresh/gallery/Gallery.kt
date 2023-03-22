@@ -3,7 +3,6 @@ package com.solanamobile.mintyfresh.gallery
 import android.Manifest
 import android.net.Uri
 import android.os.Build
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -35,19 +34,17 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
-import com.solanamobile.mintyfresh.composable.simplecomposables.BottomNavigationBar
-import com.solanamobile.mintyfresh.composable.simplecomposables.EmptyView
-import com.solanamobile.mintyfresh.composable.simplecomposables.NavigationItem
-import com.solanamobile.mintyfresh.composable.simplecomposables.PermissionView
+import com.solanamobile.mintyfresh.composable.simplecomposables.*
 import com.solanamobile.mintyfresh.gallery.viewmodel.MediaViewModel
 import com.solanamobile.mintyfresh.walletconnectbutton.composables.ConnectWalletButton
 
 const val galleryRoute = "photos"
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.galleryScreen(
     navigateToDetails: (String) -> Unit = { },
     navigateToCamera: () -> Unit = { },
+    navigateToSettings: () -> Unit = { },
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
@@ -84,6 +81,10 @@ fun NavGraphBuilder.galleryScreen(
                         iconUri = iconUri,
                         identityName = appName,
                         activityResultSender = activityResultSender
+                    )
+                    SettingsButton(
+                        modifier = Modifier.padding(start = 16.dp),
+                        onClick = navigateToSettings
                     )
                 }
             },

@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
@@ -34,16 +33,14 @@ import com.solanamobile.mintyfresh.navigation.*
 import com.solanamobile.mintyfresh.nftmint.MintConfirmLayout
 import com.solanamobile.mintyfresh.nftmint.mintDetailsScreen
 import com.solanamobile.mintyfresh.nftmint.navigateToMintDetailsScreen
+import com.solanamobile.mintyfresh.settings.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @OptIn(
-        ExperimentalAnimationApi::class,
-        ExperimentalMaterialApi::class
-    )
+    @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -95,6 +92,7 @@ class MainActivity : ComponentActivity() {
                                 galleryScreen(
                                     navigateToDetails = appState.navController::navigateToMintDetailsScreen,
                                     navigateToCamera = appState.navController::navigateToCamera,
+                                    navigateToSettings = appState.navController::navigateToSettingsPage,
                                     navController = appState.navController,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(
@@ -143,6 +141,7 @@ class MainActivity : ComponentActivity() {
                             nestedGraphs = {
                                 myMintsScreen(
                                     navigateToDetails = appState.navController::navigateToMyMintsDetails,
+                                    navigateToSettings = appState.navController::navigateToSettingsPage,
                                     navController = appState.navController,
                                     activityResultSender = activityResultSender,
                                     navigationItems = listOf(
@@ -155,6 +154,20 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 myMintsDetailsScreen(navigateUp = navigateUp)
+                            }
+                        )
+
+                        settingsGraph(
+                            startDestination = settingsRoute,
+                            nestedGraphs = {
+                                settingsScreen(
+                                    onNavigateToUrl = { title, url -> appState.navController.navigateToWebView(title = title, url = url) },
+                                    navigateUp = navigateUp,
+                                )
+
+                                webViewScreen(
+                                    navigateUp = navigateUp,
+                                )
                             }
                         )
                     }
