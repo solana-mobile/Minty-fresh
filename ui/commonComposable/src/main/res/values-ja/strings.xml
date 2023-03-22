@@ -1,3 +1,4 @@
 <resources>
+    <string name="settings">設定</string>
     <string name="back">戻る</string>
 </resources>
