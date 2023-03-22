@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Ustawienia</string>
+    <string name="privacy_policy_title">Polityka prywatności</string>
+    <string name="terms_of_service_title">Warunki korzystania z usługi</string>
+    <string name="open_source_licenses_title">Licencje open source</string>
+    </resources>
