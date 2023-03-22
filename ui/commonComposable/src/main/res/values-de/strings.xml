@@ -1,3 +1,4 @@
 <resources>
+    <string name="settings">Einstellungen</string>
     <string name="back">Zurück</string>
 </resources>
