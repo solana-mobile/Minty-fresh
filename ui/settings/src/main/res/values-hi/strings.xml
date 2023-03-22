@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">सेटिंग</string>
+    <string name="privacy_policy_title">निजता नीति</string>
+    <string name="terms_of_service_title">सेवा की शर्तें</string>
+    <string name="open_source_licenses_title">ओपन सोर्स लाइसेंस</string>
+    </resources>
