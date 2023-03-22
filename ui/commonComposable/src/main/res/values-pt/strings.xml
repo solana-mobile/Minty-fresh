@@ -1,3 +1,4 @@
 <resources>
+    <string name="settings">Definições</string>
     <string name="back">Voltar</string>
 </resources>
