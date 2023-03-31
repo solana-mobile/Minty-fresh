@@ -86,15 +86,23 @@ class PerformMintUseCase @Inject constructor(
 
         val signatureResult = walletAdapter.transact(sender) {
             val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
-            persistenceUseCase.persistConnection(reauth.publicKey, reauth.accountLabel ?: "", reauth.authToken)
+            persistenceUseCase.persistConnection(
+                reauth.publicKey,
+                reauth.accountLabel ?: "",
+                reauth.authToken
+            )
 
-            val signingResult = signMessagesDetached(arrayOf(xWeb3Message.encodeToByteArray()), arrayOf(creator.pubkey))
+            val signingResult = signMessagesDetached(
+                arrayOf(xWeb3Message.encodeToByteArray()),
+                arrayOf(creator.pubkey)
+            )
 
             return@transact signingResult.messages.first().signatures[0]
         }
 
         val signature = signatureResult.successPayload ?: run {
-            _mintState.value = MintState.Error(context.getString(R.string.wallet_signature_error_message))
+            _mintState.value =
+                MintState.Error(context.getString(R.string.wallet_signature_error_message))
             persistenceUseCase.clearConnection()
             return@withContext
         }
@@ -108,9 +116,8 @@ class PerformMintUseCase @Inject constructor(
         val directoryUrl = try {
             storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
         } catch (throwable: Throwable) {
-            _mintState.value = MintState.Error(
-                throwable.message ?: context.getString(R.string.upload_file_error_message)
-            )
+            _mintState.value =
+                MintState.Error(context.getString(R.string.upload_file_error_message))
             return@withContext
         }
 
@@ -131,9 +138,8 @@ class PerformMintUseCase @Inject constructor(
         try {
             mintTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
         } catch (throwable: Throwable) {
-            _mintState.value = MintState.Error(
-                throwable.message ?: context.getString(R.string.transaction_failure_message)
-            )
+            _mintState.value =
+                MintState.Error(context.getString(R.string.transaction_failure_message))
             return@withContext
         }
 
@@ -151,7 +157,11 @@ class PerformMintUseCase @Inject constructor(
         val token = getWalletConnection(this).authToken
         val txResult = walletAdapter.transact(sender) {
             val reauth = reauthorize(identityUri, iconUri, identityName, token)
-            persistenceUseCase.persistConnection(reauth.publicKey, reauth.accountLabel ?: "", reauth.authToken)
+            persistenceUseCase.persistConnection(
+                reauth.publicKey,
+                reauth.accountLabel ?: "",
+                reauth.authToken
+            )
 
             val signingResult = signTransactions(arrayOf(transactionBytes))
 
@@ -179,7 +189,8 @@ class PerformMintUseCase @Inject constructor(
                 // send the signed transaction to the cluster
                 val transactionSignature = sendTransactionRepository.sendTransaction(signed)
                     .getOrElse {
-                        _mintState.value = MintState.Error("${context.getString(R.string.transaction_confirmation_failure_message)}\n${it.message}")
+                        _mintState.value =
+                            MintState.Error(context.getString(R.string.transaction_failure_message))
                         return@withContext
                     }
 
@@ -193,7 +204,9 @@ class PerformMintUseCase @Inject constructor(
                 try {
                     sendTransactionRepository.confirmTransaction(transactionSignature)
                 } catch (throwable: Throwable) {
-                    _mintState.value = MintState.Error(throwable.message ?: context.getString(R.string.transaction_confirmation_failure_message))
+                    _mintState.value = MintState.Error(
+                        context.getString(R.string.transaction_confirmation_failure_message)
+                    )
                     return@withContext
                 }
 
