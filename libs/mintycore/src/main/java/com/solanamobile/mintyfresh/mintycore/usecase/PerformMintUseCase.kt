@@ -143,6 +143,10 @@ class PerformMintUseCase @Inject constructor(
             return@withContext
         }
 
+        // Apply the mint signature first. This ensures that wallets won't try to modify the txn,
+        // which will break the txn re-creation workaround we have in place below.
+        mintTxn.partialSign(mintAccount)
+
         val transactionBytes =
             mintTxn.serialize(
                 SerializeConfig(
