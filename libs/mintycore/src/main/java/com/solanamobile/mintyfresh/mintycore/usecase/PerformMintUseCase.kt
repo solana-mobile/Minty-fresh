@@ -187,12 +187,14 @@ class PerformMintUseCase @Inject constructor(
                 _mintState.value = MintState.Minting(mintAccount.publicKey)
 
                 // send the signed transaction to the cluster
-                val transactionSignature = sendTransactionRepository.sendTransaction(signed)
-                    .getOrElse {
-                        _mintState.value =
-                            MintState.Error(context.getString(R.string.transaction_failure_message))
-                        return@withContext
-                    }
+                val transactionSignature = try {
+                    sendTransactionRepository.sendTransaction(signed)
+                        .getOrThrow()
+                } catch (throwable: Throwable) {
+                    _mintState.value =
+                        MintState.Error(context.getString(R.string.transaction_failure_message))
+                    return@withContext
+                }
 
                 _mintState.value = MintState.AwaitingConfirmation
 
