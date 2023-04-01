@@ -15,8 +15,8 @@ android {
         applicationId = "com.solanamobile.mintyfresh"
         minSdk = 26
         targetSdk = 33
-        versionCode = 11
-        versionName = "v1.0.3"
+        versionCode = 12
+        versionName = "v1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations.addAll(listOf("en", "es", "pt", "pl", "it", "de", "fr", "nl", "ar", "zh", "hi", "ja", "ko", "ro", "ru"))
