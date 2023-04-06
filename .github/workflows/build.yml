@@ -3,11 +3,21 @@ name: Android CI
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - '*.md'
+      - '.transifex/**'
+      - 'assets/**'
+      - 'publishing/**'
+      - 'scripts/publish/**'
   pull_request:
     branches: [ main ]
     paths-ignore:
       - '*.md'
       - '**/res/values-*/strings.xml'
+      - '.transifex/**'
+      - 'assets/**'
+      - 'publishing/**'
+      - 'scripts/publish/**'
 
 jobs:
   build:
