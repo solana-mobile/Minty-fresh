@@ -76,10 +76,10 @@ class PerformMintUseCase @Inject constructor(
         // create upload files for both metadata and image
         _mintState.value = MintState.CreatingMetadata
 
-        val fullCar = carFileUseCase.buildNftCar(title, desc, filePath)
+        val nftCar = carFileUseCase.buildNftCar(title, desc, filePath)
 
         val xWeb3Message = web3AuthUseCase
-            .buildxWeb3AuthMessage(creator, fullCar.rootCid.toCanonicalString())
+            .buildxWeb3AuthMessage(creator, nftCar.rootCid.toCanonicalString())
 
         // begin message transaction step
         _mintState.value = MintState.Signing(xWeb3Message.encodeToByteArray())
@@ -113,16 +113,15 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.UploadingMedia
 
         // upload the media file
-        val directoryUrl = try {
-            storageRepository.uploadCar(fullCar.serialize(), web3AuthToken)
+        try {
+            storageRepository.uploadCar(nftCar.serialize(), web3AuthToken)
         } catch (throwable: Throwable) {
             _mintState.value =
                 MintState.Error(context.getString(R.string.upload_file_error_message))
             return@withContext
         }
 
-        // TODO: should get this some other way, or get a direct link via the metadata cid
-        val metadataUrl = "$directoryUrl/$title.json"
+        val metadataUrl = storageRepository.getIpfsLinkForCid(nftCar.metadataCid)
 
         // begin building the mint transaction
         _mintState.value = MintState.BuildingTransaction

@@ -9,55 +9,42 @@ import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
 
+class NftCar(val car: CarFile, val metadataCid: CID) {
+    val rootCid = car.rootCid
+    fun serialize() = car.serialize()
+}
+
 class CarFileUseCase @Inject constructor(
     private val cidUseCase: Web3IdUseCase,
     private val storageRepository: StorageUploadRepository
 ) {
 
-    fun buildNftCar(title: String, description: String, imageFilePath: String): CarFile {
+    fun buildNftCar(title: String, description: String, imageFilePath: String): NftCar {
 
         // first get the media file info (metadata depends on the file cid)
         val mediaFile = File(imageFilePath)
         val mediaFileExtension = mediaFile.extension
         val mediaMimeType = Files.probeContentType(mediaFile.toPath())
-        val fileBytes = mediaFile.readBytes()
+        val mediaFileName = "$title.$mediaFileExtension"
+        val mediaFileBytes = mediaFile.readBytes()
 
-        val mediaFileBlocks = fileBytes.asIterable().chunked(MAX_BLOCK_SIZE).associate {
-            val chunkBytes = it.toByteArray()
-            cidUseCase.getContentId(chunkBytes) to chunkBytes
-        }
+        lateinit var metadataCid: CID
+        return NftCar(CarFileDirectory.Builder(cidUseCase)
+            .addFile(mediaFileName, mediaFileBytes) { mediaFileCid ->
 
-        val mediaFileRoot = IpdlFile(mediaFileBlocks.map { (cid, data) ->
-            PBLink(null, data.size, cid)
-        }).encode()
+                // build the nft metadata (json)
+                val imageUrl = storageRepository.getIpfsLinkForCid(mediaFileCid)
+                val metadataJson = buildNftMetadata(title, description, imageUrl, mediaMimeType)
 
-        val mediaFileCid = cidUseCase.getRootContentId(mediaFileRoot)
-        val imageUrl = storageRepository.getIpfsLinkForCid(mediaFileCid)
+                // get the metadata file info
+                val metadataBytes = metadataJson.encodeToByteArray()
 
-        // build the nft metadata (json)
-        val metadataJson = buildNftMetadata(title, description, imageUrl, mediaMimeType)
-
-        // get the metadata file info
-        val metadataBytes = metadataJson.encodeToByteArray()
-        val metadataCid  = cidUseCase.getContentId(metadataBytes)
-
-        // Build the root node, to store both files in an IPLD bucket
-        val rootNode = IpdlDirectory(listOf(
-            PBLink("$title.json", metadataBytes.size, metadataCid),
-            PBLink("$title.$mediaFileExtension", mediaFileRoot.size, mediaFileCid)
-        )).encode()
-
-        val rootCid = cidUseCase.getRootContentId(rootNode)
-
-        return CarFile(rootCid)
-            .apply {
-                mediaFileBlocks.forEach { (cid, data) ->
-                    add(cid, data)
+                addFile("$title.json", metadataBytes) { cid ->
+                    metadataCid = cid
                 }
             }
-            .add(mediaFileCid, mediaFileRoot)
-            .add(metadataCid, metadataBytes)
-            .add(rootCid, rootNode)
+            .build(), metadataCid = metadataCid
+        )
     }
 
     private fun buildNftMetadata(title: String, description: String, imageUrl: String, imageType: String) =
