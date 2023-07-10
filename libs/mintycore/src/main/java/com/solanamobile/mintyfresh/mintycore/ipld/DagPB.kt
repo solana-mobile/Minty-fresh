@@ -42,7 +42,7 @@ fun PBNode.encode(): ByteArray {
  */
 fun PBLink.encode() =
     byteArrayOf(0x0a) + cid.bytes.size.asVarint() + cid.bytes +                     // link cid
-            (name?.let {                                                            // link name
-                byteArrayOf(0x12) + name.length.asVarint() + name.encodeToByteArray()
+            (name?.encodeToByteArray()?.let { nameBytes ->                                       // link name
+                byteArrayOf(0x12) + nameBytes.size.asVarint() + nameBytes
             } ?: byteArrayOf()) +
             byteArrayOf(0x18) + size.asVarint()                                     // link size
