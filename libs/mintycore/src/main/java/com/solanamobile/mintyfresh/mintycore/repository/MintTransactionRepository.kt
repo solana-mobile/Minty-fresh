@@ -22,7 +22,8 @@ class MintTransactionRepository @Inject constructor(private val connectionDriver
         }
 
     private fun createNftMetadata(title: String, metadataUrl: String, creator: PublicKey) = Metadata(
-        name = title,
+        name = title.truncateBytes(NFT_NAME_BYTE_LIMIT),
+        // uri must be < 204 bytes, not checked here because IPFS links will always be less
         uri = metadataUrl,
         sellerFeeBasisPoints = 0,
         creators = listOf(
@@ -30,4 +31,17 @@ class MintTransactionRepository @Inject constructor(private val connectionDriver
             Creator(PublicKey(mintyFreshCreatorPubKey), false, 0.toUByte())
         ),
     )
+
+    // truncates a string to a max number of bytes, preserving character boundaries
+    private fun String.truncateBytes(maxBytes: Int): String {
+        var count = 0
+        return this.takeWhile {
+            count += if (it.code <= 0x007F) 1 else if (it.code <= 0x07FF) 2 else 3
+            count < maxBytes
+        }
+    }
+
+    companion object {
+        private const val NFT_NAME_BYTE_LIMIT = 32
+    }
 }
