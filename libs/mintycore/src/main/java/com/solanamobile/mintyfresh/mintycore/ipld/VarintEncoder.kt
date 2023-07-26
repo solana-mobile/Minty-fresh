@@ -13,6 +13,17 @@ object Varint {
             }
         }
     }
+
+    fun encode(value: Long): ByteArray {
+        var num = value
+        val encodedSize = ceil((Long.SIZE_BITS - value.countLeadingZeroBits()) / 7f).toInt()
+        return ByteArray(encodedSize) {
+            (num and 0x7F or if (num < 128) 0 else 128).toByte().also {
+                num /= 128
+            }
+        }
+    }
 }
 
 fun Int.asVarint() = Varint.encode(this)
+fun Long.asVarint() = Varint.encode(this)
