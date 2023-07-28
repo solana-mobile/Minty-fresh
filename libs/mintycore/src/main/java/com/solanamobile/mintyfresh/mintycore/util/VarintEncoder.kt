@@ -26,21 +26,25 @@ object Varint {
         }
     }
 
-//    fun decode(bytes: ByteArray): Int =
-//        bytes.takeWhile { it and 0x80.toByte() > 0 }
-//            .foldIndexed(0) { index, value, byte ->
-//                (byte.toInt() shl (7*index)) or value
-//            }
     fun decode(bytes: ByteArray): Long =
         bytes.takeWhile { it and 0x80.toByte() < 0 }.run {
             this + bytes[this.size]
         }.foldIndexed(0L) { index, value, byte ->
             ((byte and 0x7f).toLong() shl (7*index)) or value
         }
-//            = bytes.foldIndexed(0L) { index, value, byte ->
-//                ((byte and 0x7f).toLong() shl (7*index)) or value
-//            }
+    fun decode(bytes: ByteBuffer): Int {
+        var value = 0
+        var shift = 0
+        var b: Int
+        do {
+            b = bytes.get().toInt() and 0xFF
+            value = value or ((b and 0x7F) shl shift)
+            shift += 7
+        } while (b and 0x80 != 0)
+        return value
+    }
 }
 
 fun Int.asVarint() = Varint.encode(this)
 fun Long.asVarint() = Varint.encode(this)
+fun ByteBuffer.decodeVarint() = Varint.decode(this)

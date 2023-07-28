@@ -1,7 +1,7 @@
 package com.solanamobile.mintyfresh.mintycore.bundlr
 
-import com.solanamobile.mintyfresh.mintycore.util.Varint
 import com.solanamobile.mintyfresh.mintycore.util.asVarint
+import com.solanamobile.mintyfresh.mintycore.util.decodeVarint
 import com.solanamobile.mintyfresh.mintycore.util.zigzag
 import com.solanamobile.mintyfresh.mintycore.util.zigzagToTwosComp
 import kotlinx.coroutines.Dispatchers
@@ -123,15 +123,6 @@ open class DataItem(val byteArray: ByteArray) {
             }.array())
         }
 
-//        fun verify(byteArray: ByteArray): Boolean {
-//            check (byteArray.size < MIN_BINARY_SIZE) {  }
-//
-//            val item = DataItem(byteArray)
-//            check (item.getTagLength() > MAX_TAG_BYTES) { "Invalid tag length: {${item.getTagLength()}}" }
-//            TweetNaclFast.
-//            HotAccount().sign()
-//        }
-
         internal fun serializeTags(tags: Map<String, String>): ByteArray = tags.map { (name, value) ->
             name.encodeAvro().array() + value.encodeAvro().array()
         }.run {
@@ -160,74 +151,7 @@ open class DataItem(val byteArray: ByteArray) {
             return tags
         }
 
-        private fun ByteBuffer.decodeAvroString(): String {
-            val size = this.decodeZigzagVInt()
-            val bytes = ByteArray(size)
-            this.get(bytes)
-            return String(bytes)
-        }
-
-        private fun ByteBuffer.decodeZigzagVInt(): Int {
-            var value = 0
-            var shift = 0
-            var b: Int
-            do {
-                b = this.get().toInt() and 0xFF
-                value = value or ((b and 0x7F) shl shift)
-                shift += 7
-            } while (b and 0x80 != 0)
-            return value.zigzagToTwosComp()
-        }
-//        fun deserializeTags(serializedBytes: ByteArray): Map<String, String> {
-//            val tagsMap = mutableMapOf<String, String>()
-//
-//            var index = 0
-//
-//            // Read the size field that indicates the number of tags
-//            val (tagsCount, sizeBytes) = serializedBytes.readZigzagVInt(index)
-//            index += sizeBytes
-//
-//            for (i in 0 until tagsCount) {
-//                // Extract the name and value bytes from the serialized bytes
-//                val (nameValue, nameSize) = serializedBytes.readZigzagVInt(index)
-//                index += nameSize
-//                val nameBytes = serializedBytes.sliceArray(index until index + nameValue)
-//                index += nameValue
-//
-//                val (valueValue, valueSize) = serializedBytes.readZigzagVInt(index)
-//                index += valueSize
-//                val valueBytes = serializedBytes.sliceArray(index until index + valueValue)
-//                index += valueValue
-//
-//                // Convert the name and value bytes back to strings
-//                val name = nameBytes.decodeToString()
-//                val value = valueBytes.decodeToString()
-//
-//                // Add the name-value pair to the map
-//                tagsMap[name] = value
-//            }
-//
-//            return tagsMap
-//        }
-//
-//        fun ByteArray.decodeVint()(offset: Int = 0): Long =
-//            takeWhile { it and 0x80.toByte() < 0 }.run {
-//                this + this@decode[this.size]
-//            }.foldIndexed(0L) { index, value, byte ->
-//                ((byte and 0x7f).toLong() shl (7*index)) or value
-//            }
-
-//        internal fun deserializeTags(encodedTags: ByteArray) {
-//            val count = Varint.decode(encodedTags).zigzagToTwosComp()
-//            println("+++ $count")
-////            val tagsStart = encodedTags.takeWhile { it and 0x80.toByte() < 0 }.size + 1
-//            val tagsStart = ceil((Long.SIZE_BITS - count.countLeadingZeroBits()) / 7f).toInt()
-//            println("+++ $tagsStart")
-//            (0..count).forEach {
-//
-//                val size = Varint.decode(encodedTags).zigzagToTwosComp()
-//            }
-//        }
+        private fun ByteBuffer.decodeZigzagVInt(): Int = this.decodeVarint().zigzagToTwosComp()
 
         /*
             Tag Avro Array Schema
@@ -258,8 +182,11 @@ open class DataItem(val byteArray: ByteArray) {
             }
         }
 
-        private fun decodeAvro(encoded: ByteArray): String {
-            return ""
+        private fun ByteBuffer.decodeAvroString(): String {
+            val size = this.decodeZigzagVInt()
+            val bytes = ByteArray(size)
+            this.get(bytes)
+            return String(bytes)
         }
     }
 
