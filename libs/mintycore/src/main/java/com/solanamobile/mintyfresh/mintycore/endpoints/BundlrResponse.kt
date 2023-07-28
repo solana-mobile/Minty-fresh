@@ -2,6 +2,7 @@ package com.solanamobile.mintyfresh.mintycore.endpoints
 
 import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.*
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -29,8 +30,13 @@ data class BalanceResponse(val balance: Long)
 @Serializable
 data class FundAccountResponse(val confirmed: Boolean)
 
-@Serializable
-data class UploadResponse(val id: String, val timestamp: Long)
+sealed interface UploadResponse {
+    val id: String
+
+    @Serializable
+    data class UploadComplete(override val id: String, val timestamp: Long) : UploadResponse
+    data class FileAlreadyUploaded(override val id: String) : UploadResponse
+}
 
 object TestConverter : Converter.Factory() {
 
@@ -54,7 +60,15 @@ object TestConverter : Converter.Factory() {
                 json.decodeFromString(FundAccountResponse.serializer(), response.string()).confirmed
             }
             UploadResponse::class.java -> Converter { response ->
-                json.decodeFromString(UploadResponse.serializer(), response.string())
+                val responseString = response.string()
+                try {
+                    json.decodeFromString(UploadResponse.UploadComplete.serializer(), responseString)
+                } catch (error: SerializationException) {
+                    "^Transaction [a-zA-Z0-9-_=]+ already received\$".toRegex()
+                        .matchEntire(responseString)?.value?.split(' ')?.get(1)?.let { id ->
+                            UploadResponse.FileAlreadyUploaded(id)
+                        }
+                }
             }
             else -> super.responseBodyConverter(type, annotations, retrofit)
         }
