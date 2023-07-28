@@ -68,6 +68,22 @@ class DataItemTests {
     }
 
     @Test
+    fun testDeserializeTags() {
+        // given
+        val expectedTags = mapOf("Hello" to "Bundlr!", "This is a " to "Test")
+        val bytes = byteArrayOf(
+            4, 10, 72, 101, 108, 108, 111, 14, 66, 117, 110, 100, 108, 114, 33, 20,
+            84, 104, 105, 115, 32, 105, 115, 32, 97, 32, 8, 84, 101, 115, 116, 0
+        )
+
+        // when
+        val result = DataItem.deserializeTags(bytes)
+
+        // then
+        assertEquals(expectedTags, result)
+    }
+
+    @Test
     fun testDataItemBasic() {
         // given
         val owner = HotSolanaSigner()
@@ -113,6 +129,7 @@ class DataItemTests {
         assertNull(dataItem.target)
         assertNull(dataItem.anchor)
         assertEquals(2, dataItem.tagCount)
+        assertEquals(tags, dataItem.tags)
         assertArrayEquals(expectedTags, dataItem.rawTags)
         assertEquals(data, dataItem.rawData.decodeToString())
     }

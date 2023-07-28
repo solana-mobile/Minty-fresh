@@ -6,8 +6,8 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
-import com.solana.mobilewalletadapter.clientlib.successPayload
 import com.solanamobile.mintyfresh.mintycore.R
+import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
 import com.solanamobile.mintyfresh.mintycore.bundlr.Ed25519Signer
 import com.solanamobile.mintyfresh.mintycore.repository.*
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
@@ -72,38 +72,19 @@ class PerformMintUseCase @Inject constructor(
 
         val signer = object : Ed25519Signer() {
             override val publicKey: ByteArray = creator.pubkey
-            override suspend fun sign(message: ByteArray): ByteArray =
-                walletAdapter.transact(sender) {
-                    val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
-                    persistenceUseCase.persistConnection(
-                        reauth.publicKey,
-                        reauth.accountLabel ?: "",
-                        reauth.authToken
-                    )
-
-                    val signingResult = signMessagesDetached(
-                        arrayOf(message),
-                        arrayOf(creator.pubkey)
-                    )
-
-                    return@transact signingResult.messages.first().signatures[0]
-                }.successPayload ?: run {
-                    _mintState.value =
-                        MintState.Error(context.getString(R.string.wallet_signature_error_message))
-                    persistenceUseCase.clearConnection()
-                    ByteArray(signatureLength)
-                }
+            override suspend fun sign(message: ByteArray): ByteArray = ByteArray(signatureLength)
         }
 
         // create upload files for both metadata and image
         _mintState.value = MintState.CreatingMetadata
 
-        val nftBundle = dataBundleUseCase.buildAndSignNftBundle(title, desc, filePath, signer)
-
-        // transfer funds to Bundlr
-        val bytesToUpload = nftBundle.metadata.byteArray.size + nftBundle.media.byteArray.size
-        val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, bytesToUpload)
+        val mediaBundle = dataBundleUseCase.buildMediabundle(filePath, signer)
+        val estimatedSize = mediaBundle.byteArray.size +
+                dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer).byteArray.size
+        val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, estimatedSize)
         transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+
+        lateinit var metadataBundle: DataItem
 
         val transferResult = walletAdapter.transact(sender) {
             val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
@@ -112,6 +93,19 @@ class PerformMintUseCase @Inject constructor(
                 reauth.accountLabel ?: "",
                 reauth.authToken
             )
+
+            val signer = object : Ed25519Signer() {
+                override val publicKey = creator.pubkey
+                override suspend fun sign(message: ByteArray): ByteArray = signMessagesDetached(
+                    arrayOf(message), arrayOf(publicKey)
+                ).messages.first().signatures.first()
+            }
+
+            mediaBundle.sign(signer)
+
+            metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
+
+            metadataBundle.sign(signer)
 
             val signingResult = signTransactions(
                 arrayOf(transferTxn.serialize(
@@ -139,19 +133,19 @@ class PerformMintUseCase @Inject constructor(
             else -> {}
         }
 
-        // now we can upload the mft files to bundlr
+        // now we can upload the nft files to bundlr
         _mintState.value = MintState.UploadingMedia
 
         try {
-            storageRepository.upload(nftBundle.metadata)
-            storageRepository.upload(nftBundle.media)
+            storageRepository.upload(metadataBundle)
+            storageRepository.upload(mediaBundle)
         } catch (throwable: Throwable) {
             _mintState.value =
                 MintState.Error(context.getString(R.string.upload_file_error_message))
             return@withContext
         }
 
-        val metadataUrl = "https://arweave.net/${nftBundle.metadataId}"
+        val metadataUrl = "https://arweave.net/${metadataBundle.id}"
 
         // begin building the mint transaction
         _mintState.value = MintState.BuildingTransaction
