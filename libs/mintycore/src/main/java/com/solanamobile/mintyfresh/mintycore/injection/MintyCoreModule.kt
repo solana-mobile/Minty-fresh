@@ -38,7 +38,7 @@ class MintyCoreModule {
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BUNDLR_NODE_BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(TestConverter)
+            .addConverterFactory(BundlrApiConverter)
             .build()
 
         return retrofit.create(BundlrEndpoints::class.java)

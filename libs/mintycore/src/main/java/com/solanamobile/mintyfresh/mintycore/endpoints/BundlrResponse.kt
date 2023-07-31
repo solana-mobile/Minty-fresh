@@ -38,7 +38,7 @@ sealed interface UploadResponse {
     data class FileAlreadyUploaded(override val id: String) : UploadResponse
 }
 
-object TestConverter : Converter.Factory() {
+object BundlrApiConverter : Converter.Factory() {
 
     private val json = Json { ignoreUnknownKeys = true }
 
