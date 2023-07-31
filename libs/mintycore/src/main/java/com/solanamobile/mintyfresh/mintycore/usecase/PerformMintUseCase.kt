@@ -6,13 +6,10 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
-import com.solana.mobilewalletadapter.clientlib.successPayload
 import com.solanamobile.mintyfresh.mintycore.R
-import com.solanamobile.mintyfresh.mintycore.ipld.toCanonicalString
-import com.solanamobile.mintyfresh.mintycore.repository.LatestBlockhashRepository
-import com.solanamobile.mintyfresh.mintycore.repository.MintTransactionRepository
-import com.solanamobile.mintyfresh.mintycore.repository.SendTransactionRepository
-import com.solanamobile.mintyfresh.mintycore.repository.StorageUploadRepository
+import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
+import com.solanamobile.mintyfresh.mintycore.bundlr.Ed25519Signer
+import com.solanamobile.mintyfresh.mintycore.repository.*
 import com.solanamobile.mintyfresh.persistence.usecase.Connected
 import com.solanamobile.mintyfresh.persistence.usecase.WalletConnectionUseCase
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,8 +37,8 @@ sealed interface MintState {
 class PerformMintUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
     private val walletAdapter: MobileWalletAdapter,
-    private val carFileUseCase: CarFileUseCase,
-    private val web3AuthUseCase: XWeb3AuthUseCase,
+    private val dataBundleUseCase: DataBundleUseCase,
+    private val fundNodeRepository: FundNodeTransactionRepository,
     private val storageRepository: StorageUploadRepository,
     private val persistenceUseCase: WalletConnectionUseCase,
     private val mintTransactionRepository: MintTransactionRepository,
@@ -73,18 +70,23 @@ class PerformMintUseCase @Inject constructor(
 
         val creator = PublicKey(walletAddress)
 
+        val signer = object : Ed25519Signer() {
+            override val publicKey: ByteArray = creator.pubkey
+            override suspend fun sign(message: ByteArray): ByteArray = ByteArray(signatureLength)
+        }
+
         // create upload files for both metadata and image
         _mintState.value = MintState.CreatingMetadata
 
-        val nftCar = carFileUseCase.buildNftCar(title, desc, filePath)
+        val mediaBundle = dataBundleUseCase.buildMediabundle(filePath, signer)
+        val estimatedSize = mediaBundle.byteArray.size +
+                dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer).byteArray.size
+        val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, estimatedSize)
+        transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
 
-        val xWeb3Message = web3AuthUseCase
-            .buildxWeb3AuthMessage(creator, nftCar.rootCid.toCanonicalString())
+        lateinit var metadataBundle: DataItem
 
-        // begin message transaction step
-        _mintState.value = MintState.Signing(xWeb3Message.encodeToByteArray())
-
-        val signatureResult = walletAdapter.transact(sender) {
+        val transferResult = walletAdapter.transact(sender) {
             val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
             persistenceUseCase.persistConnection(
                 reauth.publicKey,
@@ -92,36 +94,58 @@ class PerformMintUseCase @Inject constructor(
                 reauth.authToken
             )
 
-            val signingResult = signMessagesDetached(
-                arrayOf(xWeb3Message.encodeToByteArray()),
-                arrayOf(creator.pubkey)
+            val signer = object : Ed25519Signer() {
+                override val publicKey = creator.pubkey
+                override suspend fun sign(message: ByteArray): ByteArray = signMessagesDetached(
+                    arrayOf(message), arrayOf(publicKey)
+                ).messages.first().signatures.first()
+            }
+
+            mediaBundle.sign(signer)
+
+            metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
+
+            metadataBundle.sign(signer)
+
+            val signingResult = signTransactions(
+                arrayOf(transferTxn.serialize(
+                    SerializeConfig(
+                        requireAllSignatures = false,
+                        verifySignatures = false
+                    )
+                ))
             )
 
-            return@transact signingResult.messages.first().signatures[0]
+            return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
         }
 
-        val signature = signatureResult.successPayload ?: run {
-            _mintState.value =
-                MintState.Error(context.getString(R.string.wallet_signature_error_message))
-            persistenceUseCase.clearConnection()
-            return@withContext
+        when (transferResult) {
+            is TransactionResult.Success -> {
+                transferTxn.addSignature(creator, transferResult.payload)
+                val transferId = sendTransactionRepository.sendTransaction(transferTxn).getOrThrow()
+                sendTransactionRepository.confirmTransaction(transferId)
+                storageRepository.fundBundlrAccount(transferId)
+            }
+            is TransactionResult.Failure -> {
+                _mintState.value = MintState.Error(transferResult.message)
+                return@withContext
+            }
+            else -> {}
         }
 
-        val web3AuthToken = web3AuthUseCase.buildXWeb3AuthToken(xWeb3Message, signature)
-
-        // now we can upload the car files, using the web3 auth tokens we just made
+        // now we can upload the nft files to bundlr
         _mintState.value = MintState.UploadingMedia
 
-        // upload the media file
         try {
-            storageRepository.uploadCar(nftCar.serialize(), web3AuthToken)
+            storageRepository.upload(metadataBundle)
+            storageRepository.upload(mediaBundle)
         } catch (throwable: Throwable) {
             _mintState.value =
                 MintState.Error(context.getString(R.string.upload_file_error_message))
             return@withContext
         }
 
-        val metadataUrl = storageRepository.getIpfsLinkForCid(nftCar.metadataCid)
+        val metadataUrl = "https://arweave.net/${metadataBundle.id}"
 
         // begin building the mint transaction
         _mintState.value = MintState.BuildingTransaction

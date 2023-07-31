@@ -1,6 +1,8 @@
 package com.solanamobile.mintyfresh.mintycore.ipld
 
 import androidx.annotation.Size
+import com.solanamobile.mintyfresh.mintycore.util.Varint
+import com.solanamobile.mintyfresh.mintycore.util.asVarint
 
 open class CarFile(val rootCid: CID, val dataBlocks: Map<CID, ByteArray>) {
 

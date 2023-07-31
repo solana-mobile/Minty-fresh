@@ -1,5 +1,7 @@
 package com.solanamobile.mintyfresh.mintycore.ipld
 
+import com.solanamobile.mintyfresh.mintycore.util.asVarint
+
 // TODO: cleanup byte array concat + (seemingly) magic numbers + document
 class IpdlDirectory(links: List<PBLink>)
     : PBNode(byteArrayOf(8, 1), links)

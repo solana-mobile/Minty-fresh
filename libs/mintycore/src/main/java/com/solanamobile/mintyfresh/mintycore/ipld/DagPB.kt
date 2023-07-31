@@ -1,5 +1,7 @@
 package com.solanamobile.mintyfresh.mintycore.ipld
 
+import com.solanamobile.mintyfresh.mintycore.util.asVarint
+
 /*
  * Minimum viable implementation of IPLD DAG_PB encoding spec
  * see here: https://github.com/ipld/specs/blob/master/block-layer/codecs/dag-pb.md
