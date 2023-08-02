@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ExecutionException
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -82,7 +83,6 @@ class PerformMintUseCase @Inject constructor(
         val estimatedSize = mediaBundle.byteArray.size +
                 dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer).byteArray.size
         val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, estimatedSize)
-        transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
 
         lateinit var metadataBundle: DataItem
 
@@ -107,6 +107,12 @@ class PerformMintUseCase @Inject constructor(
 
             metadataBundle.sign(signer)
 
+            try {
+                transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+            } catch (e: Exception) {
+                throw ExecutionException(e)
+            }
+
             val signingResult = signTransactions(
                 arrayOf(transferTxn.serialize(
                     SerializeConfig(
@@ -116,15 +122,20 @@ class PerformMintUseCase @Inject constructor(
                 ))
             )
 
-            return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
+            return@transact Transaction.from(signingResult.signedPayloads[0])
         }
 
         when (transferResult) {
             is TransactionResult.Success -> {
-                transferTxn.addSignature(creator, transferResult.payload)
-                val transferId = sendTransactionRepository.sendTransaction(transferTxn).getOrThrow()
-                sendTransactionRepository.confirmTransaction(transferId)
-                storageRepository.fundBundlrAccount(transferId)
+                try {
+                    val transferId = sendTransactionRepository.sendTransaction(transferResult.payload).getOrThrow()
+                    sendTransactionRepository.confirmTransaction(transferId)
+                    storageRepository.fundBundlrAccount(transferId)
+                } catch (e: Exception) {
+                    _mintState.value =
+                        MintState.Error(context.getString(R.string.transaction_failure_message))
+                    return@withContext
+                }
             }
             is TransactionResult.Failure -> {
                 _mintState.value = MintState.Error(transferResult.message)
