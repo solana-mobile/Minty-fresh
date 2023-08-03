@@ -6,6 +6,7 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solana.vendor.TweetNaclFast
 import com.solanamobile.mintyfresh.mintycore.R
 import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
 import com.solanamobile.mintyfresh.mintycore.bundlr.Ed25519Signer
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import java.util.concurrent.ExecutionException
+import java.util.Base64
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -84,6 +85,14 @@ class PerformMintUseCase @Inject constructor(
                 dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer).byteArray.size
         val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, estimatedSize)
 
+        try {
+            transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+        } catch (e: Exception) {
+            _mintState.value =
+                MintState.Error(context.getString(R.string.transaction_failure_message))
+            return@withContext
+        }
+
         lateinit var metadataBundle: DataItem
 
         val transferResult = walletAdapter.transact(sender) {
@@ -101,18 +110,7 @@ class PerformMintUseCase @Inject constructor(
                 ).messages.first().signatures.first()
             }
 
-            mediaBundle.sign(signer)
-
-            metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
-
-            metadataBundle.sign(signer)
-
-            try {
-                transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
-            } catch (e: Exception) {
-                throw ExecutionException(e)
-            }
-
+            // first, sign the funding transaction because the blockhash is time sensitive
             val signingResult = signTransactions(
                 arrayOf(transferTxn.serialize(
                     SerializeConfig(
@@ -121,6 +119,12 @@ class PerformMintUseCase @Inject constructor(
                     )
                 ))
             )
+
+            // now sign the data bundles
+            mediaBundle.sign(signer)
+
+            metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
+            metadataBundle.sign(signer)
 
             return@transact Transaction.from(signingResult.signedPayloads[0])
         }
