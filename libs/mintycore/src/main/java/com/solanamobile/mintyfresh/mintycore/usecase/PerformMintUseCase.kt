@@ -6,6 +6,7 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
+import com.solana.vendor.TweetNaclFast
 import com.solanamobile.mintyfresh.mintycore.R
 import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
 import com.solanamobile.mintyfresh.mintycore.bundlr.Ed25519Signer
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
+import java.util.Base64
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -82,7 +84,14 @@ class PerformMintUseCase @Inject constructor(
         val estimatedSize = mediaBundle.byteArray.size +
                 dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer).byteArray.size
         val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, estimatedSize)
-        transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+
+        try {
+            transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+        } catch (e: Exception) {
+            _mintState.value =
+                MintState.Error(context.getString(R.string.transaction_failure_message))
+            return@withContext
+        }
 
         lateinit var metadataBundle: DataItem
 
@@ -101,12 +110,7 @@ class PerformMintUseCase @Inject constructor(
                 ).messages.first().signatures.first()
             }
 
-            mediaBundle.sign(signer)
-
-            metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
-
-            metadataBundle.sign(signer)
-
+            // first, sign the funding transaction because the blockhash is time sensitive
             val signingResult = signTransactions(
                 arrayOf(transferTxn.serialize(
                     SerializeConfig(
@@ -116,15 +120,26 @@ class PerformMintUseCase @Inject constructor(
                 ))
             )
 
-            return@transact signingResult.signedPayloads[0].sliceArray(1 until 1 + SIGNATURE_LENGTH)
+            // now sign the data bundles
+            mediaBundle.sign(signer)
+
+            metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
+            metadataBundle.sign(signer)
+
+            return@transact Transaction.from(signingResult.signedPayloads[0])
         }
 
         when (transferResult) {
             is TransactionResult.Success -> {
-                transferTxn.addSignature(creator, transferResult.payload)
-                val transferId = sendTransactionRepository.sendTransaction(transferTxn).getOrThrow()
-                sendTransactionRepository.confirmTransaction(transferId)
-                storageRepository.fundBundlrAccount(transferId)
+                try {
+                    val transferId = sendTransactionRepository.sendTransaction(transferResult.payload).getOrThrow()
+                    sendTransactionRepository.confirmTransaction(transferId)
+                    storageRepository.fundBundlrAccount(transferId)
+                } catch (e: Exception) {
+                    _mintState.value =
+                        MintState.Error(context.getString(R.string.transaction_failure_message))
+                    return@withContext
+                }
             }
             is TransactionResult.Failure -> {
                 _mintState.value = MintState.Error(transferResult.message)
