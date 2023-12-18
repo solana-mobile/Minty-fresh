@@ -27,7 +27,7 @@ android {
 
         // NFT.Storage API Url
         buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-        buildConfigField("String", "BUNDLR_NODE_BASE_URL", "\"https://devnet.bundlr.network/\"")
+        buildConfigField("String", "BUNDLR_NODE_BASE_URL", "\"https://turbo.ardrive.dev/\"")
     }
 
     buildTypes {
@@ -36,7 +36,7 @@ android {
 
             // NFT.Storage API Url
             buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-            buildConfigField("String", "BUNDLR_NODE_BASE_URL", "\"https://node1.bundlr.network/\"")
+            buildConfigField("String", "BUNDLR_NODE_BASE_URL", "\"https://up.arweave.net/\"")
         }
     }
 
