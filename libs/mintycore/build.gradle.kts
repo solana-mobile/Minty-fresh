@@ -27,16 +27,14 @@ android {
 
         // NFT.Storage API Url
         buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-        buildConfigField("String", "BUNDLR_NODE_BASE_URL", "\"https://devnet.bundlr.network/\"")
+        buildConfigField("String", "BUNDLER_NODE_BASE_URL", "\"https://turbo.ardrive.dev/\"")
+        buildConfigField("String", "ARWEAVE_BASE_URL", "\"https://arweave.net/\"")
     }
 
     buildTypes {
         release {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-
-            // NFT.Storage API Url
-            buildConfigField("String", "API_BASE_URL", "\"https://api.nft.storage/\"")
-            buildConfigField("String", "BUNDLR_NODE_BASE_URL", "\"https://node1.bundlr.network/\"")
+            buildConfigField("String", "BUNDLER_NODE_BASE_URL", "\"https://up.arweave.net/\"")
         }
     }
 

@@ -6,7 +6,7 @@ import com.solana.core.*
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
 import com.solana.mobilewalletadapter.clientlib.MobileWalletAdapter
 import com.solana.mobilewalletadapter.clientlib.TransactionResult
-import com.solana.vendor.TweetNaclFast
+import com.solanamobile.mintyfresh.mintycore.BuildConfig
 import com.solanamobile.mintyfresh.mintycore.R
 import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
 import com.solanamobile.mintyfresh.mintycore.bundlr.Ed25519Signer
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
-import java.util.Base64
 import javax.inject.Inject
 
 sealed interface MintState {
@@ -86,7 +85,7 @@ class PerformMintUseCase @Inject constructor(
         val transferTxn = fundNodeRepository.buildNodeFundingTransaction(creator, estimatedSize)
 
         try {
-            transferTxn.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
+            transferTxn?.setRecentBlockHash(blockhashRepository.getLatestBlockHash())
         } catch (e: Exception) {
             _mintState.value =
                 MintState.Error(context.getString(R.string.transaction_failure_message))
@@ -111,14 +110,16 @@ class PerformMintUseCase @Inject constructor(
             }
 
             // first, sign the funding transaction because the blockhash is time sensitive
-            val signingResult = signTransactions(
-                arrayOf(transferTxn.serialize(
-                    SerializeConfig(
-                        requireAllSignatures = false,
-                        verifySignatures = false
-                    )
-                ))
-            )
+            val signingResult = transferTxn?.run {
+                signTransactions(
+                    arrayOf(transferTxn.serialize(
+                        SerializeConfig(
+                            requireAllSignatures = false,
+                            verifySignatures = false
+                        )
+                    ))
+                )
+            }
 
             // now sign the data bundles
             mediaBundle.sign(signer)
@@ -126,16 +127,18 @@ class PerformMintUseCase @Inject constructor(
             metadataBundle = dataBundleUseCase.buildMetadatabundle(title, desc, mediaBundle, signer)
             metadataBundle.sign(signer)
 
-            return@transact Transaction.from(signingResult.signedPayloads[0])
+            return@transact signingResult?.let {
+                Transaction.from(it.signedPayloads[0])
+            }
         }
 
         when (transferResult) {
             is TransactionResult.Success -> {
-                try {
-                    val transferId = sendTransactionRepository.sendTransaction(transferResult.payload).getOrThrow()
+                transferResult.payload?.runCatching {
+                    val transferId = sendTransactionRepository.sendTransaction(this).getOrThrow()
                     sendTransactionRepository.confirmTransaction(transferId)
-                    storageRepository.fundBundlrAccount(transferId)
-                } catch (e: Exception) {
+                    storageRepository.fundAccount(transferId)
+                }?.onFailure {
                     _mintState.value =
                         MintState.Error(context.getString(R.string.transaction_failure_message))
                     return@withContext
@@ -148,7 +151,7 @@ class PerformMintUseCase @Inject constructor(
             else -> {}
         }
 
-        // now we can upload the nft files to bundlr
+        // now we can upload the nft files to web3 storage
         _mintState.value = MintState.UploadingMedia
 
         try {
@@ -160,7 +163,7 @@ class PerformMintUseCase @Inject constructor(
             return@withContext
         }
 
-        val metadataUrl = "https://arweave.net/${metadataBundle.id}"
+        val metadataUrl = "${BuildConfig.ARWEAVE_BASE_URL}${metadataBundle.id}"
 
         // begin building the mint transaction
         _mintState.value = MintState.BuildingTransaction
