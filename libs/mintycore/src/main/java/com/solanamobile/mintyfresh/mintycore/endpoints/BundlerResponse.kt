@@ -21,7 +21,8 @@ data class NodeInfoResponse(
 @Serializable
 data class NodeAddresses(
     // NOTE: there are other chains returned, but we only care about sol
-    val solana: String
+    val arweave: String,
+    val solana: String? = null
 )
 
 @Serializable
@@ -38,7 +39,7 @@ sealed interface UploadResponse {
     data class FileAlreadyUploaded(override val id: String) : UploadResponse
 }
 
-object BundlrApiConverter : Converter.Factory() {
+object BundlerApiConverter : Converter.Factory() {
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -53,7 +54,7 @@ object BundlrApiConverter : Converter.Factory() {
             }
             java.lang.Long::class.java -> Converter {
                 val response = it.string()
-                response.toLongOrNull()
+                response.toLongOrNull() ?: response.toDoubleOrNull()?.toLong()
                     ?: json.decodeFromString(BalanceResponse.serializer(), response).balance
             }
             java.lang.Boolean::class.java -> Converter { response ->
@@ -64,8 +65,8 @@ object BundlrApiConverter : Converter.Factory() {
                 try {
                     json.decodeFromString(UploadResponse.UploadComplete.serializer(), responseString)
                 } catch (error: SerializationException) {
-                    "^Transaction [a-zA-Z0-9-_=]+ already received\$".toRegex()
-                        .matchEntire(responseString)?.value?.split(' ')?.get(1)?.let { id ->
+                    "^[a-zA-Z\\s]*\\s([a-zA-Z0-9-_=]+)\\s[\\S\\s]*already[\\S\\s]*\$".toRegex()
+                        .matchEntire(responseString)?.groupValues?.get(1)?.let { id ->
                             UploadResponse.FileAlreadyUploaded(id)
                         }
                 }

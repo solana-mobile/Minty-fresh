@@ -4,7 +4,7 @@ import com.solanamobile.mintyfresh.mintycore.bundlr.Bundle
 import com.solanamobile.mintyfresh.mintycore.bundlr.DataItem
 import retrofit2.http.*
 
-interface BundlrEndpoints {
+interface BundlerEndpoints {
 
     /*
      * NOTE: solana is hardcoded here, but could be made dynamic (via PATH(...))
