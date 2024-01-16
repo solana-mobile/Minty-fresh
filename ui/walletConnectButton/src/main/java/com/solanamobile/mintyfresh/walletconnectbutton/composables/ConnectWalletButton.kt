@@ -1,6 +1,5 @@
 package com.solanamobile.mintyfresh.walletconnectbutton.composables
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -23,9 +22,6 @@ import com.solanamobile.mintyfresh.walletconnectbutton.viewmodel.WalletConnectio
 
 @Composable
 fun ConnectWalletButton(
-    identityUri: Uri,
-    iconUri: Uri,
-    identityName: String,
     activityResultSender: ActivityResultSender,
     modifier: Modifier = Modifier,
     walletConnectionViewModel: WalletConnectionViewModel = hiltViewModel(),

@@ -1,6 +1,5 @@
 package com.solanamobile.mintyfresh.walletconnectbutton.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
