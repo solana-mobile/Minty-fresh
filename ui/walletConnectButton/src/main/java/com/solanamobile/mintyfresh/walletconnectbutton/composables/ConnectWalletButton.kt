@@ -41,7 +41,7 @@ fun ConnectWalletButton(
         ),
         onClick = {
             if (viewState.userAddress.isEmpty()) {
-                walletConnectionViewModel.connect(identityUri, iconUri, identityName, activityResultSender)
+                walletConnectionViewModel.connect(activityResultSender)
             } else {
                 walletConnectionViewModel.disconnect()
             }

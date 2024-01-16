@@ -69,7 +69,7 @@ class PerformMintViewModel @Inject constructor(
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
                 val result = mobileWalletAdapter.transact(sender) {
-                    authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
+                    authorize(identityUri, iconUri, identityName, rpcConfig.blockchain.fullName)
                 }
 
                 if (result !is TransactionResult.Success) {
@@ -86,8 +86,8 @@ class PerformMintViewModel @Inject constructor(
                 }
 
                 persistenceUseCase.persistConnection(
-                    result.payload.publicKey,
-                    result.payload.accountLabel ?: "",
+                    result.payload.accounts.first().publicKey,
+                    result.payload.accounts.first().accountLabel ?: "",
                     result.payload.authToken
                 )
             }

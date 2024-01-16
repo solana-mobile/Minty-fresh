@@ -61,26 +61,14 @@ class WalletConnectionViewModel @Inject constructor(
     }
 
     fun connect(
-        identityUri: Uri,
-        iconUri: Uri,
-        identityName: String,
         activityResultSender: ActivityResultSender
     ) {
         viewModelScope.launch {
-            val result = walletAdapter.transact(activityResultSender) {
-                authorize(
-                    identityUri = identityUri,
-                    iconUri = iconUri,
-                    identityName = identityName,
-                    rpcCluster = rpcConfig.rpcCluster
-                )
-            }
-
-            when (result) {
+            when (val result = walletAdapter.transact(activityResultSender) { it }) {
                 is TransactionResult.Success -> {
                     walletConnectionUseCase.persistConnection(
-                        result.payload.publicKey,
-                        result.payload.accountLabel ?: "",
+                        result.payload.accounts.first().publicKey,
+                        result.payload.accounts.first().accountLabel ?: "",
                         result.payload.authToken
                     )
                 }
@@ -101,6 +89,7 @@ class WalletConnectionViewModel @Inject constructor(
 
     fun disconnect() {
         viewModelScope.launch {
+            walletAdapter.authToken = null
             walletConnectionUseCase.clearConnection()
         }
     }

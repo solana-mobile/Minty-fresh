@@ -2,6 +2,7 @@ package com.solanamobile.mintyfresh.mintycore.usecase
 
 import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.clusterName
 import org.intellij.lang.annotations.Language
 import java.util.*
 import javax.inject.Inject
@@ -35,7 +36,7 @@ class XWeb3AuthUseCase @Inject constructor(
                   "tags": {
                     "mintingAgent": "solana-mobile/Minty-fresh",
                     "chain": "solana",
-                    "solanaCluster": "${rpcConfig.rpcCluster.name}"
+                    "solanaCluster": "${rpcConfig.clusterName}"
                   }
                 }
               }

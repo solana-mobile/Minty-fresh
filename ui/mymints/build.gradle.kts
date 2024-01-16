@@ -76,7 +76,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
 
     implementation("com.github.bumptech.glide:compose:1.0.0-alpha.1")
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

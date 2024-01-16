@@ -96,9 +96,10 @@ class PerformMintUseCase @Inject constructor(
 
         val transferResult = walletAdapter.transact(sender) {
             val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
+            val primaryAccount = reauth.accounts.first()
             persistenceUseCase.persistConnection(
-                reauth.publicKey,
-                reauth.accountLabel ?: "",
+                primaryAccount.publicKey,
+                primaryAccount.accountLabel ?: "",
                 reauth.authToken
             )
 

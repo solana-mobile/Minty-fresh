@@ -1,6 +1,8 @@
 package com.solanamobile.mintyfresh.networkinterface.rpcconfig
 
-import com.solana.mobilewalletadapter.clientlib.RpcCluster
+import com.solana.mobilewalletadapter.clientlib.Blockchain
+import com.solana.mobilewalletadapter.clientlib.Solana
+import com.solana.mobilewalletadapter.common.ProtocolContract
 
 /**
  * RPC config interface
@@ -14,7 +16,14 @@ interface IRpcConfig {
     val solanaRpcUrl: String
 
     /**
-     * cluster where the RPC requests are made.
+     * blockchain where requests/transactions are submit.
      */
-    val rpcCluster: RpcCluster
+    val blockchain: Blockchain
+}
+
+val IRpcConfig.clusterName: String get() = when (blockchain) {
+    Solana.Devnet -> ProtocolContract.CLUSTER_DEVNET
+    Solana.Testnet -> ProtocolContract.CLUSTER_TESTNET
+    Solana.Mainnet -> ProtocolContract.CLUSTER_MAINNET_BETA
+    else -> blockchain.cluster
 }
