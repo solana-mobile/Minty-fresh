@@ -63,12 +63,12 @@ class WalletConnectionViewModel @Inject constructor(
         activityResultSender: ActivityResultSender
     ) {
         viewModelScope.launch {
-            when (val result = walletAdapter.transact(activityResultSender) { it }) {
+            when (val result = walletAdapter.connect(activityResultSender)) {
                 is TransactionResult.Success -> {
                     walletConnectionUseCase.persistConnection(
-                        result.payload.accounts.first().publicKey,
-                        result.payload.accounts.first().accountLabel ?: "",
-                        result.payload.authToken
+                        result.authResult.accounts.first().publicKey,
+                        result.authResult.accounts.first().accountLabel ?: "",
+                        result.authResult.authToken
                     )
                 }
                 is TransactionResult.NoWalletFound -> {
