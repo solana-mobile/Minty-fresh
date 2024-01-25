@@ -1,6 +1,5 @@
 package com.solanamobile.mintyfresh.activity
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -125,10 +124,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     activityResultSender = activityResultSender,
                                     contentResolver = contentResolver,
-                                    cacheDir = cacheDir,
-                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
-                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                                    appName = application.getString(R.string.app_name),
+                                    cacheDir = cacheDir
                                 )
                             }
                         )

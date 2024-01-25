@@ -54,10 +54,7 @@ fun NavGraphBuilder.mintDetailsScreen(
     onMintCompleted: () -> Unit,
     activityResultSender: ActivityResultSender,
     contentResolver: ContentResolver,
-    cacheDir: File,
-    identityUri: Uri,
-    iconUri: Uri,
-    appName: String
+    cacheDir: File
 ) {
     composable(
         route = "$MintDetailsRoute?imagePath={imagePath}",
@@ -102,9 +99,6 @@ fun NavGraphBuilder.mintDetailsScreen(
             ?: throw IllegalStateException("$MintDetailsRoute requires an \"imagePath\" argument to be launched"),
             navigateUp = navigateUp,
             onMintCompleted = onMintCompleted,
-            identityUri = identityUri,
-            iconUri = iconUri,
-            identityName = appName,
             intentSender = activityResultSender
         )
     }
@@ -117,9 +111,6 @@ fun NavGraphBuilder.mintDetailsScreen(
 )
 @Composable
 fun MintDetailsPage(
-    identityUri: Uri,
-    iconUri: Uri,
-    identityName: String,
     imagePath: String,
     navigateUp: () -> Boolean = { true },
     onMintCompleted: () -> Unit = { },
@@ -320,9 +311,6 @@ fun MintDetailsPage(
                         enabled = title.value.isNotEmpty() && description.value.isNotEmpty(),
                         onClick = {
                             performMintViewModel.performMint(
-                                identityUri,
-                                iconUri,
-                                identityName,
                                 intentSender,
                                 title.value,
                                 description.value,
