@@ -30,9 +30,9 @@ android {
             )
             buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
             buildConfigField(
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-                "RPC_CLUSTER",
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
+                "com.solana.mobilewalletadapter.clientlib.Blockchain",
+                "BLOCKCHAIN",
+                "com.solana.mobilewalletadapter.clientlib.Solana.Mainnet.INSTANCE"
             )
         }
     }
