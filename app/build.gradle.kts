@@ -96,7 +96,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:1.3.3")
     implementation("androidx.paging:paging-compose:1.0.0-alpha17")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.0")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.1")
 
     implementation("com.google.accompanist:accompanist-pager:0.28.0")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.28.0")
