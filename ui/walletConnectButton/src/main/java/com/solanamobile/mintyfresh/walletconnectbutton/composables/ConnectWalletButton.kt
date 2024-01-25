@@ -39,7 +39,7 @@ fun ConnectWalletButton(
             if (viewState.userAddress.isEmpty()) {
                 walletConnectionViewModel.connect(activityResultSender)
             } else {
-                walletConnectionViewModel.disconnect()
+                walletConnectionViewModel.disconnect(activityResultSender)
             }
         },
         enabled = !viewState.noWallet

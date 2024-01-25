@@ -82,7 +82,8 @@ class PerformMintViewModel @Inject constructor(
                 persistenceUseCase.persistConnection(
                     result.payload.accounts.first().publicKey,
                     result.payload.accounts.first().accountLabel ?: "",
-                    result.payload.authToken
+                    result.payload.authToken,
+                    result.payload.walletUriBase
                 )
             }
 

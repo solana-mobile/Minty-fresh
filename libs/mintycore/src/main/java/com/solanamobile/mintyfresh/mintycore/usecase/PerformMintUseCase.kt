@@ -96,7 +96,8 @@ class PerformMintUseCase @Inject constructor(
             persistenceUseCase.persistConnection(
                 primaryAccount.publicKey,
                 primaryAccount.accountLabel ?: "",
-                authResult.authToken
+                authResult.authToken,
+                authResult.walletUriBase
             )
 
             val signer = object : Ed25519Signer() {
@@ -200,7 +201,8 @@ class PerformMintUseCase @Inject constructor(
             persistenceUseCase.persistConnection(
                 authResult.publicKey,
                 authResult.accountLabel ?: "",
-                authResult.authToken
+                authResult.authToken,
+                authResult.walletUriBase
             )
 
             val signingResult = signTransactions(arrayOf(transactionBytes))

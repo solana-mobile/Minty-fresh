@@ -1,5 +1,6 @@
 package com.solanamobile.mintyfresh.persistence.usecase
 
+import android.net.Uri
 import com.solana.core.PublicKey
 import com.solanamobile.mintyfresh.persistence.repository.PrefsDataStoreRepository
 import kotlinx.coroutines.flow.combine
@@ -12,7 +13,8 @@ object NotConnected : UserWalletDetails()
 data class Connected(
     val publicKey: String,
     val accountLabel: String,
-    val authToken: String
+    val authToken: String,
+    val walletUriBase: String? = null
 ): UserWalletDetails()
 
 /**
@@ -39,16 +41,16 @@ class WalletConnectionUseCase @Inject constructor(
         }
     }
 
-    suspend fun persistConnection(pubKey: ByteArray, accountLabel: String, token: String) {
-        persistConnection(PublicKey(pubKey), accountLabel, token)
+    suspend fun persistConnection(pubKey: ByteArray, accountLabel: String, token: String, walletUri: Uri?) {
+        persistConnection(PublicKey(pubKey), accountLabel, token, walletUri.toString())
     }
 
-    suspend fun persistConnection(pubKey: String, accountLabel: String, token: String) {
-        dataStoreRepository.updateWalletDetails(pubKey, accountLabel, token)
+    suspend fun persistConnection(pubKey: String, accountLabel: String, token: String, walletUri: Uri?) {
+        persistConnection(PublicKey.valueOf(pubKey), accountLabel, token, walletUri.toString())
     }
 
-    private suspend fun persistConnection(pubKey: PublicKey, accountLabel: String, token: String) {
-        dataStoreRepository.updateWalletDetails(pubKey.toBase58(), accountLabel, token)
+    private suspend fun persistConnection(pubKey: PublicKey, accountLabel: String, token: String, walletUri: String?) {
+        dataStoreRepository.updateWalletDetails(pubKey.toBase58(), accountLabel, token, walletUri)
     }
 
     suspend fun clearConnection() {

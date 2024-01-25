@@ -68,7 +68,8 @@ class WalletConnectionViewModel @Inject constructor(
                     walletConnectionUseCase.persistConnection(
                         result.authResult.accounts.first().publicKey,
                         result.authResult.accounts.first().accountLabel ?: "",
-                        result.authResult.authToken
+                        result.authResult.authToken,
+                        result.authResult.walletUriBase
                     )
                 }
                 is TransactionResult.NoWalletFound -> {
@@ -86,9 +87,11 @@ class WalletConnectionViewModel @Inject constructor(
         }
     }
 
-    fun disconnect() {
+    fun disconnect(
+        activityResultSender: ActivityResultSender
+    ) {
         viewModelScope.launch {
-            walletAdapter.authToken = null
+            walletAdapter.disconnect(activityResultSender)
             walletConnectionUseCase.clearConnection()
         }
     }
