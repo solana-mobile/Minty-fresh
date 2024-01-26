@@ -28,15 +28,17 @@ class WalletConnectionUseCase @Inject constructor(
     val walletDetails = combine(
         dataStoreRepository.publicKeyFlow,
         dataStoreRepository.accountLabelFlow,
-        dataStoreRepository.authTokenFlow)
-    { pubKey, label, authToken ->
+        dataStoreRepository.authTokenFlow,
+        dataStoreRepository.walletUriFlow)
+    { pubKey, label, authToken, walletUriBase ->
         if (pubKey.isEmpty() || label.isEmpty() || authToken.isEmpty()) {
             NotConnected
         } else {
             Connected(
                 publicKey = pubKey,
                 accountLabel = label,
-                authToken = authToken
+                authToken = authToken,
+                walletUriBase = walletUriBase
             )
         }
     }
