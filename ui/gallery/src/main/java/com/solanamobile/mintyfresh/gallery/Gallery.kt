@@ -1,7 +1,6 @@
 package com.solanamobile.mintyfresh.gallery
 
 import android.Manifest
-import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,10 +46,7 @@ fun NavGraphBuilder.galleryScreen(
     navigateToSettings: () -> Unit = { },
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
-    navigationItems: List<NavigationItem>,
-    identityUri: Uri,
-    iconUri: Uri,
-    appName: String
+    navigationItems: List<NavigationItem>
 ) {
     composable(route = galleryRoute) {
         Scaffold(
@@ -77,9 +73,6 @@ fun NavGraphBuilder.galleryScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     ConnectWalletButton(
-                        identityUri = identityUri,
-                        iconUri = iconUri,
-                        identityName = appName,
                         activityResultSender = activityResultSender
                     )
                     SettingsButton(

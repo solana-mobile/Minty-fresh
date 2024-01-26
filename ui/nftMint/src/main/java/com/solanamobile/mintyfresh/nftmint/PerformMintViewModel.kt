@@ -27,8 +27,7 @@ class PerformMintViewModel @Inject constructor(
     application: Application,
     private val persistenceUseCase: WalletConnectionUseCase,
     private val performMintUseCase: PerformMintUseCase,
-    private val mobileWalletAdapter: MobileWalletAdapter,
-    private val rpcConfig: IRpcConfig
+    private val mobileWalletAdapter: MobileWalletAdapter
 ) : AndroidViewModel(application) {
 
     private var _viewState: MutableStateFlow<PerformMintViewState> = MutableStateFlow(
@@ -58,9 +57,6 @@ class PerformMintViewModel @Inject constructor(
      * have to be passed here. Also we'll want to support dynamic attributes in the future.
      */
     fun performMint(
-        identityUri: Uri,
-        iconUri: Uri,
-        identityName: String,
         sender: ActivityResultSender,
         title: String,
         description: String,
@@ -68,9 +64,7 @@ class PerformMintViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             if (!_viewState.value.isWalletConnected) {
-                val result = mobileWalletAdapter.transact(sender) {
-                    authorize(identityUri, iconUri, identityName, rpcConfig.rpcCluster)
-                }
+                val result = mobileWalletAdapter.transact(sender) { it }
 
                 if (result !is TransactionResult.Success) {
                     _viewState.update {
@@ -86,16 +80,14 @@ class PerformMintViewModel @Inject constructor(
                 }
 
                 persistenceUseCase.persistConnection(
-                    result.payload.publicKey,
-                    result.payload.accountLabel ?: "",
-                    result.payload.authToken
+                    result.payload.accounts.first().publicKey,
+                    result.payload.accounts.first().accountLabel ?: "",
+                    result.payload.authToken,
+                    result.payload.walletUriBase
                 )
             }
 
             performMintUseCase.performMint(
-                identityUri,
-                iconUri,
-                identityName,
                 sender,
                 title,
                 description,

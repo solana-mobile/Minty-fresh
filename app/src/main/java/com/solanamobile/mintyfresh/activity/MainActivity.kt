@@ -1,6 +1,5 @@
 package com.solanamobile.mintyfresh.activity
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -98,10 +97,7 @@ class MainActivity : ComponentActivity() {
                                     navigationItems = listOf(
                                         NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
                                         NavigationItem(viewingGraphRoutePattern, Icons.Outlined.AutoAwesome, R.string.my_mints)
-                                    ),
-                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
-                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                                    appName = application.getString(R.string.app_name),
+                                    )
                                 )
 
                                 cameraScreen(navigateToDetails = {
@@ -128,10 +124,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     activityResultSender = activityResultSender,
                                     contentResolver = contentResolver,
-                                    cacheDir = cacheDir,
-                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
-                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                                    appName = application.getString(R.string.app_name),
+                                    cacheDir = cacheDir
                                 )
                             }
                         )
@@ -147,10 +140,7 @@ class MainActivity : ComponentActivity() {
                                     navigationItems = listOf(
                                         NavigationItem(creatingGraphRoutePattern, Icons.Outlined.Image, R.string.photos),
                                         NavigationItem(viewingGraphRoutePattern, Icons.Outlined.AutoAwesome, R.string.my_mints)
-                                    ),
-                                    identityUri = Uri.parse(application.getString((R.string.id_url))),
-                                    iconUri = Uri.parse(application.getString(R.string.id_favico)),
-                                    appName = application.getString(R.string.app_name),
+                                    )
                                 )
 
                                 myMintsDetailsScreen(navigateUp = navigateUp)

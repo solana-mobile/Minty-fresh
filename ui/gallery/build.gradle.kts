@@ -58,7 +58,7 @@ dependencies {
 
     implementation("androidx.compose.material:material-icons-core:1.4.0-beta01")
     implementation("androidx.compose.material:material-icons-extended:1.4.0-beta01")
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.1")
 
     val cameraxVersion = "1.2.0"
     implementation("androidx.camera:camera-core:${cameraxVersion}")

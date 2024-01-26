@@ -16,9 +16,9 @@ android {
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.devnet.solana.com\"")
         buildConfigField(
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-            "RPC_CLUSTER",
-            "com.solana.mobilewalletadapter.clientlib.RpcCluster.Devnet.INSTANCE"
+            "com.solana.mobilewalletadapter.clientlib.Blockchain",
+            "BLOCKCHAIN",
+            "com.solana.mobilewalletadapter.clientlib.Solana.Devnet.INSTANCE"
         )
     }
 
@@ -30,9 +30,9 @@ android {
             )
             buildConfigField("String", "SOLANA_RPC_URL", "\"https://api.mainnet-beta.solana.com\"")
             buildConfigField(
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster",
-                "RPC_CLUSTER",
-                "com.solana.mobilewalletadapter.clientlib.RpcCluster.MainnetBeta.INSTANCE"
+                "com.solana.mobilewalletadapter.clientlib.Blockchain",
+                "BLOCKCHAIN",
+                "com.solana.mobilewalletadapter.clientlib.Solana.Mainnet.INSTANCE"
             )
         }
     }
@@ -57,7 +57,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
 
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.1")
 
     // SolanaKT & Metaplex
     implementation("com.github.metaplex-foundation:SolanaKT:2.0.1")

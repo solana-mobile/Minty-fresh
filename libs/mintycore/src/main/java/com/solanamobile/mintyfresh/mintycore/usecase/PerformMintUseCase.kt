@@ -56,9 +56,6 @@ class PerformMintUseCase @Inject constructor(
     }
 
     suspend fun performMint(
-        identityUri: Uri,
-        iconUri: Uri,
-        identityName: String,
         sender: ActivityResultSender,
         title: String,
         desc: String,
@@ -66,8 +63,8 @@ class PerformMintUseCase @Inject constructor(
     ) = withContext(Dispatchers.IO) {
 
         val currConn = getWalletConnection(this)
-        val authToken = currConn.authToken
         val walletAddress = currConn.publicKey
+        walletAdapter.authToken = currConn.authToken
 
         val creator = PublicKey(walletAddress)
 
@@ -94,12 +91,13 @@ class PerformMintUseCase @Inject constructor(
 
         lateinit var metadataBundle: DataItem
 
-        val transferResult = walletAdapter.transact(sender) {
-            val reauth = reauthorize(identityUri, iconUri, identityName, authToken)
+        val transferResult = walletAdapter.transact(sender) { authResult ->
+            val primaryAccount = authResult.accounts.first()
             persistenceUseCase.persistConnection(
-                reauth.publicKey,
-                reauth.accountLabel ?: "",
-                reauth.authToken
+                primaryAccount.publicKey,
+                primaryAccount.accountLabel ?: "",
+                authResult.authToken,
+                authResult.walletUriBase
             )
 
             val signer = object : Ed25519Signer() {
@@ -199,13 +197,12 @@ class PerformMintUseCase @Inject constructor(
         // begin signing transaction step
         _mintState.value = MintState.Signing(transactionBytes)
 
-        val token = getWalletConnection(this).authToken
-        val txResult = walletAdapter.transact(sender) {
-            val reauth = reauthorize(identityUri, iconUri, identityName, token)
+        val txResult = walletAdapter.transact(sender) { authResult ->
             persistenceUseCase.persistConnection(
-                reauth.publicKey,
-                reauth.accountLabel ?: "",
-                reauth.authToken
+                authResult.publicKey,
+                authResult.accountLabel ?: "",
+                authResult.authToken,
+                authResult.walletUriBase
             )
 
             val signingResult = signTransactions(arrayOf(transactionBytes))

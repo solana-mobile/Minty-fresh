@@ -1,6 +1,5 @@
 package com.solanamobile.mintyfresh.walletconnectbutton.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
@@ -61,27 +60,16 @@ class WalletConnectionViewModel @Inject constructor(
     }
 
     fun connect(
-        identityUri: Uri,
-        iconUri: Uri,
-        identityName: String,
         activityResultSender: ActivityResultSender
     ) {
         viewModelScope.launch {
-            val result = walletAdapter.transact(activityResultSender) {
-                authorize(
-                    identityUri = identityUri,
-                    iconUri = iconUri,
-                    identityName = identityName,
-                    rpcCluster = rpcConfig.rpcCluster
-                )
-            }
-
-            when (result) {
+            when (val result = walletAdapter.connect(activityResultSender)) {
                 is TransactionResult.Success -> {
                     walletConnectionUseCase.persistConnection(
-                        result.payload.publicKey,
-                        result.payload.accountLabel ?: "",
-                        result.payload.authToken
+                        result.authResult.accounts.first().publicKey,
+                        result.authResult.accounts.first().accountLabel ?: "",
+                        result.authResult.authToken,
+                        result.authResult.walletUriBase
                     )
                 }
                 is TransactionResult.NoWalletFound -> {
@@ -99,8 +87,11 @@ class WalletConnectionViewModel @Inject constructor(
         }
     }
 
-    fun disconnect() {
+    fun disconnect(
+        activityResultSender: ActivityResultSender
+    ) {
         viewModelScope.launch {
+            walletAdapter.disconnect(activityResultSender)
             walletConnectionUseCase.clearConnection()
         }
     }

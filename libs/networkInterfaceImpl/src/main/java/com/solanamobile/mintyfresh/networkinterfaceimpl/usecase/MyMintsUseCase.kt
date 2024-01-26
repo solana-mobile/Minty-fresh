@@ -2,6 +2,7 @@ package com.solanamobile.mintyfresh.networkinterfaceimpl.usecase
 
 import android.util.Log
 import com.solanamobile.mintyfresh.networkinterface.rpcconfig.IRpcConfig
+import com.solanamobile.mintyfresh.networkinterface.rpcconfig.clusterName
 import com.solanamobile.mintyfresh.networkinterface.usecase.IMyMintsUseCase
 import com.solanamobile.mintyfresh.networkinterfaceimpl.repository.NFTRepository
 import com.solanamobile.mintyfresh.persistence.diskcache.MyMint
@@ -21,13 +22,13 @@ class MyMintsUseCase @Inject constructor(
     override fun getCachedMints(publicKey: String): Flow<List<MyMint>> {
         return myMintsCacheRepository.get(
             pubKey = publicKey,
-            clusterName = rpcConfig.rpcCluster.name
+            clusterName = rpcConfig.clusterName
         )
     }
 
     override suspend fun getAllUserMintyFreshNfts(publicKey: String): List<MyMint> {
         val nfts = nftRepository.getAllUserMintyFreshNfts(publicKey)
-        val clusterName = rpcConfig.rpcCluster.name
+        val clusterName = rpcConfig.clusterName
 
         val currentMintList = metaplexToCacheMapper.map(nfts, clusterName)
         myMintsCacheRepository.deleteStaleData(

@@ -13,7 +13,7 @@ import dagger.hilt.android.components.ViewModelComponent
 class MintyModule {
 
     @Provides
-    fun providesMobileWalletAdapter(): MobileWalletAdapter {
-        return MobileWalletAdapter()
+    fun providesMobileWalletAdapter(provider: MobileWalletAdapterProvider): MobileWalletAdapter {
+        return provider.mobileWalletAdapter
     }
 }

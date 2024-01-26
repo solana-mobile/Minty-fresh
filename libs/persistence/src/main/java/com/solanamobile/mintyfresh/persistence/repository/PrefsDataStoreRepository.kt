@@ -35,11 +35,20 @@ class PrefsDataStoreRepository @Inject constructor(
                 preferences[authTokenPref] ?: ""
             }
 
-    suspend fun updateWalletDetails(pubkey: String, label: String, authToken: String) {
+    val walletUriFlow: Flow<String> =
+        context.dataStore.data
+            .map { preferences ->
+                preferences[walletUriPref] ?: ""
+            }
+
+    suspend fun updateWalletDetails(pubkey: String, label: String, authToken: String, walletUri: String?) {
         context.dataStore.edit { settings ->
             settings[pubkeyPref] = pubkey
             settings[accountLabelPref] = label
             settings[authTokenPref] = authToken
+            walletUri?.run {
+                settings[walletUriPref] = this
+            } ?: settings.remove(walletUriPref)
         }
     }
 
@@ -51,5 +60,6 @@ class PrefsDataStoreRepository @Inject constructor(
         val pubkeyPref = stringPreferencesKey("public_key")
         val accountLabelPref = stringPreferencesKey("account_label")
         val authTokenPref = stringPreferencesKey("auth_token")
+        val walletUriPref = stringPreferencesKey("wallet_uri_base")
     }
 }

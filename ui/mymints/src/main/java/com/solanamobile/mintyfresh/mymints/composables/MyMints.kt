@@ -1,7 +1,5 @@
 package com.solanamobile.mintyfresh.mymints.composables
 
-import android.net.Uri
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -48,16 +46,13 @@ fun NavController.navigateToMyMints(forceRefresh: Boolean = false, navOptions: N
     this.navigate("$myMintsRoute?forceRefresh=$forceRefresh", navOptions)
 }
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.myMintsScreen(
     navigateToDetails: (Int) -> Unit,
     navigateToSettings: () -> Unit = { },
     navController: NavHostController,
     activityResultSender: ActivityResultSender,
     navigationItems: List<NavigationItem>,
-    identityUri: Uri,
-    iconUri: Uri,
-    appName: String
 ) {
     composable(
         route = "$myMintsRoute?forceRefresh={forceRefresh}",
@@ -82,9 +77,6 @@ fun NavGraphBuilder.myMintsScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     ConnectWalletButton(
-                        identityUri = identityUri,
-                        iconUri = iconUri,
-                        identityName = appName,
                         activityResultSender = activityResultSender
                     )
                     SettingsButton(

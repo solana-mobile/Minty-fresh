@@ -67,7 +67,7 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.44.2")
     kapt("com.google.dagger:hilt-android:2.44.2")
 
-    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:1.1.0")
+    implementation("com.solanamobile:mobile-wallet-adapter-clientlib-ktx:2.0.1")
 
     // SolanaKT & Metaplex
     implementation("com.github.metaplex-foundation:SolanaKT:2.0.1")
