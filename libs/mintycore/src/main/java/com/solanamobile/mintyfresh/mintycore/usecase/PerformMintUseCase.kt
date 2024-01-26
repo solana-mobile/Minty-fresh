@@ -198,9 +198,10 @@ class PerformMintUseCase @Inject constructor(
         _mintState.value = MintState.Signing(transactionBytes)
 
         val txResult = walletAdapter.transact(sender) { authResult ->
+            val primaryAccount = authResult.accounts.first()
             persistenceUseCase.persistConnection(
-                authResult.publicKey,
-                authResult.accountLabel ?: "",
+                primaryAccount.publicKey,
+                primaryAccount.accountLabel ?: "",
                 authResult.authToken,
                 authResult.walletUriBase
             )
